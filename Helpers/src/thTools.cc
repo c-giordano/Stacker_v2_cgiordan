@@ -1,19 +1,19 @@
 #include "../interface/thTools.h"
 
-void normalizeHistograms(std::vector<TH1D*>& histos) {
+void normalizeHistograms(std::vector<std::shared_ptr<TH1D>>& histos) {
     for (auto curr : histos) {
         curr->Scale(1/curr->Integral());
     }
 }
 
-TH1D* sumVector(std::vector<TH1D*>& histoVec) {
-    TH1D* sum = nullptr;
+std::shared_ptr<TH1D> sumVector(std::vector<std::shared_ptr<TH1D>>& histoVec) {
+    std::shared_ptr<TH1D> sum = nullptr;
     for (unsigned i = 0; i < histoVec.size(); i++) {
-        TH1D* currHist = histoVec[i];
+        std::shared_ptr<TH1D> currHist = histoVec[i];
         if (i == 0) {
-            sum = new TH1D(*currHist);
+            sum = std::make_shared<TH1D>(TH1D(*currHist));
         } else {
-            sum->Add(currHist);
+            sum->Add(currHist.get());
         }
     }
     return sum;

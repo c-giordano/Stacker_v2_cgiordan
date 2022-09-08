@@ -12,7 +12,7 @@
 #include <TGaxis.h>
 #include <TColor.h>
 
-void normalizeHistograms(std::vector<TH1D*>& histos);
-TH1D* sumVector(std::vector<TH1D*>& histoVec);
+void normalizeHistograms(std::vector<std::shared_ptr<TH1D>>& histos);
+std::shared_ptr<TH1D> sumVector(std::vector<std::shared_ptr<TH1D>>& histoVec);
 
 #endif
