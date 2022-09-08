@@ -64,9 +64,9 @@ Process::Process(TString& procName, int procColor, std::vector<TFile*>& inputfil
     }
 }
 
-TH1D* Process::getHistogram(Histogram* histogram) {
+std::shared_ptr<TH1D> Process::getHistogram(Histogram* histogram) {
     TString histName = histogram->getID();
-    TH1D* output = nullptr;// = new TH1D();// = new TH1D(histName + "_" + name, name)
+    std::shared_ptr<TH1D> output = nullptr;
 
     //if (stringContainsSubstr(std::string(histName.Data()), "Yield")) {
     //    std::cout << "Process " << name << std::endl;
@@ -104,7 +104,7 @@ TH1D* Process::getHistogram(Histogram* histogram) {
             //}
 
             if (output == nullptr) {
-                output = new TH1D(*inter);
+                output = std::make_shared<TH1D>(TH1D(*inter));
             } else {
                 output->Add(inter);
             }
@@ -124,7 +124,7 @@ TH1D* Process::getHistogram(Histogram* histogram) {
             output->Rebin(histogram->GetRebin());
         } else {
             std::string newName = std::string(histName.Data() + name);
-            output = (TH1D*) output->Rebin(histogram->GetRebin()-1, newName.c_str(), histogram->GetRebinVar());
+            output = std::make_shared<TH1D> (*(TH1D*) output->Rebin(histogram->GetRebin()-1, newName.c_str(), histogram->GetRebinVar()));
         }
     }
 
@@ -138,11 +138,11 @@ TH1D* Process::getHistogram(Histogram* histogram) {
     return output;
 }
 
-TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope) {
+std::shared_ptr<TH1D> Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope) {
     TString histName = hist->getID(); // + "_" + uncName + "_" + upOrDown;
     TH1::AddDirectory(false);
     // std::cout << histName << std::endl;
-    TH1D* output = nullptr;
+    std::shared_ptr<TH1D> output = nullptr;
 
     for (unsigned i = 0; i < inputfiles.size(); i++) {
         TFile* currFile = inputfiles[i];
@@ -173,7 +173,7 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
             gDirectory->GetObject(histName, inter);
             if (inter != nullptr) {
                 if (output == nullptr) {
-                    output = new TH1D(*inter);
+                    output = std::make_shared<TH1D>(TH1D(*inter));
                 } else {
                     output->Add(inter);
                 }

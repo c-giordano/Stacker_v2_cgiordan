@@ -20,12 +20,12 @@ ProcessSet::ProcessSet(TString& name, std::vector<TString>& procNames, int procC
 }
 
 
-TH1D* ProcessSet::getHistogram(Histogram* histogram) {
-    TH1D* output = nullptr;
+std::shared_ptr<TH1D> ProcessSet::getHistogram(Histogram* histogram) {
+    std::shared_ptr<TH1D> output = nullptr;
     TString histName = histogram->getID();
 
     for (auto it : subProcesses) {
-        TH1D* tmp = it->getHistogram(histogram);
+        std::shared_ptr<TH1D> tmp = it->getHistogram(histogram);
         if (tmp == nullptr) {
             continue;
         }
@@ -33,7 +33,7 @@ TH1D* ProcessSet::getHistogram(Histogram* histogram) {
         if (output == nullptr) {
             output = tmp;
         } else {
-            output->Add(tmp);
+            output->Add(tmp.get());
         }
     }
 
@@ -47,18 +47,18 @@ TH1D* ProcessSet::getHistogram(Histogram* histogram) {
     return output;
 }
 
-TH1D* ProcessSet::getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope) {
-    TH1D* output = nullptr;
+std::shared_ptr<TH1D> ProcessSet::getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope) {
+    std::shared_ptr<TH1D> output = nullptr;
    // bool printToFile = hist->getPrintToFile();
    // hist->setPrintToFile(false);
 
     for (auto it : subProcesses) {
-        TH1D* tmp = it->getHistogramUncertainty(uncName, upOrDown, hist, outputFolder, envelope);
+        std::shared_ptr<TH1D> tmp = it->getHistogramUncertainty(uncName, upOrDown, hist, outputFolder, envelope);
         
         if (output == nullptr) {
             output = tmp;
         } else {
-            output->Add(tmp);
+            output->Add(tmp.get());
         }
     }
 

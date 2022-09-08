@@ -8,7 +8,7 @@ Uncertainty::Uncertainty(std::string& name, bool flat, bool envelope, bool corrP
 }
 
 
-TH1D* Uncertainty::getUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec) {
+std::shared_ptr<TH1D> Uncertainty::getUncertainty(Histogram* histogram, Process* head, std::vector<std::shared_ptr<TH1D>>& histVec) {
     if (flat) {
         return getFlatUncertainty(histogram, head, histVec);
     } else if (envelope && buildEnvelope) {
@@ -19,12 +19,12 @@ TH1D* Uncertainty::getUncertainty(Histogram* histogram, Process* head, std::vect
 }
 
 
-TH1D* Uncertainty::getShapeUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec) {
+std::shared_ptr<TH1D> Uncertainty::getShapeUncertainty(Histogram* histogram, Process* head, std::vector<std::shared_ptr<TH1D>>& histVec) {
     // Loop processes, ask to add stuff
 
     // create one final TH1D to return
     Process* current = head;
-    TH1D* ret = new TH1D(*histVec[0]);
+    std::shared_ptr<TH1D> ret = std::make_shared<TH1D>(TH1D(*histVec[0]));
 
     for (int bin = 1; bin < ret->GetNbinsX() + 1; bin++) {
         ret->SetBinContent(bin, 0.);
@@ -64,9 +64,9 @@ TH1D* Uncertainty::getShapeUncertainty(Histogram* histogram, Process* head, std:
         }
         //std::cout << current->getName();
 
-        TH1D* histNominal = histVec[histCount];
-        TH1D* histUp = current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
-        TH1D* histDown = current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope());
+        std::shared_ptr<TH1D> histNominal = histVec[histCount];
+        std::shared_ptr<TH1D> histUp = current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
+        std::shared_ptr<TH1D> histDown = current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope());
 
         if (histUp == nullptr && histDown == nullptr) {
             current = current->getNext();
@@ -85,8 +85,8 @@ TH1D* Uncertainty::getShapeUncertainty(Histogram* histogram, Process* head, std:
                 TString newNameDown = histDown->GetName();
                 histDown->SetName(newNameDown + TString("OLD"));
                 
-                histUp = (TH1D*) histUp->Rebin(histogram->GetRebin()-1, newNameUp, histogram->GetRebinVar());
-                histDown = (TH1D*) histDown->Rebin(histogram->GetRebin()-1, newNameDown, histogram->GetRebinVar());
+                histUp = std::make_shared<TH1D> (*(TH1D*)histUp->Rebin(histogram->GetRebin()-1, newNameUp, histogram->GetRebinVar()));
+                histDown = std::make_shared<TH1D> (*(TH1D*)histDown->Rebin(histogram->GetRebin()-1, newNameDown, histogram->GetRebinVar()));
             }
         }
         // do stuff
@@ -136,13 +136,14 @@ TH1D* Uncertainty::getShapeUncertainty(Histogram* histogram, Process* head, std:
     // set return value
 }
 
-TH1D* Uncertainty::getEnvelope(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec) {
+std::shared_ptr<TH1D> Uncertainty::getEnvelope(Histogram* histogram, Process* head, std::vector<std::shared_ptr<TH1D>>& histVec) {
     // combine stuff of different variations here
     // use normal envelopes
 
     // create one final TH1D to return
     Process* current = head;
-    TH1D* ret = new TH1D(*histVec[0]);
+    std::shared_ptr<TH1D> ret = std::make_shared<TH1D>(TH1D(*histVec[0]));
+
 
     for (int bin = 1; bin < ret->GetNbinsX() + 1; bin++) {
         ret->SetBinContent(bin, 0.);
@@ -179,8 +180,8 @@ TH1D* Uncertainty::getEnvelope(Histogram* histogram, Process* head, std::vector<
             current = current->getNext();
         }
 
-        TH1D* histNominal = histVec[histCount];
-        std::pair<TH1D*, TH1D*> histVars;
+        std::shared_ptr<TH1D> histNominal = histVec[histCount];
+        std::pair<std::shared_ptr<TH1D>, std::shared_ptr<TH1D>> histVars;
 
         if (name == "pdfShapeVar") {
             // alternative code is still available for building correct envelope here. Should in principle never be used anymore
@@ -189,8 +190,8 @@ TH1D* Uncertainty::getEnvelope(Histogram* histogram, Process* head, std::vector<
             histVars = buildEnvelopeForProcess(histogram, current, histNominal);
         }
 
-        TH1D* histUp = histVars.first;
-        TH1D* histDown = histVars.second;
+        std::shared_ptr<TH1D> histUp = histVars.first;
+        std::shared_ptr<TH1D> histDown = histVars.second;
 
         if (histUp == nullptr && histDown == nullptr) {
             current = current->getNext();
@@ -264,14 +265,14 @@ TH1D* Uncertainty::getEnvelope(Histogram* histogram, Process* head, std::vector<
 
 }
 
-std::pair<TH1D*, TH1D*> Uncertainty::buildEnvelopeForProcess(Histogram* histogram, Process* currentProcess, TH1D* nominalHist) {
+std::pair<std::shared_ptr<TH1D>, std::shared_ptr<TH1D>> Uncertainty::buildEnvelopeForProcess(Histogram* histogram, Process* currentProcess, std::shared_ptr<TH1D> nominalHist) {
     // call this for each histogram (comes from earlier call. So only given histogram is relevant)
     // loop per process
     // get all n variations of this histogram for a given process, create each bincontent. 
     // postprocess for given process
     // should only be qcd uncertainty 
-    TH1D* upVar = new TH1D(*nominalHist);
-    TH1D* downVar = new TH1D(*nominalHist);
+    std::shared_ptr<TH1D> upVar = std::make_shared<TH1D>(TH1D(*nominalHist));
+    std::shared_ptr<TH1D> downVar = std::make_shared<TH1D>(TH1D(*nominalHist));
 
     upVar->SetName(histogram->getID() + currentProcess->getName() + TString(name + "Up"));
     upVar->SetTitle(histogram->getID() + currentProcess->getName() + TString(name + "Up"));
@@ -314,22 +315,22 @@ std::pair<TH1D*, TH1D*> Uncertainty::buildEnvelopeForProcess(Histogram* histogra
     return {upVar, downVar};
 }
 
-std::pair<TH1D*, TH1D*> Uncertainty::buildPDFFromSumSquaredCollections(Histogram* histogram, Process* currentProcess, TH1D* nominalHist) {
+std::pair<std::shared_ptr<TH1D>, std::shared_ptr<TH1D>> Uncertainty::buildPDFFromSumSquaredCollections(Histogram* histogram, Process* currentProcess, std::shared_ptr<TH1D> nominalHist) {
     // call this for each histogram (comes from earlier call. So only given histogram is relevant)
     // loop per process
     // get all n variations of this histogram for a given process, create each bincontent. 
     // postprocess for given process
 
-    TH1D* upVar = new TH1D(*nominalHist);
+    std::shared_ptr<TH1D> upVar = std::make_shared<TH1D>(TH1D(*nominalHist));
     upVar->SetName(histogram->getID() + currentProcess->getName() + TString(name + "Up"));
     upVar->SetTitle(histogram->getID() + currentProcess->getName() + TString(name + "Up"));
 
-    TH1D* downVar = new TH1D(*nominalHist);
+    std::shared_ptr<TH1D> downVar = std::make_shared<TH1D>(TH1D(*nominalHist));
     downVar->SetName(histogram->getID() + currentProcess->getName() + TString(name + "Down"));
     downVar->SetTitle(histogram->getID() + currentProcess->getName() + TString(name + "Down"));
 
     std::string up = "Up";
-    TH1D* totalVar = currentProcess->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
+    std::shared_ptr<TH1D> totalVar = currentProcess->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
 
     // get all histograms in up variation -> Should automatically sum in process
 
@@ -343,25 +344,24 @@ std::pair<TH1D*, TH1D*> Uncertainty::buildPDFFromSumSquaredCollections(Histogram
             totalVar->Rebin(histogram->GetRebin());
         } else {
             std::string newName = std::string(histogram->getID() + name + "Complete");
-            totalVar = (TH1D*) totalVar->Rebin(histogram->GetRebin()-1, newName.c_str(), histogram->GetRebinVar());
+            totalVar = std::make_shared<TH1D> (*(TH1D*) totalVar->Rebin(histogram->GetRebin()-1, newName.c_str(), histogram->GetRebinVar()));
         }
     }
     
-    upVar->Add(totalVar);
-    downVar->Add(totalVar, -1.);
+    upVar->Add(totalVar.get());
+    downVar->Add(totalVar.get(), -1.);
 
     return {upVar, downVar};
 }
 
-std::pair<TH1D*, TH1D*> Uncertainty::buildSumSquaredEnvelopeForProcess(Histogram* histogram, Process* currentProcess, TH1D* nominalHist) {
+std::pair<std::shared_ptr<TH1D>, std::shared_ptr<TH1D>> Uncertainty::buildSumSquaredEnvelopeForProcess(Histogram* histogram, Process* currentProcess, std::shared_ptr<TH1D> nominalHist) {
     // call this for each histogram (comes from earlier call. So only given histogram is relevant)
     // loop per process
     // get all n variations of this histogram for a given process, create each bincontent. 
     // postprocess for given process
-
-    TH1D* totalVar = new TH1D(*nominalHist);
-    TH1D* upVar = new TH1D(*nominalHist);
-    TH1D* downVar = new TH1D(*nominalHist);
+    std::shared_ptr<TH1D> totalVar = std::make_shared<TH1D>(TH1D(*nominalHist));
+    std::shared_ptr<TH1D> upVar = std::make_shared<TH1D>(TH1D(*nominalHist));
+    std::shared_ptr<TH1D> downVar = std::make_shared<TH1D>(TH1D(*nominalHist));
 
     // make sure they are empty
     totalVar->Reset();
@@ -388,8 +388,8 @@ std::pair<TH1D*, TH1D*> Uncertainty::buildSumSquaredEnvelopeForProcess(Histogram
         totalVar->SetBinContent(j, sqrt(totalVar->GetBinContent(j)));
     }
     
-    upVar->Add(totalVar);
-    downVar->Add(totalVar, -1.);
+    upVar->Add(totalVar.get());
+    downVar->Add(totalVar.get(), -1.);
 
     return {upVar, downVar};
 }
@@ -422,9 +422,9 @@ void Uncertainty::printOutShapeUncertainty(Histogram* histogram, Process* head) 
             current = current->getNext();
         }
 
-        //TH1D* upVar = nullptr;
-        //TH1D* downVar = nullptr;
-        //TH1D* histNominal = nominalHists[histCount];
+        //std::shared_ptr<TH1D> upVar = nullptr;
+        //std::shared_ptr<TH1D> downVar = nullptr;
+        //std::shared_ptr<TH1D> histNominal = nominalHists[histCount];
         ////current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
         ////current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope());
 //
@@ -442,16 +442,16 @@ void Uncertainty::printOutShapeUncertainty(Histogram* histogram, Process* head) 
         //            TString newNameDown = downVar->GetName();
         //            downVar->SetName(newNameDown + TString("OLD"));
         //            
-        //            upVar = (TH1D*) upVar->Rebin(histogram->GetRebin(), newNameUp, histogram->GetRebinVar());
-        //            downVar = (TH1D*) downVar->Rebin(histogram->GetRebin(), newNameDown, histogram->GetRebinVar());
+        //            upVar = (std::shared_ptr<TH1D>) upVar->Rebin(histogram->GetRebin(), newNameUp, histogram->GetRebinVar());
+        //            downVar = (std::shared_ptr<TH1D>) downVar->Rebin(histogram->GetRebin(), newNameDown, histogram->GetRebinVar());
         //        }
         //    }
         //} else if (name == "pdfShapeVar") {
-        //    std::pair<TH1D*, TH1D*> histVars = buildPDFFromSumSquaredCollections(histogram, current, histNominal);
+        //    std::pair<std::shared_ptr<TH1D>, std::shared_ptr<TH1D>> histVars = buildPDFFromSumSquaredCollections(histogram, current, histNominal);
         //    upVar = histVars.first;
         //    downVar = histVars.second;
         //} else {
-        //    std::pair<TH1D*, TH1D*> histVars = buildEnvelopeForProcess(histogram, current, histNominal);
+        //    std::pair<std::shared_ptr<TH1D>, std::shared_ptr<TH1D>> histVars = buildEnvelopeForProcess(histogram, current, histNominal);
         //    upVar = histVars.first;
         //    downVar = histVars.second;
         //}
@@ -464,11 +464,11 @@ void Uncertainty::printOutShapeUncertainty(Histogram* histogram, Process* head) 
     } 
 }
 
-TH1D* Uncertainty::getFlatUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec) {
+std::shared_ptr<TH1D> Uncertainty::getFlatUncertainty(Histogram* histogram, Process* head, std::vector<std::shared_ptr<TH1D>>& histVec) {
     Process* current = head;
     //int histCount = 0;
 
-    TH1D* ret = new TH1D(*histVec[0]);
+    std::shared_ptr<TH1D> ret = std::make_shared<TH1D>(TH1D(*histVec[0]));
     TString histogramID = histogram->getID();
     ret->SetName(histogramID + name);
     ret->SetTitle(histogramID + name);
@@ -513,7 +513,7 @@ TH1D* Uncertainty::getFlatUncertainty(Histogram* histogram, Process* head, std::
     return ret;
 }
 
-std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& nominalHists) {
+std::pair<std::shared_ptr<TH1D>, std::shared_ptr<TH1D>> Uncertainty::getUpAndDownShapeUncertainty(Histogram* histogram, Process* head, std::vector<std::shared_ptr<TH1D>>& nominalHists) {
     // Loop processes, ask to add stuff
     Process* current = head;
     TString histogramID = histogram->getID();
@@ -534,8 +534,8 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
     std::string up = "Up";
     std::string down = "Down";
 
-    TH1D* upVarReturn = nullptr;
-    TH1D* downVarReturn = nullptr;
+    std::shared_ptr<TH1D> upVarReturn = nullptr;
+    std::shared_ptr<TH1D> downVarReturn = nullptr;
 
 
     while (current) {
@@ -547,9 +547,9 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
             continue;
         }
 
-        TH1D* upVar = nullptr;
-        TH1D* downVar = nullptr;
-        TH1D* histNominal = nominalHists[histCount];
+        std::shared_ptr<TH1D> upVar = nullptr;
+        std::shared_ptr<TH1D> downVar = nullptr;
+        std::shared_ptr<TH1D> histNominal = nominalHists[histCount];
 
         if (! envelope || (envelope && ! buildEnvelope)) {
             upVar = current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
@@ -565,16 +565,16 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
                     TString newNameDown = downVar->GetName();
                     downVar->SetName(newNameDown + TString("OLD"));
                     
-                    upVar = (TH1D*) upVar->Rebin(histogram->GetRebin()-1, newNameUp, histogram->GetRebinVar());
-                    downVar = (TH1D*) downVar->Rebin(histogram->GetRebin()-1, newNameDown, histogram->GetRebinVar());
+                    upVar = std::make_shared<TH1D> (*(TH1D*) upVar->Rebin(histogram->GetRebin()-1, newNameUp, histogram->GetRebinVar()));
+                    downVar = std::make_shared<TH1D> (*(TH1D*) downVar->Rebin(histogram->GetRebin()-1, newNameDown, histogram->GetRebinVar()));
                 }
             }
         } else if (name == "pdfShapeVar") {
-            std::pair<TH1D*, TH1D*> histVars = buildPDFFromSumSquaredCollections(histogram, current, histNominal);
+            std::pair<std::shared_ptr<TH1D>, std::shared_ptr<TH1D>> histVars = buildPDFFromSumSquaredCollections(histogram, current, histNominal);
             upVar = histVars.first;
             downVar = histVars.second;
         } else {
-            std::pair<TH1D*, TH1D*> histVars = buildEnvelopeForProcess(histogram, current, histNominal);
+            std::pair<std::shared_ptr<TH1D>, std::shared_ptr<TH1D>> histVars = buildEnvelopeForProcess(histogram, current, histNominal);
             upVar = histVars.first;
             downVar = histVars.second;
         }
@@ -597,23 +597,23 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
         }
 
         if (upVarReturn == nullptr) {
-            upVarReturn = new TH1D(*upVar);
-            downVarReturn = new TH1D(*downVar);
+            upVarReturn = std::make_shared<TH1D>(TH1D(*upVar));
+            downVarReturn = std::make_shared<TH1D>(TH1D(*downVar));
 
             if(! correlatedAmongProcesses ){
-                upVarReturn->Multiply(upVarReturn);
-                downVarReturn->Multiply(downVarReturn);
+                upVarReturn->Multiply(upVarReturn.get());
+                downVarReturn->Multiply(downVarReturn.get());
             }
         } else {
             if(! correlatedAmongProcesses ){
-                upVar->Multiply(upVar);
-                downVar->Multiply(downVar);
+                upVar->Multiply(upVar.get());
+                downVar->Multiply(downVar.get());
 
-                upVarReturn->Add(upVar);
-                downVarReturn->Add(downVar);
+                upVarReturn->Add(upVar.get());
+                downVarReturn->Add(downVar.get());
             } else {
-                upVarReturn->Add(upVar);
-                downVarReturn->Add(downVar);
+                upVarReturn->Add(upVar.get());
+                downVarReturn->Add(downVar.get());
             }
         }
 

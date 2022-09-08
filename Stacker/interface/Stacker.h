@@ -120,15 +120,15 @@ class Stacker {
 
         void printAllHistograms();
         void printHistogram(Histogram* histID);
-        TH1D* drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>& histVec, TH1D** sysUnc, TH1D* data, TPad** mainPad);
-        void drawSignalYield(TLegend* legend, std::vector<TH1D*>& signalVec);
-        TH1D* drawRatioMC(Histogram* hist, std::vector<TH1D*>& histoVec, std::vector<TH1D*>& signalVec, TPad** smallPadPtr);
-        TH1D* drawRatioData(Histogram* hist, TH1D* uncHist, TH1D* data, TPad** smallPadPtr);
+        std::shared_ptr<TH1D> drawStack(Histogram* hist, THStack* histStack, std::vector<std::shared_ptr<TH1D>>& histVec, std::shared_ptr<TH1D>* sysUnc, std::shared_ptr<TH1D> data, TPad** mainPad);
+        void drawSignalYield(TLegend* legend, std::vector<std::shared_ptr<TH1D>>& signalVec);
+        std::shared_ptr<TH1D> drawRatioMC(Histogram* hist, std::vector<std::shared_ptr<TH1D>>& histoVec, std::vector<std::shared_ptr<TH1D>>& signalVec, TPad** smallPadPtr);
+        std::shared_ptr<TH1D> drawRatioData(Histogram* hist, std::shared_ptr<TH1D> uncHist, std::shared_ptr<TH1D> data, TPad** smallPadPtr);
 
         void drawUncertaintyImpacts(Histogram* hist, std::vector<std::string>& uncToDraw);
         void drawAllUncertaintyImpacts();
         
-        std::vector<TH1D*> fillStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile);
+        std::vector<std::shared_ptr<TH1D>> fillStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile);
         
         void printAll2DHistograms();
         void print2DHistogram(Histogram2D* histID);
@@ -136,8 +136,8 @@ class Stacker {
         void setLumi(std::string& lumiSetting);
         void setDrawOpt(std::string& drawSetting);
 
-        void stackSettingsPreDraw(THStack* stack, std::vector<TH1D*>& histVec);
-        void stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, TH1* first, TH1* dataHist);
+        void stackSettingsPreDraw(THStack* stack, std::vector<std::shared_ptr<TH1D>>& histVec);
+        void stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, std::shared_ptr<TH1> first, std::shared_ptr<TH1> dataHist);
 
         void initDatacard() {
             dcwriter->initDatacard();
@@ -150,7 +150,7 @@ class Stacker {
 
         void GenerateSFs(std::string& SFFile);
         void GenerateSF(Histogram* histogram, TString& processName);
-        void DrawSF(TH1D* sfHistogram);
+        void DrawSF(std::shared_ptr<TH1D> sfHistogram);
 
 };
 

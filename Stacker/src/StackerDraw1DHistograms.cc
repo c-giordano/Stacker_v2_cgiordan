@@ -20,10 +20,10 @@ void Stacker::printHistogram(Histogram* hist) {
 
     THStack* histStack = new THStack(histID, histID);
     TLegend* legend = getLegend();
-    std::vector<TH1D*>* signalVector = new std::vector<TH1D*>;
-    TH1D** sysUnc = new TH1D*();
+    std::vector<std::shared_ptr<TH1D>>* signalVector = new std::vector<std::shared_ptr<TH1D>>;
+    std::shared_ptr<TH1D>* sysUnc = new std::shared_ptr<TH1D>();
     *sysUnc = nullptr; 
-    std::vector<TH1D*> histVec = processes->fillStack(histStack, hist, legend, outputfile, signalVector, sysUnc);
+    std::vector<std::shared_ptr<TH1D>> histVec = processes->fillStack(histStack, hist, legend, outputfile, signalVector, sysUnc);
     
     if (onlyDC) return;
 
@@ -31,7 +31,7 @@ void Stacker::printHistogram(Histogram* hist) {
     canv->Draw();
     canv->cd();
 
-    TH1D* dataHistogram = nullptr;
+    std::shared_ptr<TH1D> dataHistogram = nullptr;
     if (getData()) {
         // get data histogram. Either from specialised process(list) or fake it
         // pass to stackfiller and to ratiodrawer
@@ -61,12 +61,12 @@ void Stacker::printHistogram(Histogram* hist) {
             dataHistogram->SetName("Data");
         }
 
-        legend->AddEntry(dataHistogram, dataHistogram->GetName());
+        legend->AddEntry(dataHistogram.get(), dataHistogram->GetName());
         // change dataHistogram settings
     }
 
     TPad** mainPad = new TPad*();
-    TH1D* totalUnc = drawStack(hist, histStack, histVec, sysUnc, dataHistogram, mainPad);
+    std::shared_ptr<TH1D> totalUnc = drawStack(hist, histStack, histVec, sysUnc, dataHistogram, mainPad);
 
     drawSignalYield(legend, *signalVector);
     legend->Draw();
@@ -74,10 +74,10 @@ void Stacker::printHistogram(Histogram* hist) {
     canv->cd();
 
     TPad** smallPad = new TPad*(); 
-    TH1D* ratioPlot = nullptr;
+    std::shared_ptr<TH1D> ratioPlot = nullptr;
     if (getData()) {
         if (! totalUnc) {
-            TH1D* allHistograms = sumVector(histVec);
+            std::shared_ptr<TH1D> allHistograms = sumVector(histVec);
             ratioPlot = drawRatioData(hist, allHistograms, dataHistogram, smallPad);
 
         } else {
@@ -152,7 +152,7 @@ void Stacker::printHistogram(Histogram* hist) {
 }
 
 
-TH1D* Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>& histVec, TH1D** sysUnc, TH1D* data, TPad** mainPad) {
+std::shared_ptr<TH1D> Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<std::shared_ptr<TH1D>>& histVec, std::shared_ptr<TH1D>* sysUnc, std::shared_ptr<TH1D> data, TPad** mainPad) {
     stackSettingsPreDraw(histStack, histVec);
     TString histID = hist->getID();
     TPad* pad = getPad(histID, 0);
@@ -167,10 +167,10 @@ TH1D* Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>
 
     stackSettingsPostDraw(pad, histStack, hist, histVec[0], data);
 
-    TH1D* allHistograms = sumVector(histVec);
-    TH1D* totalUnc = nullptr;
+    std::shared_ptr<TH1D> allHistograms = sumVector(histVec);
+    std::shared_ptr<TH1D> totalUnc = nullptr;
     if (*sysUnc) {
-        totalUnc = new TH1D(*allHistograms);
+        totalUnc = std::make_shared<TH1D>(TH1D(*allHistograms));
         
         //std::cout << "printing uncertainties:\t";
         for(int bin = 1; bin < totalUnc->GetNbinsX() + 1; ++bin){
@@ -237,13 +237,13 @@ TH1D* Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>
     return totalUnc;
 }
 
-void Stacker::drawSignalYield(TLegend* legend, std::vector<TH1D*>& signalVec) {
+void Stacker::drawSignalYield(TLegend* legend, std::vector<std::shared_ptr<TH1D>>& signalVec) {
     if (! isSignalLine) return;
 
-    TH1D* signalTotal = sumVector(signalVec);
+    std::shared_ptr<TH1D> signalTotal = sumVector(signalVec);
     signalTotal->SetTitle("Signal yield");
 
-    legend->AddEntry(signalTotal, "Signal x30");
+    legend->AddEntry(signalTotal.get(), "Signal x30");
     
     signalTotal->SetFillColor(0);
     signalTotal->SetLineColor(633);
@@ -254,7 +254,7 @@ void Stacker::drawSignalYield(TLegend* legend, std::vector<TH1D*>& signalVec) {
 }
 
 
-TH1D* Stacker::drawRatioMC(Histogram* hist, std::vector<TH1D*>& histoVec, std::vector<TH1D*>& signalVec, TPad** smallPadPtr) {
+std::shared_ptr<TH1D> Stacker::drawRatioMC(Histogram* hist, std::vector<std::shared_ptr<TH1D>>& histoVec, std::vector<std::shared_ptr<TH1D>>& signalVec, TPad** smallPadPtr) {
     /* 
     TODO:
         Make a function deciding if data or not, let it decide after what to do... ofzo
@@ -268,10 +268,10 @@ TH1D* Stacker::drawRatioMC(Histogram* hist, std::vector<TH1D*>& histoVec, std::v
     smallPad->Draw();
     smallPad->cd();
 
-    TH1D* signalTotal = sumVector(signalVec);
-    TH1D* allHistograms = sumVector(histoVec);
+    std::shared_ptr<TH1D> signalTotal = sumVector(signalVec);
+    std::shared_ptr<TH1D> allHistograms = sumVector(histoVec);
     
-    signalTotal->Divide(allHistograms);
+    signalTotal->Divide(allHistograms.get());
 
     signalTotal->SetTitleSize(0.192, "X");
     signalTotal->SetTitleSize(0.17, "Y");
@@ -306,7 +306,7 @@ TH1D* Stacker::drawRatioMC(Histogram* hist, std::vector<TH1D*>& histoVec, std::v
     return signalTotal;
 }
 
-TH1D* Stacker::drawRatioData(Histogram* hist, TH1D* uncHist, TH1D* data, TPad** smallPadPtr) {
+std::shared_ptr<TH1D> Stacker::drawRatioData(Histogram* hist, std::shared_ptr<TH1D> uncHist, std::shared_ptr<TH1D> data, TPad** smallPadPtr) {
     if (! isRatioPlot) return nullptr;
     
     TString histID = hist->getID() + "_ratio";
@@ -316,10 +316,10 @@ TH1D* Stacker::drawRatioData(Histogram* hist, TH1D* uncHist, TH1D* data, TPad** 
     smallPad->Draw();
     smallPad->cd();
 
-    TH1D* dataTotal = new TH1D(*data);
-    TH1D* mcTotal = new TH1D(*uncHist);
+    std::shared_ptr<TH1D> dataTotal = std::make_shared<TH1D>(TH1D(*data));
+    std::shared_ptr<TH1D> mcTotal = std::make_shared<TH1D>(TH1D(*uncHist));
     
-    dataTotal->Divide(uncHist);
+    dataTotal->Divide(uncHist.get());
 
     dataTotal->SetTitleSize(0.192, "X");
     dataTotal->SetTitleSize(0.17, "Y");

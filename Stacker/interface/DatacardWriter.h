@@ -24,7 +24,7 @@ private:
     ProcessList* allProc;
     //std::vector<Process*> allProc;
     std::vector<Histogram*> allHistograms;
-    std::vector<std::vector<TH1D*>> allHistogramTH1Ds;
+    std::vector<std::vector<std::shared_ptr<TH1D>>> allHistogramTH1Ds;
 
     Process* head;
     

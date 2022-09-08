@@ -57,17 +57,17 @@ class Uncertainty {
         Uncertainty* getNext() {return next;}
         void setNext(Uncertainty* newNext) {next = newNext;}
 
-        TH1D* getShapeUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec);
-        TH1D* getEnvelope(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec);
-        TH1D* getSumSquaredEnvelope(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec);
+        std::shared_ptr<TH1D> getShapeUncertainty(Histogram* histogram, Process* head, std::vector<std::shared_ptr<TH1D>>& histVec);
+        std::shared_ptr<TH1D> getEnvelope(Histogram* histogram, Process* head, std::vector<std::shared_ptr<TH1D>>& histVec);
+        std::shared_ptr<TH1D> getSumSquaredEnvelope(Histogram* histogram, Process* head, std::vector<std::shared_ptr<TH1D>>& histVec);
 
-        std::pair<TH1D*, TH1D*> buildEnvelopeForProcess(Histogram* histogram, Process* currentProcess, TH1D* nominalHist);
-        std::pair<TH1D*, TH1D*> buildSumSquaredEnvelopeForProcess(Histogram* histogram, Process* currentProcess, TH1D* nominalHist);
-        std::pair<TH1D*, TH1D*> buildPDFFromSumSquaredCollections(Histogram* histogram, Process* currentProcess, TH1D* nominalHist);
+        std::pair<std::shared_ptr<TH1D>, std::shared_ptr<TH1D>> buildEnvelopeForProcess(Histogram* histogram, Process* currentProcess, std::shared_ptr<TH1D> nominalHist);
+        std::pair<std::shared_ptr<TH1D>, std::shared_ptr<TH1D>> buildSumSquaredEnvelopeForProcess(Histogram* histogram, Process* currentProcess, std::shared_ptr<TH1D> nominalHist);
+        std::pair<std::shared_ptr<TH1D>, std::shared_ptr<TH1D>> buildPDFFromSumSquaredCollections(Histogram* histogram, Process* currentProcess, std::shared_ptr<TH1D> nominalHist);
 
-        std::pair<TH1D*, TH1D*> getUpAndDownShapeUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& nominalHists);
-        TH1D* getFlatUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec);
-        TH1D* getUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec);
+        std::pair<std::shared_ptr<TH1D>, std::shared_ptr<TH1D>> getUpAndDownShapeUncertainty(Histogram* histogram, Process* head, std::vector<std::shared_ptr<TH1D>>& nominalHists);
+        std::shared_ptr<TH1D> getFlatUncertainty(Histogram* histogram, Process* head, std::vector<std::shared_ptr<TH1D>>& histVec);
+        std::shared_ptr<TH1D> getUncertainty(Histogram* histogram, Process* head, std::vector<std::shared_ptr<TH1D>>& histVec);
 
         void printOutShapeUncertainty(Histogram* histogram, Process* head);
 

@@ -32,10 +32,10 @@ void Stacker::drawUncertaintyImpacts(Histogram* hist, std::vector<std::string>& 
 
     // generate vector now with uncertainties in the correct way that i need
     // idk what to do now
-    std::vector<TH1D*> nominalHists = processes->CreateHistogramAllProcesses(hist);
-    std::map<std::string, std::pair<TH1D*, TH1D*>> variations = processes->UpAndDownHistograms(hist, nominalHists);
+    std::vector<std::shared_ptr<TH1D>> nominalHists = processes->CreateHistogramAllProcesses(hist);
+    std::map<std::string, std::pair<std::shared_ptr<TH1D>, std::shared_ptr<TH1D>>> variations = processes->UpAndDownHistograms(hist, nominalHists);
 
-    TH1D* nominal = sumVector(nominalHists);
+    std::shared_ptr<TH1D> nominal = sumVector(nominalHists);
 
     TLegend* legend = new TLegend(0.2, 0.8, 0.93, 0.92);
     legend->SetNColumns(3);
@@ -46,14 +46,14 @@ void Stacker::drawUncertaintyImpacts(Histogram* hist, std::vector<std::string>& 
     int colIndex=0;
     int step = (cols.GetSize() - 1) / (uncToDraw.size() - 1);
     for (auto it : uncToDraw) {
-        std::pair<TH1D*, TH1D*> upAndDown = variations[it];
+        std::pair<std::shared_ptr<TH1D>, std::shared_ptr<TH1D>> upAndDown = variations[it];
         
         // uncertainty / nominal
-        TH1D* upVar = upAndDown.first;
-        TH1D* downVar = upAndDown.second;
+        std::shared_ptr<TH1D> upVar = upAndDown.first;
+        std::shared_ptr<TH1D> downVar = upAndDown.second;
 
-        upVar->Divide(nominal);
-        downVar->Divide(nominal);
+        upVar->Divide(nominal.get());
+        downVar->Divide(nominal.get());
 
         if (std::max(upVar->GetMaximum(), downVar->GetMaximum()) > max) {
             max = std::max(upVar->GetMaximum(), downVar->GetMaximum());
@@ -74,7 +74,7 @@ void Stacker::drawUncertaintyImpacts(Histogram* hist, std::vector<std::string>& 
         downVar->SetLineStyle(2);
 
         // add to legend
-        legend->AddEntry(upVar, it.c_str());
+        legend->AddEntry(upVar.get(), it.c_str());
 
         // draw in optimal way
         // use SAME option

@@ -1,14 +1,14 @@
 #include "../interface/Stacker.h"
 
 
-void Stacker::stackSettingsPreDraw(THStack* stack, std::vector<TH1D*>& histVec) {
+void Stacker::stackSettingsPreDraw(THStack* stack, std::vector<std::shared_ptr<TH1D>>& histVec) {
     // settings to be applied before drawing the THStack. 
 
     // Normalization of histograms
     if (noStack) normalizeHistograms(histVec);
 }
 
-void Stacker::stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, TH1* first, TH1* dataHist) {
+void Stacker::stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, std::shared_ptr<TH1> first, std::shared_ptr<TH1> dataHist) {
     // Settings to be applied after drawing the THStack
 
     // Set X axis name

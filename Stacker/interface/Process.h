@@ -8,6 +8,7 @@
 #include <TLegend.h>
 
 #include <iostream>
+#include <memory>
 
 #include "../../Helpers/interface/StringTools.h"
 #include "Histogram.h"
@@ -48,8 +49,8 @@ class Process {
 
         TFile* GetOutputFile() {return outputFile;}
 
-        virtual TH1D* getHistogram(Histogram* histogram);
-        virtual TH1D* getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope);
+        virtual std::shared_ptr<TH1D> getHistogram(Histogram* histogram);
+        virtual std::shared_ptr<TH1D> getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope);
 
         virtual std::vector<std::shared_ptr<TH1D>> GetAllVariations(Histogram* histogram, int nVars, std::string& uncName);
 

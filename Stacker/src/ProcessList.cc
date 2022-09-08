@@ -88,9 +88,9 @@ ProcessList::~ProcessList() {
     }
 }
 
-std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLegend* legend, TFile* outfile, std::vector<TH1D*>* signalHistograms, TH1D** sysUnc) {
+std::vector<std::shared_ptr<TH1D>> ProcessList::fillStack(THStack* stack, Histogram* hist, TLegend* legend, TFile* outfile, std::vector<std::shared_ptr<TH1D>>* signalHistograms, std::shared_ptr<TH1D>* sysUnc) {
     Process* current = head;
-    std::vector<TH1D*> histVec;
+    std::vector<std::shared_ptr<TH1D>> histVec;
 
     TString histogramID = hist->getID();
 
@@ -101,17 +101,17 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
     if (verbose) std::cout << histogramID << std::endl;
 
     while (current) {
-        TH1D* histToAdd = current->getHistogram(hist);
+        std::shared_ptr<TH1D> histToAdd = current->getHistogram(hist);
         if (histToAdd == nullptr) {
             current = current->getNext();
         }
-        legend->AddEntry(histToAdd, current->getCleanedName());
-        stack->Add(histToAdd);
+        legend->AddEntry(histToAdd.get(), current->getCleanedName());
+        stack->Add(histToAdd.get());
         histVec.push_back(histToAdd);
         
         if (current->isSignalProcess()) {
             signalYield += histToAdd->Integral();
-            TH1D* signalHist = new TH1D(*histToAdd);
+            std::shared_ptr<TH1D> signalHist = std::make_shared<TH1D>(TH1D(*histToAdd));
             signalHistograms->push_back(signalHist);
         } else {
             bkgYield += histToAdd->Integral();
@@ -151,7 +151,7 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
     }
     
     if (hist->getPrintToFile()) {
-        TH1D* allHistograms = sumVector(histVec);
+        std::shared_ptr<TH1D> allHistograms = sumVector(histVec);
         allHistograms->SetName("data_obs");
         allHistograms->SetTitle("data_obs");
         outfile->cd(hist->getCleanName().c_str());
@@ -163,17 +163,17 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
     
     // loop uncertainties as well if required
     Uncertainty* currUnc = headUnc;
-    std::vector<TH1D*> uncVec;
+    std::vector<std::shared_ptr<TH1D>> uncVec;
     while (currUnc && hist->getDrawUncertainties()) {
         // getShapeUncertainty or apply flat uncertainty
-        TH1D* newUncertainty = currUnc->getUncertainty(hist, head, histVec);
+        std::shared_ptr<TH1D> newUncertainty = currUnc->getUncertainty(hist, head, histVec);
 
         uncVec.push_back(newUncertainty);
 
         if (*sysUnc == nullptr) {
-            *sysUnc = new TH1D(*newUncertainty);
+            *sysUnc = std::make_shared<TH1D>( TH1D(*newUncertainty));
         } else {
-            (*sysUnc)->Add(newUncertainty);
+            (*sysUnc)->Add(newUncertainty.get());
         }
 
         currUnc = currUnc->getNext();
@@ -199,7 +199,7 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
 
 std::map<TString, bool> ProcessList::printHistograms(Histogram* hist, TFile* outfile, bool isData, Process* dataProc) {
     Process* current = head;
-    std::vector<TH1D*> histVec;
+    std::vector<std::shared_ptr<TH1D>> histVec;
     std::map<TString, bool> output;
 
     TString histogramID = hist->getID();
@@ -210,7 +210,7 @@ std::map<TString, bool> ProcessList::printHistograms(Histogram* hist, TFile* out
 
     while (current) {
 
-        TH1D* histToAdd = current->getHistogram(hist);
+        std::shared_ptr<TH1D> histToAdd = current->getHistogram(hist);
         if (histToAdd == nullptr) {
             current = current->getNext();
         }
@@ -244,7 +244,7 @@ std::map<TString, bool> ProcessList::printHistograms(Histogram* hist, TFile* out
         current = current->getNext();
     }
     if (! isData && hist->getPrintToFile()) {
-        TH1D* allHistograms = sumVector(histVec);
+        std::shared_ptr<TH1D> allHistograms = sumVector(histVec);
         allHistograms->SetName("data_obs");
         allHistograms->SetTitle("data_obs");
         outfile->cd(hist->getCleanName().c_str());
@@ -253,7 +253,7 @@ std::map<TString, bool> ProcessList::printHistograms(Histogram* hist, TFile* out
         }
         allHistograms->Write("data_obs", TObject::kOverwrite);
     } else if (isData && hist->getPrintToFile()) {
-        TH1D* data = dataProc->getHistogram(hist);
+        std::shared_ptr<TH1D> data = dataProc->getHistogram(hist);
         data->SetName("data_obs");
         data->SetTitle("data_obs");
         outfile->cd(hist->getCleanName().c_str());
@@ -301,17 +301,17 @@ std::vector<TH2D*> ProcessList::fill2DStack(THStack* stack, TString& histogramID
     return histVec;
 }
 
-std::map<std::string, std::pair<TH1D*, TH1D*>> ProcessList::UpAndDownHistograms(Histogram* hist, std::vector<TH1D*>& nominalHists) {
+std::map<std::string, std::pair<std::shared_ptr<TH1D>, std::shared_ptr<TH1D>>> ProcessList::UpAndDownHistograms(Histogram* hist, std::vector<std::shared_ptr<TH1D>>& nominalHists) {
     // loop uncertainties as well if required
     Uncertainty* currUnc = headUnc;
-    std::map<std::string, std::pair<TH1D*, TH1D*>> returnValue;
+    std::map<std::string, std::pair<std::shared_ptr<TH1D>, std::shared_ptr<TH1D>>> returnValue;
     while (currUnc && hist->getDrawUncertainties()) {
         if (currUnc->isFlat()) {
             currUnc = currUnc->getNext();
             continue;
         }
         // getShapeUncertainty or apply flat uncertainty
-        std::pair<TH1D*, TH1D*> newUncertainty = currUnc->getUpAndDownShapeUncertainty(hist, head, nominalHists);
+        std::pair<std::shared_ptr<TH1D>, std::shared_ptr<TH1D>> newUncertainty = currUnc->getUpAndDownShapeUncertainty(hist, head, nominalHists);
 
         returnValue[currUnc->getName()] = newUncertainty;
 
@@ -321,14 +321,14 @@ std::map<std::string, std::pair<TH1D*, TH1D*>> ProcessList::UpAndDownHistograms(
     return returnValue;
 }
 
-std::vector<TH1D*> ProcessList::CreateHistogramAllProcesses(Histogram* hist) {
+std::vector<std::shared_ptr<TH1D>> ProcessList::CreateHistogramAllProcesses(Histogram* hist) {
     Process* current = getHead();
-    std::vector<TH1D*> histVec;
+    std::vector<std::shared_ptr<TH1D>> histVec;
 
     TString histogramID = hist->getID();
 
     while (current) {
-        TH1D* histToAdd = current->getHistogram(hist);
+        std::shared_ptr<TH1D> histToAdd = current->getHistogram(hist);
         if (histToAdd == nullptr) {
             current = current->getNext();
         }

@@ -36,11 +36,11 @@ void Stacker::GenerateSF(Histogram* histogram, TString& processName) {
     TString histID = histogram->getID();
     TLegend* legend = getLegend();
     THStack* histStack = new THStack(histID, histID);
-    std::vector<TH1D*>* signalVector = new std::vector<TH1D*>;
+    std::vector<std::shared_ptr<TH1D>>* signalVector = new std::vector<std::shared_ptr<TH1D>>;
 
-    std::vector<TH1D*> histVec = processes->fillStack(histStack, histogram, legend, outputfile, signalVector, nullptr);
+    std::vector<std::shared_ptr<TH1D>> histVec = processes->fillStack(histStack, histogram, legend, outputfile, signalVector, nullptr);
 
-    TH1D* dataHistogram;
+    std::shared_ptr<TH1D> dataHistogram;
     if (getFakeData()) {
         dataHistogram = sumVector(histVec);
         dataHistogram->SetTitle("Data (expected)");
@@ -55,7 +55,7 @@ void Stacker::GenerateSF(Histogram* histogram, TString& processName) {
         dataHistogram->SetName("Data");
     }
 
-    TH1D* sf = new TH1D(*dataHistogram);
+    std::shared_ptr<TH1D> sf = std::make_shared<TH1D>(TH1D(*dataHistogram));
     // take a deep copy of the process for which we extract a SF
     // histvector should be in the order of the processes
     // remove from histvec, sum histvec, extract from data
@@ -71,18 +71,18 @@ void Stacker::GenerateSF(Histogram* histogram, TString& processName) {
         exit(1);
     }
 
-    TH1D* releventContribution = new TH1D(*histVec[index]);
+    std::shared_ptr<TH1D> releventContribution = std::make_shared<TH1D>(TH1D(*histVec[index]));
     std::cout << releventContribution->GetName() << std::endl;
     histVec.erase(histVec.begin()+index);
 
-    TH1D* sum = sumVector(histVec);
-    sf->Add(sum, -1.);
+    std::shared_ptr<TH1D> sum = sumVector(histVec);
+    sf->Add(sum.get(), -1.);
     
 
     sf->SetName("SF_" + histogram->getID());
     sf->SetTitle("SF_" + histogram->getID());
 
-    sf->Divide(releventContribution);
+    sf->Divide(releventContribution.get());
     
     DrawSF(sf);
 
@@ -95,7 +95,7 @@ void Stacker::GenerateSF(Histogram* histogram, TString& processName) {
     sfOutput->Close();
 }
 
-void Stacker::DrawSF(TH1D* sfHistogram) {
+void Stacker::DrawSF(std::shared_ptr<TH1D> sfHistogram) {
     // canvas, pad, draw with usual setting but add text on it
     // lumi not specified generally speaking
     TString sfName = sfHistogram->GetName();

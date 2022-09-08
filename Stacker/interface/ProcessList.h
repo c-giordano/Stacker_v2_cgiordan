@@ -43,12 +43,12 @@ class ProcessList {
         std::vector<TString> getAllProcessNames() {return allProcessNames;};
         std::vector<Process*> getAllProcess();
 
-        std::vector<TH1D*> fillStack(THStack* stack, Histogram* hist, TLegend* legend, TFile* outfile, std::vector<TH1D*>* signalHistograms, TH1D** sysUnc);
+        std::vector<std::shared_ptr<TH1D>> fillStack(THStack* stack, Histogram* hist, TLegend* legend, TFile* outfile, std::vector<std::shared_ptr<TH1D>>* signalHistograms, std::shared_ptr<TH1D>* sysUnc);
         std::map<TString, bool> printHistograms(Histogram* hist, TFile* outfile, bool isData, Process* dataProc);
         std::vector<TH2D*> fill2DStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile);
 
-        std::map<std::string, std::pair<TH1D*, TH1D*>> UpAndDownHistograms(Histogram* hist, std::vector<TH1D*>& nominalHists);
-        std::vector<TH1D*> CreateHistogramAllProcesses(Histogram* hist);
+        std::map<std::string, std::pair<std::shared_ptr<TH1D>, std::shared_ptr<TH1D>>> UpAndDownHistograms(Histogram* hist, std::vector<std::shared_ptr<TH1D>>& nominalHists);
+        std::vector<std::shared_ptr<TH1D>> CreateHistogramAllProcesses(Histogram* hist);
 
         void setVerbosity(bool verbosity) {verbose = verbosity;}
         void setVeryVerbosity(bool verbosity) {veryVerbose = verbosity;}
