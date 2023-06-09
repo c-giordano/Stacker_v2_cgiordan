@@ -9,7 +9,7 @@ void Stacker::printAllHistograms() {
         histogramID->setPrintToFile(false);
         //std::cout << std::string(histogramID->getID().Data()) << std::endl;
         //if (std::string(histogramID->getID().Data()) != "BDT_FinalresultSignal_TriClass_SR-2Lee" && std::string(histogramID->getID().Data()) != "BDT_FinalresultSignal_TriClass_SR-3L") continue;
-        //if (! stringContainsSubstr(std::string(histogramID->getID().Data()), "CR-3L-Z")) continue;
+        //if (! stringContainsSubstr(std::string(histogramID->getID().Data()), "Yield")) continue;
 
         if (! onlyDC || (onlyDC && histogramID->getPrintToFile())) {
             printHistogram(histogramID);
@@ -32,6 +32,7 @@ void Stacker::printHistogram(Histogram* hist) {
     TCanvas* canv = getCanvas(histID);
     canv->Draw();
     canv->cd();
+    //std::cout << "canvas check" << std::endl;
 
     TH1D* dataHistogram = nullptr;
     if (getData()) {
@@ -135,6 +136,7 @@ void Stacker::printHistogram(Histogram* hist) {
         // temp disabled -> dont really like the effect it has on some plots. Definitely a want for later versions but not now.
         histStack->GetXaxis()->SetRangeUser(xmin, xmax);
         if (ratioPlot) ratioPlot->GetXaxis()->SetRangeUser(xmin, xmax);
+        //if (*line) (*line)->PaintLine(xmin, 1., xmax, 1.);
     }
 
     (*mainPad)->Update();

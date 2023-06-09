@@ -29,10 +29,10 @@ TPad* Stacker::getPad(TString& histID, int position) {
 }
 
 TLegend* Stacker::getLegend() {
-    double x1 = 1. - gPad->GetRightMargin() - 0.03 - 0.4; // 0.4;//0.65
-    double y1 = 1. - gPad->GetTopMargin() - 0.03 - 0.2;  // 0.69;
-    double x2 = 1. - gPad->GetRightMargin() - 0.03; // 1 - gStyle->GetPadLeftMargin() - gStyle->GetTickLength("X")*1.1 ;
-    double y2 = 1. - gPad->GetTopMargin() - 0.03; // 1 - gStyle->GetPadTopMargin() - gStyle->GetTickLength("Y")*1.1;//-0.06;
+    double x1 = 1. - gStyle->GetPadRightMargin() - 0.03 - 0.4; // 0.4;//0.65
+    double y1 = 1. - gStyle->GetPadTopMargin() - 0.03 - 0.2;  // 0.69;
+    double x2 = 1. - gStyle->GetPadRightMargin() - 0.03; // 1 - gStyle->GetPadLeftMargin() - gStyle->GetTickLength("X")*1.1 ;
+    double y2 = 1. - gStyle->GetPadTopMargin() - 0.03; // 1 - gStyle->GetPadTopMargin() - gStyle->GetTickLength("Y")*1.1;//-0.06;
     int nColumns = 2; // 1 
 
     TLegend* legend = new TLegend(x1, y1, x2, y2, "", "NBNDC");
