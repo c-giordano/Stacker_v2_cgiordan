@@ -60,7 +60,7 @@ def convert_and_write_histogram(input_histogram, variable: Variable, outputname:
     for i in range(1, ret_th1.GetNbinsX() + 1):
         if ret_th1.GetBinContent(i) > 0.001:
             continue
-        if ret_th1.GetBinContent(i) < -0.5:
+        if ret_th1.GetBinContent(i) < -0.1:
             print(f"WARNING: Significant negative value in {outputname} bin {i}! Setting to 0.001")
 
         ret_th1.SetBinError(i, 0.001)
@@ -406,17 +406,21 @@ def bsm_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
 
         # relative size of stat unc:
         stat_unc_rel = np.nan_to_num(histograms_bsm[var_name]["stat_unc"] / histograms_bsm[var_name]["nominal"])
+        quartic_component = ak.to_numpy(histograms_bsm[var_name]["BSM_Quartic"]["Up"])
 
         ### Next, loop the existing variations.
         for count, bsm_variation in enumerate(bsm_variations):
             if channel_num == 0:
                 ret.append([bsm_variation, -count])
 
+            current_bsm_var = ak.to_numpy(histograms_bsm[var_name][bsm_variation]["Up"])
+            if bsm_variation != "BSM_Quartic":
+                current_bsm_var += quartic_component
             # For each variation, first write the nominal component to file:
             path_to_histogram = f"{channel_DC_setting['prettyname']}/{bsm_variation}"
             # recalc stat unc:
-            stat_unc = stat_unc_rel * histograms_bsm[var_name][bsm_variation]["Up"]
-            convert_and_write_histogram(histograms_bsm[var_name][bsm_variation]["Up"], variables.get_properties(var_name), path_to_histogram, rootfile, statunc=stat_unc)
+            stat_unc = stat_unc_rel * current_bsm_var
+            convert_and_write_histogram(current_bsm_var, variables.get_properties(var_name), path_to_histogram, rootfile, statunc=stat_unc)
 
             # Loop systematics:
             for systname, syst in shape_systematics.items():
@@ -437,7 +441,7 @@ def bsm_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                 rel_syst_up = np.nan_to_num(upvar / histograms_bsm[var_name]["nominal"], nan=1.)
                 rel_syst_up = np.where(np.abs(rel_syst_up) > 1e10, 1., rel_syst_up)
 
-                content_var_syst_up = rel_syst_up * histograms_bsm[var_name][bsm_variation]["Up"]
+                content_var_syst_up = rel_syst_up * current_bsm_var
 
                 if syst.weight_key_down is None:
                     content_var_syst_down = histograms_bsm[var_name][bsm_variation]["Up"]
@@ -445,7 +449,7 @@ def bsm_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                     rel_syst_down = np.nan_to_num(downvar / histograms_bsm[var_name]["nominal"], nan=1.)
                     rel_syst_down = np.where(np.abs(rel_syst_down) > 1e10, 1., rel_syst_down)
 
-                    content_var_syst_down = rel_syst_down * histograms_bsm[var_name][bsm_variation]["Up"]
+                    content_var_syst_down = rel_syst_down * current_bsm_var
 
                 rootpath_systname = syst.technical_name
                 if not syst.correlated_process:
@@ -496,7 +500,7 @@ if __name__ == "__main__":
                 bsm_process = {process: processfile["Processes"][process]}
                 bsm_processname = process
                 break
-        bsm_part = bsm_datacard_creation(rootfile, datacard_settings, ["BSM_Lin", "BSM_Quad", "BSM_Cubic", "BSM_Quartic"], shape_systematics, bsm_process, args)
+        bsm_part = bsm_datacard_creation(rootfile, datacard_settings, ["BSM_Quad", "BSM_Quartic"], shape_systematics, bsm_process, args)
         processes = [process for process in processes if process != bsm_processname]
         processes_write = [[process, i + 1] for i, process in enumerate(processes)]
     else:
