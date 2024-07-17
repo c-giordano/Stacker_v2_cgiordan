@@ -118,7 +118,7 @@
     },
     "ScaleVar": {
         "channels": "all",
-        "processes": "MCOnly",
+        "processes": ["TTW","TTZ","TTH","Xgamma","WZ","VVV","other_t","TTT"], 
         "type": "weight",
         "corr_proc": 1
     },
@@ -271,7 +271,14 @@
     },
     "ISR": {
         "channels": "all",
-        "processes": "MCOnly",
+        "processes": ["TTW","TTZ","TTH","Xgamma","WZ","VVV","other_t","TTT"],
+        "type": "weight",
+        "aliasUp": "isrfsrVariations[:, 0]",
+        "aliasDown": "isrfsrVariations[:, 1]"
+    },
+    "ISR_TTTT": {
+        "channels": "all",
+        "processes": ["TTTT", "sm", "lin", "quad"],
         "type": "weight",
         "aliasUp": "isrfsrVariations[:, 0]",
         "aliasDown": "isrfsrVariations[:, 1]"
