@@ -1,3 +1,5 @@
+import re
+
 
 class Uncertainty:
     def __init__(self, name, dict_entry):
@@ -15,6 +17,7 @@ class Uncertainty:
         self.processes = dict_entry.get("processes", ["all"])
         if type(self.processes) is not list:
             self.processes = [self.processes]
+        self.reg_processes = [re.compile(process) for process in self.processes]
 
         self._correlated_process = bool(dict_entry.get("corr_proc", True))
 
@@ -75,8 +78,7 @@ class Uncertainty:
             return True
         elif self.processes[0].lower() in ["mconly", "mcall"]:
             return not ("nonPrompt" in process or "ChargeMisID" in process)
-        return any([relevant_process in process for relevant_process in self.processes])    
-        #return process in self.processes
+        return any([bool(relevant_process.match(process)) for relevant_process in self.reg_processes])    
 
     def get_weight_aliases(self):
         return (self.weight_alias_up, self.weight_alias_down)
