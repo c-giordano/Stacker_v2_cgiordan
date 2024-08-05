@@ -82,7 +82,8 @@ class HistogramManager:
             content = ak.from_parquet(self.get_name(var, sys))
         else:
             content = dict()
-            print(f"Note: Variable {var} for systematic {sys} does not exist with base {self.base_name[var]}.")
+            if ("sm" in self.base_name[var] or "quad" in self.base_name[var]):  
+                print(f"Note: Variable {var} for systematic {sys} does not exist with base {self.base_name[var]}.")
             content["Up"] = np.zeros(1)
             content["Down"] = np.zeros(1)
 
