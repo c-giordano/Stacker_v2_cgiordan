@@ -65,12 +65,15 @@ def convert_and_write_histogram(input_histogram, variable: Variable, outputname:
             continue
         if ret_th1.GetBinContent(i) < -0.1:
             if "lin" in outputname :
-                #print ("\n we don't want to change the interference even if it's negative!!")
+                print (outputname) #("\n we don't want to change the interference even if it's negative!!")
                 continue
             else : 
-                print(f"WARNING: Significant negative value in {outputname} bin {i}! Setting to 0.001")
-                ret_th1.SetBinError(i, 0.001)
-                ret_th1.SetBinContent(i, 0.001)
+                print(f"WARNING: Significant negative value in {outputname} bin {i}! Setting to 0.")
+                ret_th1.SetBinError(i, 0.0)
+                ret_th1.SetBinContent(i, 0.0)
+    if ret_th1.Integral()==0 :
+        ret_th1.SetBinContent(1, 1e-6)  # Set the first bin to a small value
+        print (f"This process {outputname} is actually empty here")
     rootfile[outputname] = ret_th1
 
 
@@ -84,7 +87,7 @@ def patch_scalevar_correlations(systematics, processes):
         return
 
     envelope_relevant_mod = list(systematics["ScaleVarEnvelope"].processes)
-    if "TTTT" in envelope_relevant_mod:
+    if (("TTTT" in envelope_relevant_mod) or ("TTT" in envelope_relevant_mod)):
         for process in processes:
             if not ("sm" in process or "quad" in process):
                 continue
@@ -96,12 +99,12 @@ def patch_scalevar_correlations(systematics, processes):
     envelope_relevant = list(systematics["ScaleVarEnvelope"].processes)
     envelope_relevant += ["nonPromptElectron", "nonPromptMuon", "ChargeMisID"]
     for process in processes:
-        if (("sm" in process) or ("quad" in process) or ("TTTT" in process)): envelope_relevant.append(process)
+        if (("sm" in process) or ("quad" in process) or ("TTTT" in process) ): envelope_relevant.append(process)
 
     relevant_processes = [process for process in processes if not process in envelope_relevant]
     
-    #print ("\n","list of envelope relevant stuf:", envelope_relevant)
-    #print ("\n","list of all relevant stuff:", relevant_processes)
+    print ("\n","list of envelope relevant stuf:", envelope_relevant)
+    print ("\n","list of all relevant stuff:", relevant_processes)
 
     for i in range(6):
         key = f"ScaleVar_{i}"
@@ -230,6 +233,7 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
             counter +=2
             lin_name = "EFT_" + eft_var
             quad_name = "EFT_" + eft_var + "_" + eft_var
+            #print(lin_name , quad_name)
             for channelname, channel_DC_setting in datacard_settings["channelcontent"].items():
                 # print(channelname)
                 storagepath = os.path.join(args.storage, channelname)
@@ -326,24 +330,33 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                         print(f"ERROR: combination {combi} not found in mix_list")
                         exit(1)
                 eft_var = combistring
+                first_wc = eft_var.split("_")[0]
+                second_wc = eft_var.split("_")[1]
+                
+                #print (first_wc , second_wc)
     
                 ret.append([f"sm_lin_quad_mixed_{eft_var}", -(1+counter)])
                 counter +=1
                 mixName = "EFT_"+eft_var
+                first_lin_name = "EFT_" + first_wc
+                first_quad_name = "EFT_" + first_wc + "_" + first_wc
+                second_lin_name = "EFT_" + second_wc
+                second_quad_name = "EFT_" + second_wc + "_" + second_wc
+                #print(first_lin_name,first_quad_name,second_lin_name,second_quad_name)
                 for channelname, channel_DC_setting in datacard_settings["channelcontent"].items():
                     storagepath = os.path.join(args.storage, channelname)
                     var_name = channel_DC_setting["variable"]
                     variables = VariableReader(args.variablefile, [var_name])
                     
                     # load nominal and stat unc? stat unc from EFT sample itself, then nominal is the variation, so:
-                    content_to_load = ["nominal", "stat_unc", mixName]
+                    content_to_load = ["nominal", "stat_unc", mixName, first_lin_name,first_quad_name,second_lin_name,second_quad_name]
                     histograms_eft = HistogramManager(storagepath, "TTTT_EFT", variables, content_to_load, args.years[0])
                     histograms_eft.load_histograms()
                     
                     rel = np.nan_to_num(sm_histograms[channelname][var_name]["nominal"] / histograms_eft[var_name]["nominal"], nan=1.)
                     rel = np.where(np.abs(rel) > 1e10, 1., rel)
                    
-                    content_mix_nominal_beforeRW = histograms_eft[var_name][mixName]["Up"] 
+                    content_mix_nominal_beforeRW = histograms_eft[var_name]["nominal"] + histograms_eft[var_name][first_lin_name]["Up"] + histograms_eft[var_name][first_quad_name]["Up"] + histograms_eft[var_name][second_lin_name]["Up"] + histograms_eft[var_name][second_quad_name]["Up"] + (2*histograms_eft[var_name][mixName]["Up"]) 
                     content_mix_nominal = rel * content_mix_nominal_beforeRW
                     statunc_mix_nominal = np.nan_to_num(ak.to_numpy(content_mix_nominal * histograms_eft[var_name]["stat_unc"] / histograms_eft[var_name]["nominal"]))
                     path_to_mix = f"{channel_DC_setting['prettyname']}/sm_lin_quad_mixed_{eft_var}"
@@ -454,8 +467,6 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                 content_to_load = ["nominal", "stat_unc", lin_name, quad_name]
                 histograms_eft = HistogramManager(storagepath, "TTT_EFT", variables, content_to_load, args.years[0])
                 histograms_eft.load_histograms()
-                # print(channelname)
-                # print(var_name)
                 
                 rel = np.nan_to_num(sm_histograms[channelname][var_name]["nominal"] / histograms_eft[var_name]["nominal"], nan=1.)
                 rel = np.where(np.abs(rel) > 1e10, 1., rel)
@@ -538,9 +549,18 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                         print(f"ERROR: combination {combi} not found in mix_list")
                         exit(1)
                 eft_var = combistring
+                first_wc = eft_var.split("_")[0]
+                second_wc = eft_var.split("_")[1]
+                
+                #print (first_wc , second_wc)
     
                 ret.append([f"sm_lin_quad_mixed_{eft_var}", -(1+counter)])
                 counter +=1
+                mixName = "EFT_"+eft_var
+                first_lin_name = "EFT_" + first_wc
+                first_quad_name = "EFT_" + first_wc + "_" + first_wc
+                second_lin_name = "EFT_" + second_wc
+                second_quad_name = "EFT_" + second_wc + "_" + second_wc  
                 mixName = "EFT_"+eft_var
                 for channelname, channel_DC_setting in datacard_settings["channelcontent"].items():
                     storagepath = os.path.join(args.storage, channelname)
@@ -548,14 +568,14 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                     variables = VariableReader(args.variablefile, [var_name])
                     
                     # load nominal and stat unc? stat unc from EFT sample itself, then nominal is the variation, so:
-                    content_to_load = ["nominal", "stat_unc", mixName]
+                    content_to_load = ["nominal", "stat_unc", mixName, first_lin_name,first_quad_name,second_lin_name,second_quad_name]
                     histograms_eft = HistogramManager(storagepath, "TTT_EFT", variables, content_to_load, args.years[0])
                     histograms_eft.load_histograms()
                     
                     rel = np.nan_to_num(sm_histograms[channelname][var_name]["nominal"] / histograms_eft[var_name]["nominal"], nan=1.)
                     rel = np.where(np.abs(rel) > 1e10, 1., rel)
                    
-                    content_mix_nominal_beforeRW = histograms_eft[var_name][mixName]["Up"] 
+                    content_mix_nominal_beforeRW = histograms_eft[var_name]["nominal"] + histograms_eft[var_name][first_lin_name]["Up"] + histograms_eft[var_name][first_quad_name]["Up"] + histograms_eft[var_name][second_lin_name]["Up"] + histograms_eft[var_name][second_quad_name]["Up"] + (2*histograms_eft[var_name][mixName]["Up"]) 
                     content_mix_nominal = rel * content_mix_nominal_beforeRW
                     statunc_mix_nominal = np.nan_to_num(ak.to_numpy(content_mix_nominal * histograms_eft[var_name]["stat_unc"] / histograms_eft[var_name]["nominal"]))
                     path_to_mix = f"{channel_DC_setting['prettyname']}/sm_lin_quad_mixed_{eft_var}"
@@ -689,7 +709,7 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                  
                  content_3t_sm_lin_quad_nominal_beforeRW = histograms_3t_eft[var_name]["nominal"] + histograms_3t_eft[var_name][lin_name]["Up"] + histograms_3t_eft[var_name][quad_name]["Up"]
                  content_3t_sm_lin_quad_nominal = rel3 * content_3t_sm_lin_quad_nominal_beforeRW
-                 statunc_3t_sm_lin_quad_nominal = np.nan_to_num(ak.to_numpy(content_3t_sm_lin_quad_nominal * histograms_3t_eft[var_name]["stat_unc"] / histograms_3t_eft[var_name]["nominal"]))
+                 statunc_3t_sm_lin_quad_nominal = np.nan_to_num(ak.to_numpy(content_3t_sm_lin_quad_nominal * histograms_3t_eft[var_name]["stat_unc"] / histograms_3t_eft[var_name]["nominal"] ))
                  
                  content_sm_lin_quad_nominal = content_4t_sm_lin_quad_nominal + content_3t_sm_lin_quad_nominal
                  statunc_sm_lin_quad_nominal = statunc_4t_sm_lin_quad_nominal + statunc_3t_sm_lin_quad_nominal
@@ -798,9 +818,18 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                         print(f"ERROR: combination {combi} not found in mix_list")
                         exit(1)
                 eft_var = combistring
+                first_wc = eft_var.split("_")[0]
+                second_wc = eft_var.split("_")[1]
+                
+                #print (first_wc , second_wc)
     
                 ret.append([f"sm_lin_quad_mixed_{eft_var}", -(1+counter)])
                 counter +=1
+                mixName = "EFT_"+eft_var
+                first_lin_name = "EFT_" + first_wc
+                first_quad_name = "EFT_" + first_wc + "_" + first_wc
+                second_lin_name = "EFT_" + second_wc
+                second_quad_name = "EFT_" + second_wc + "_" + second_wc
                 mixName = "EFT_"+eft_var
                 for channelname, channel_DC_setting in datacard_settings["channelcontent"].items():
                     storagepath = os.path.join(args.storage, channelname)
@@ -808,7 +837,7 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                     variables = VariableReader(args.variablefile, [var_name])
                     
                     # load nominal and stat unc? stat unc from EFT sample itself, then nominal is the variation, so:
-                    content_to_load = ["nominal", "stat_unc", mixName]
+                    content_to_load = ["nominal", "stat_unc", mixName, first_lin_name,first_quad_name,second_lin_name,second_quad_name]
                     histograms_4t_eft = HistogramManager(storagepath, "TTTT_EFT", variables, content_to_load, args.years[0])
                     histograms_4t_eft.load_histograms()
                     histograms_3t_eft = HistogramManager(storagepath, "TTT_EFT", variables, content_to_load, args.years[0])
@@ -819,11 +848,11 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                     rel3 = np.nan_to_num(sm_3t_histograms[channelname][var_name]["nominal"] / histograms_3t_eft[var_name]["nominal"], nan=1.)
                     rel3 = np.where(np.abs(rel3) > 1e10, 1., rel3)
                     
-                    content_4t_mix_nominal_beforeRW = histograms_4t_eft[var_name][mixName]["Up"] 
+                    content_4t_mix_nominal_beforeRW = histograms_4t_eft[var_name]["nominal"] + histograms_4t_eft[var_name][first_lin_name]["Up"] + histograms_4t_eft[var_name][first_quad_name]["Up"] + histograms_4t_eft[var_name][second_lin_name]["Up"] + histograms_4t_eft[var_name][second_quad_name]["Up"] + (2*histograms_4t_eft[var_name][mixName]["Up"]) 
                     content_4t_mix_nominal = rel4 * content_4t_mix_nominal_beforeRW
                     statunc_4t_mix_nominal = np.nan_to_num(ak.to_numpy(content_4t_mix_nominal * histograms_4t_eft[var_name]["stat_unc"] / histograms_4t_eft[var_name]["nominal"]))
                     
-                    content_3t_mix_nominal_beforeRW = histograms_3t_eft[var_name][mixName]["Up"]
+                    content_3t_mix_nominal_beforeRW = histograms_3t_eft[var_name]["nominal"] + histograms_3t_eft[var_name][first_lin_name]["Up"] + histograms_3t_eft[var_name][first_quad_name]["Up"] + histograms_3t_eft[var_name][second_lin_name]["Up"] + histograms_3t_eft[var_name][second_quad_name]["Up"] + (2*histograms_3t_eft[var_name][mixName]["Up"]) 
                     content_3t_mix_nominal = rel3 * content_3t_mix_nominal_beforeRW
                     statunc_3t_mix_nominal = np.nan_to_num(ak.to_numpy(content_3t_mix_nominal * histograms_3t_eft[var_name]["stat_unc"] / histograms_3t_eft[var_name]["nominal"]))
                     
@@ -1001,7 +1030,9 @@ if __name__ == "__main__":
         elif args.TTT_EFT:
             processes = [process for process in processes if process != "TTT"]
         elif args.All_EFT:
-            processes = [process for process in processes if (process != "TTTT" or process !="TTT")]
+            processes = [process for process in processes if process != "TTTT"]
+            processes = [process for process in processes if process != "TTT"]
+                #print("I am Actually trying")
         processes_write = [[process, i + 1] for i, process in enumerate(processes)]
     elif args.UseBSM:
         # find BSM process in processlist:
@@ -1066,11 +1097,11 @@ if __name__ == "__main__":
     patch_scalevar_correlations(systematics, processes)
     if args.UseEFT:
         if args.TTTT_EFT: 
-            systematics["tttt_norm"] = Uncertainty("TTTTNorm", {"rate": "0.88/1.04", "processes": ["^sm$"]})
+            systematics["tttt_norm"] = Uncertainty("TTTTNorm", {"rate": "0.88/1.04", "processes": ["sm"], "exact": True})
         elif args.TTT_EFT: 
-            systematics["ttt_norm"] = Uncertainty("TTTNorm", {"rate": "0.88/1.12", "processes": ["^sm$"]})
+                systematics["ttt_norm"] = Uncertainty("TTTNorm", {"rate": "0.88/1.12", "processes": ["sm"], "exact": True})
         elif args.All_EFT: 
-            systematics["Signal_norm"] = Uncertainty("SignalNorm", {"rate": "0.84/1.13", "processes": ["^sm$"]})
+                systematics["Signal_norm"] = Uncertainty("SignalNorm", {"rate": "0.84/1.13", "processes": ["sm"], "exact": True})
 
     for syst_name, syst_info in systematics.items():
         dc_writer.add_systematic(syst_info)
