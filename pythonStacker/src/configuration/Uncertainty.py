@@ -45,6 +45,8 @@ class Uncertainty:
 
         if (dict_entry.get("isEFT", 0) > 0) or (dict_entry.get("isBSM", 0) > 0):
             self.weight_key_up = self.name
+       
+        self.exact = dict_entry.get("exact",False)
 
     @property
     def isFlat(self):
@@ -78,7 +80,11 @@ class Uncertainty:
             return True
         elif self.processes[0].lower() in ["mconly", "mcall"]:
             return not ("nonPrompt" in process or "ChargeMisID" in process)
-        return any([bool(relevant_process.match(process)) for relevant_process in self.reg_processes])    
+        #return any([bool(relevant_process.match(process)) for relevant_process in self.reg_processes])    
+        if self.exact :
+            return any([relevant_process == process for relevant_process in self.processes])
+        else:
+            return any([relevant_process in process for relevant_process in self.processes])
 
     def get_weight_aliases(self):
         return (self.weight_alias_up, self.weight_alias_down)
