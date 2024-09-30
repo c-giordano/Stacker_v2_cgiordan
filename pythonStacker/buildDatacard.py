@@ -199,7 +199,7 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
             all_asimovdata[channel_DC_setting['prettyname']] = sm_histograms[channelname][var_name]["nominal"]
     
             path_to_histogram = f"{channel_DC_setting['prettyname']}/sm"
-            convert_and_write_histogram(sm_histograms[channelname][var_name]["nominal"], variables.get_properties(var_name), path_to_histogram, rootfile, statunc=sm_histograms[channelname][var_name]["stat_unc"])
+            convert_and_write_histogram(sm_histograms[channelname][var_name]["nominal"], variables.get_properties(var_name), path_to_histogram, rootfile)#, statunc=sm_histograms[channelname][var_name]["stat_unc"])
             # loop and write systematics
             for systname, syst in shape_systematics.items():
                 if systname == "nominal" or systname == "stat_unc"  or systname == "ScaleVarEnvelopeSignal" or systname == "ISRSignal":
@@ -263,8 +263,8 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                 path_to_quad = f"{channel_DC_setting['prettyname']}/quad_{eft_var}"
                 
                 
-                convert_and_write_histogram(content_sm_lin_quad_nominal, variables.get_properties(var_name), path_to_sm_lin_quad, rootfile, statunc=statunc_sm_lin_quad_nominal)
-                convert_and_write_histogram(content_quad_nominal, variables.get_properties(var_name), path_to_quad, rootfile, statunc=statunc_quad_nominal)
+                convert_and_write_histogram(content_sm_lin_quad_nominal, variables.get_properties(var_name), path_to_sm_lin_quad, rootfile)#, statunc=statunc_sm_lin_quad_nominal)
+                convert_and_write_histogram(content_quad_nominal, variables.get_properties(var_name), path_to_quad, rootfile)#, statunc=statunc_quad_nominal)
     
     
     	    # print(content_sm_lin_quad_nominal)
@@ -361,7 +361,7 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                     statunc_mix_nominal = np.nan_to_num(ak.to_numpy(content_mix_nominal * histograms_eft[var_name]["stat_unc"] / histograms_eft[var_name]["nominal"]))
                     path_to_mix = f"{channel_DC_setting['prettyname']}/sm_lin_quad_mixed_{eft_var}"
                 
-                    convert_and_write_histogram(content_mix_nominal, variables.get_properties(var_name), path_to_mix, rootfile, statunc=statunc_mix_nominal)
+                    convert_and_write_histogram(content_mix_nominal, variables.get_properties(var_name), path_to_mix, rootfile)#, statunc=statunc_mix_nominal)
                     
                     # loop and write systematics
                     for systname, syst in shape_systematics.items():
@@ -644,7 +644,7 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
             path_to_histogram = f"{channel_DC_setting['prettyname']}/sm"
             sm_hist = sm_4t_histograms[channelname][var_name]["nominal"] + sm_3t_histograms[channelname][var_name]["nominal"]
             statunc = sm_4t_histograms[channelname][var_name]["stat_unc"] + sm_3t_histograms[channelname][var_name]["stat_unc"]
-            convert_and_write_histogram(sm_hist, variables.get_properties(var_name), path_to_histogram, rootfile, statunc=statunc)
+            convert_and_write_histogram(sm_hist, variables.get_properties(var_name), path_to_histogram, rootfile)#, statunc=statunc)
             # loop and write systematics
             for systname, syst in shape_systematics.items():
                 if systname == "nominal" or systname == "stat_unc" or systname == "ScaleVarEnvelopeTTTT" or systname == "ISRTTTT":
@@ -730,8 +730,8 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                  path_to_quad = f"{channel_DC_setting['prettyname']}/quad_{eft_var}"
                  
                  
-                 convert_and_write_histogram(content_sm_lin_quad_nominal, variables.get_properties(var_name), path_to_sm_lin_quad, rootfile, statunc=statunc_sm_lin_quad_nominal)
-                 convert_and_write_histogram(content_quad_nominal, variables.get_properties(var_name), path_to_quad, rootfile, statunc=statunc_quad_nominal)
+                 convert_and_write_histogram(content_sm_lin_quad_nominal, variables.get_properties(var_name), path_to_sm_lin_quad, rootfile)#, statunc=statunc_sm_lin_quad_nominal)
+                 convert_and_write_histogram(content_quad_nominal, variables.get_properties(var_name), path_to_quad, rootfile)#, statunc=statunc_quad_nominal)
                  
                  
                  # print(content_sm_lin_quad_nominal)
@@ -861,7 +861,7 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                     
                     path_to_mix = f"{channel_DC_setting['prettyname']}/sm_lin_quad_mixed_{eft_var}"
                     
-                    convert_and_write_histogram(content_mix_nominal, variables.get_properties(var_name), path_to_mix, rootfile, statunc=statunc_mix_nominal)
+                    convert_and_write_histogram(content_mix_nominal, variables.get_properties(var_name), path_to_mix, rootfile)#, statunc=statunc_mix_nominal)
                     
                     # loop and write systematics
                     for systname, syst in shape_systematics.items():
@@ -1028,10 +1028,14 @@ if __name__ == "__main__":
         if args.TTTT_EFT:
             processes = [process for process in processes if process != "TTTT"]
         elif args.TTT_EFT:
+            processes = [process for process in processes if process != "TTTW"]
+            processes = [process for process in processes if process != "TTTJ"]
             processes = [process for process in processes if process != "TTT"]
         elif args.All_EFT:
             processes = [process for process in processes if process != "TTTT"]
             processes = [process for process in processes if process != "TTT"]
+            processes = [process for process in processes if process != "TTTW"]
+            processes = [process for process in processes if process != "TTTJ"]
                 #print("I am Actually trying")
         processes_write = [[process, i + 1] for i, process in enumerate(processes)]
     elif args.UseBSM:
@@ -1097,11 +1101,11 @@ if __name__ == "__main__":
     patch_scalevar_correlations(systematics, processes)
     if args.UseEFT:
         if args.TTTT_EFT: 
-            systematics["tttt_norm"] = Uncertainty("TTTTNorm", {"rate": "0.88/1.04", "processes": ["sm"], "exact": True})
+            systematics["tttt_norm"] = Uncertainty("TTTTNorm", {"rate": "0.88/1.04", "processes": ["sm","lin","quad"], "exact": False})
         elif args.TTT_EFT: 
-                systematics["ttt_norm"] = Uncertainty("TTTNorm", {"rate": "0.88/1.12", "processes": ["sm"], "exact": True})
+                systematics["ttt_norm"] = Uncertainty("TTTNorm", {"rate": "0.88/1.12", "processes": ["sm","lin","quad"], "exact": False})
         elif args.All_EFT: 
-                systematics["Signal_norm"] = Uncertainty("SignalNorm", {"rate": "0.84/1.13", "processes": ["sm"], "exact": True})
+                systematics["Signal_norm"] = Uncertainty("SignalNorm", {"rate": "0.84/1.13", "processes": ["sm","lin","quad"], "exact": False})
 
     for syst_name, syst_info in systematics.items():
         dc_writer.add_systematic(syst_info)
