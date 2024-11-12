@@ -1101,11 +1101,11 @@ if __name__ == "__main__":
     patch_scalevar_correlations(systematics, processes)
     if args.UseEFT:
         if args.TTTT_EFT: 
-            systematics["tttt_norm"] = Uncertainty("TTTTNorm", {"rate": "0.88/1.04", "processes": ["sm","lin","quad"], "exact": False})
+            systematics["Norm_tttt"] = Uncertainty("Norm_tttt", {"rate": "0.88/1.04", "processes": ["sm","lin","quad"], "exact": False})
         elif args.TTT_EFT: 
-                systematics["ttt_norm"] = Uncertainty("TTTNorm", {"rate": "0.88/1.12", "processes": ["sm","lin","quad"], "exact": False})
+                systematics["Norm_ttt"] = Uncertainty("Norm_ttt", {"rate": "0.88/1.12", "processes": ["sm","lin","quad"], "exact": False})
         elif args.All_EFT: 
-                systematics["Signal_norm"] = Uncertainty("SignalNorm", {"rate": "0.84/1.13", "processes": ["sm","lin","quad"], "exact": False})
+                systematics["Norm_Signal"] = Uncertainty("Norm_BSMsignal", {"rate": "0.84/1.13", "processes": ["sm","lin","quad"], "exact": False})
 
     for syst_name, syst_info in systematics.items():
         dc_writer.add_systematic(syst_info)
