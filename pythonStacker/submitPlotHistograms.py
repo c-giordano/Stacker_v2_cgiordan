@@ -41,6 +41,8 @@ if __name__ == "__main__":
                 continue
             cmd = basecommand + f" -y {year}"
             cmd += f" -c {channel}"
+            if args.UseData:
+                cmd += " --data"
             cmds.append([cmd])
 
      #if "2016PreVFP" in args.years and "2016PostVFP" in args.years:

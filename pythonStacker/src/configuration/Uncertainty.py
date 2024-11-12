@@ -81,7 +81,7 @@ class Uncertainty:
         if self.processes[0] == "all":
             return True
         elif self.processes[0].lower() in ["mconly", "mcall"]:
-            return not ("nonPrompt" in process or "ChargeMisID" in process)
+            return not ("nonPrompt" in process or "ChargeMisID" in process or "Data" in process)
         return any([bool(relevant_process.match(process)) for relevant_process in self.reg_processes])    
 
     def get_weight_aliases(self):

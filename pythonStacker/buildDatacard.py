@@ -11,6 +11,7 @@ import awkward as ak
 import itertools
 
 from src.histogramTools import HistogramManager
+from src.dataprocessing import DataManager
 from src.variables.variableReader import VariableReader, Variable
 from src import generate_binning
 from src.configuration import load_channels_and_subchannels, load_uncertainties, Uncertainty
@@ -115,6 +116,11 @@ def nominal_datacard_creation(rootfile: uproot.WritableDirectory, datacard_setti
         # setup systematics for current channel
 
         asimov_data = np.zeros(variables.get_properties(var_name).nbins)
+        if args.UseData:
+            data_histograms = DataManager(storagepath, variables, channelname, args.years[0], eras_split=False)
+            path_to_histogram = f"{channel_DC_setting['prettyname']}/data_obs"
+            datacontent, stat_unc = data_histograms.get_histogram_and_uncertainties(args.years[0], variables.get_properties(var_name))
+            convert_and_write_histogram(datacontent, variables.get_properties(var_name), path_to_histogram, rootfile, statunc=np.sqrt(datacontent))
 
         for process in processes:
             if channels[channelname].is_process_excluded(process):
@@ -498,20 +504,21 @@ if __name__ == "__main__":
     if args.UseBSM:
         processes_write.extend(bsm_part)
 
-    if args.UseEFT:
-        processes_write.extend(eft_part)
-        for channelname, channel_DC_setting in datacard_settings["channelcontent"].items():
-            asimov_data_path = f"{channel_DC_setting['prettyname']}/data_obs"
-            var_name = channel_DC_setting["variable"]
-            variables = VariableReader(args.variablefile, [var_name])
-            asimov_data = asimov_bkg[channel_DC_setting['prettyname']] + asimov_signal[channel_DC_setting['prettyname']]
-            convert_and_write_histogram(asimov_data, variables.get_properties(var_name), asimov_data_path, rootfile, statunc=np.sqrt(asimov_data))
-    else:
-        for channelname, channel_DC_setting in datacard_settings["channelcontent"].items():
-            asimov_data_path = f"{channel_DC_setting['prettyname']}/data_obs"
-            var_name = channel_DC_setting["variable"]
-            variables = VariableReader(args.variablefile, [var_name])
-            convert_and_write_histogram(asimov_bkg[channel_DC_setting['prettyname']], variables.get_properties(var_name), asimov_data_path, rootfile, statunc=np.sqrt(asimov_bkg[channel_DC_setting['prettyname']]))
+    if not args.UseData:
+        if args.UseEFT:
+            processes_write.extend(eft_part)
+            for channelname, channel_DC_setting in datacard_settings["channelcontent"].items():
+                asimov_data_path = f"{channel_DC_setting['prettyname']}/data_obs"
+                var_name = channel_DC_setting["variable"]
+                variables = VariableReader(args.variablefile, [var_name])
+                asimov_data = asimov_bkg[channel_DC_setting['prettyname']] + asimov_signal[channel_DC_setting['prettyname']]
+                convert_and_write_histogram(asimov_data, variables.get_properties(var_name), asimov_data_path, rootfile, statunc=np.sqrt(asimov_data))
+        else:
+            for channelname, channel_DC_setting in datacard_settings["channelcontent"].items():
+                asimov_data_path = f"{channel_DC_setting['prettyname']}/data_obs"
+                var_name = channel_DC_setting["variable"]
+                variables = VariableReader(args.variablefile, [var_name])
+                convert_and_write_histogram(asimov_bkg[channel_DC_setting['prettyname']], variables.get_properties(var_name), asimov_data_path, rootfile, statunc=np.sqrt(asimov_bkg[channel_DC_setting['prettyname']]))
 
     rootfile.close()
 

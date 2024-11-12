@@ -4,13 +4,13 @@ import sys
 
 def add_settingfiles(parser: argparse.ArgumentParser):
     # Add arguments here
-    parser.add_argument('-vf', '--variablefile', dest="variablefile",
+    parser.add_argument('-vf', '--variablefile', dest="variablefile", default="settingfiles/Variables/base.json",
                         type=str, help='JSON file with variables.')
-    parser.add_argument('-sf', '--systematicsfile', dest="systematicsfile",
+    parser.add_argument('-sf', '--systematicsfile', dest="systematicsfile", default="settingfiles/Uncertainties/base.json",
                         type=str, help='JSON file with systematics.')
-    parser.add_argument('-pf', '--processfile', dest='processfile',
+    parser.add_argument('-pf', '--processfile', dest='processfile', default="settingfiles/Process/SM.json",
                         type=str, help='JSON file with process definitions.')
-    parser.add_argument('-cf', '--channelfile', dest='channelfile',
+    parser.add_argument('-cf', '--channelfile', dest='channelfile', default="settingfiles/Channel/all_channels.json",
                         type=str, help='JSON file with channel definitions.')
     parser.add_argument('-y', '--years', dest='years', default=["2016PreVFP", "2016PostVFP", "2016", "2017", "2018"], nargs='+',
                         help='Specific years.')
@@ -34,6 +34,8 @@ def add_toggles(parser: argparse.ArgumentParser):
                         help="toggle to include EFT variations")
     parser.add_argument('--BSM', '--bsm', dest="UseBSM", default=False, action="store_true",
                         help="toggle to include BSM reweighted variations.")
+    parser.add_argument('--data', dest="UseData", default=False, action="store_true",
+                        help="toggle to include data in the plots.")
 
 
 def add_EFT_choice(parser: argparse.ArgumentParser):
