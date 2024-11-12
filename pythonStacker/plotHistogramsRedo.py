@@ -12,6 +12,7 @@ import json
 
 # Own code
 from src import generate_binning, load_prepared_histograms
+from src.dataprocessing import DataManager
 from src.configuration import load_channels
 from src.histogramTools import HistogramManager
 from src.variables.variableReader import VariableReader, Variable
@@ -133,6 +134,23 @@ def plot_histograms_base(axis, histograms: dict, variable: Variable, processes: 
     return {"signal": signal, "bkg": bkg, "sum": sum_of_content, "binning": binning}
 
 
+def plot_data(axis, datamanager: DataManager, variable: Variable, years: list):
+    data = np.zeros(variable.nbins)
+    binning = generate_binning(variable.range, variable.nbins)
+
+    # load data or make sure it is loaded?
+    content = np.zeros(variable.nbins)
+    content, stat_unc = datamanager.get_histogram_and_uncertainties(years, variable)
+    stat_unc = np.abs(stat_unc - content)
+
+    # then add to figure, fix label and color, as well as legend
+    pretty_name = "Data"
+    axis.errorbar(x=binning[:-1] + (np.diff(binning)/2), y=content, yerr=stat_unc, ecolor="#000000", linewidth=1,
+                  fmt='o', markersize=5., c="#000000",# mec="#000000",
+                  label=pretty_name)
+
+
+
 def plot_systematics_band(axis, nominal_content, variable: Variable, storagepath: str, years: list):
     # get binning:
     binning = generate_binning(variable.range, variable.nbins)
@@ -226,7 +244,7 @@ def get_lumi(years):
     return total_lumi
 
 
-def plotting_sequence(args, histograms, variable, processinfo, plotdir, channel, storagepath):
+def plotting_sequence(args, histograms, variable, processinfo, plotdir, channel, storagepath, datahistograms=None):
     n_ratios = 0
     if args.SBRatio:
         n_ratios = 1
@@ -245,6 +263,11 @@ def plotting_sequence(args, histograms, variable, processinfo, plotdir, channel,
         fig, axes = fg.create_multi_ratioplot(lumi, True, n_subplots=n_ratios)
 
     main_plot_out = plot_histograms_base(axes[0], histograms, variable, processinfo, args.years, shapes=args.shapes)
+    if datahistograms is not None:    
+        data_out = plot_data(axes[0], datahistograms, variable, args.years)
+    else:
+        data_out = None
+
     if not args.no_unc:
         plot_systematics_band(axes[0], main_plot_out["sum"], variable, storagepath, args.years)
 
@@ -305,13 +328,17 @@ if __name__ == "__main__":
         copy_index_html(outputfolder)
 
         histograms = load_prepared_histograms(processinfo, channel, variables, systematics, storagepath_tmp, args)
+        data_histograms = None
+        if args.UseData:
+            data_histograms = DataManager(storagepath_tmp, variables, channel, args.years, eras_split=False)
 
         for variable_name, variable in variables.get_variable_objects().items():
             if not variable.is_channel_relevant(channel):
                 continue
             if args.variable and args.variable != variable_name:
                 continue
-            plotting_sequence(args, histograms, variable, processinfo, outputfolder, channel, storagepath_tmp)
+            plotting_sequence(args, histograms, variable, processinfo, outputfolder, channel, storagepath_tmp, data_histograms)
+            # exit()
             # plot_variable_base(variable, outputfolder, processinfo, histograms, storagepath=storagepath_tmp, years=args.years, drawEFT=args.UseEFT, no_uncertainty=args.no_unc, plotlabel=channel)
 
         for subchannel in channels[channel].get_subchannels():
@@ -328,11 +355,13 @@ if __name__ == "__main__":
             copy_index_html(outputfolder)
 
             histograms = load_prepared_histograms(processinfo, channel, variables, systematics, storagepath_tmp, args)
+            if args.UseData:
+                data_histograms = DataManager(storagepath_tmp, variables, channel, args.years, eras_split=False)
 
             for _, variable in variables.get_variable_objects().items():
                 if not variable.is_channel_relevant(channel + subchannel):
                     continue
-                plotting_sequence(args, histograms, variable, processinfo, outputfolder, channel+"_"+subchannel, storagepath_tmp)
+                plotting_sequence(args, histograms, variable, processinfo, outputfolder, channel+"_"+subchannel, storagepath_tmp, data_histograms)
                 # plot_variable_base(variable, outputfolder, processinfo, histograms, storagepath=storagepath_tmp, years=args.years, drawEFT=args.UseEFT, no_uncertainty=args.no_unc, plotlabel=channel+"_"+subchannel)
 
     print("Finished!")

@@ -55,6 +55,7 @@
     },
     "pureTTW": {
         "isSubchannel": 1,
+        "subchannels":  ["ee", "em", "mm"],
         "selection": "(ttWScore > fourTopScore) & (ttWScore > ttbarScore)"
     },
     "puresig_4L": {

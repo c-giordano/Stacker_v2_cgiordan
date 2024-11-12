@@ -35,16 +35,17 @@ if __name__ == "__main__":
         basecommand += " --EFT_ratio --EFT_fullbkg"
         basecommand += f" --wc {args.wc}"
     cmds = []
-    if len(args.years) == 2:
-        for year in args.years:
-            for channel in channels:
-                if args.channel is not None and channel != args.channel:
-                    continue
-                if channels[channel].get("isSubchannel", 0) > 0:
-                    continue
-                cmd = basecommand + f" -y {year}"
-                cmd += f" -c {channel}"
-                cmds.append([cmd])
+    for year in args.years:
+        for channel in channels:
+            if args.channel is not None and channel != args.channel:
+                continue
+            if channels[channel].get("isSubchannel", 0) > 0:
+                continue
+            cmd = basecommand + f" -y {year}"
+            cmd += f" -c {channel}"
+            if args.UseData:
+                cmd += " --data"
+            cmds.append([cmd])
 
      #if "2016PreVFP" in args.years and "2016PostVFP" in args.years:
     #    cmd = basecommand + " -y 2016PreVFP 2016PostVFP"

@@ -1,0 +1,72 @@
+{
+    "Basedir": "/pnfs/iihe/cms/store/user/nivanden/AnalysisOutput/ReducedTuples/2024-04-23_16-46",
+    "Processes": {
+        "TTTJ": {
+            "fileglobs": ["Tree_TTTJ_*MCPrompt"],
+            "pretty_name": "ttt",
+            "color": "#e9d98d"
+        },
+        "TTTW": {
+            "fileglobs": ["Tree_TTTW_*MCPrompt"],
+            "pretty_name": "ttt",
+            "color": "#e9d98d"
+        },
+        "other_t": {
+            "fileglobs": ["Tree_THQ_*MCPrompt", "Tree_tZq_ll*MCPrompt", "*_TTHH_*MCPrompt", "*_TTWW_*MCPrompt", "*_TTWH_*MCPrompt", "*_TTWZ_*MCPrompt", "*_TTZH_*MCPrompt", "*_TTZZ_*MCPrompt"],
+            "pretty_name": "Other\\ t",
+            "color": "#92dadd"
+        },
+        "Xgamma": {
+            "fileglobs": ["*TTTo2L2Nu*MCPrompt", "*TTToSemiLeptonic*MCPrompt", "*_TTGamma_*MCPrompt", "Tree_ZGToLLG*MCPrompt", "*DYJetsToLL*MCPrompt"],
+            "pretty_name": "X\\gamma",
+            "color": "#3f90da"
+        },
+        "ChargeMisID": {
+            "fileglobs": ["*_ChargeDD*"],
+            "color": "#832db6"
+        },
+        "VVV": {
+            "fileglobs": ["Tree_WWZ_*MCPrompt", "Tree_WZZ_*MCPrompt", "Tree_ZZZ_*MCPrompt", "Tree_SSWW*MCPrompt", 
+            "Tree_VHToNonbb*MCPrompt", "Tree_ZZTo4L*MCPrompt", "Tree_VBF_HToZZTo4L*MCPrompt",
+            "Tree_GluGlu*MCPrompt"],
+            "pretty_name": "VV(V)",
+            "color": "#bd1f01"
+        },
+        "WZ": {
+            "fileglobs": ["Tree_WZTo3LNu_*MCPrompt"],
+            "pretty_name": "WZ",
+            "color": "#bd1f01"
+        },
+        "nonPromptElectron": {
+            "fileglobs": ["*_nonPromptDD_*"],
+            "color": "#e76300",
+            "pretty_name": "NP e"
+        },
+        "nonPromptMuon": {
+            "fileglobs": ["*_nonPromptDD_*"],
+            "color": "#a96b59",
+            "pretty_name": "NP\\ \\mu"
+        },
+        "TTH": {
+            "fileglobs": ["Tree_ttHJetToNonbb*MCPrompt"],
+            "pretty_name": "t\\bar{t}H",
+            "color": "#b9ac70"
+        },
+        "TTZ": {
+            "fileglobs": ["Tree_TTZToLLNuNu*MCPrompt"],
+            "pretty_name": "t\\bar{t}Z",
+            "color": "#717581"
+        },
+        "TTW": {
+            "fileglobs": ["Tree_TTWJetsToLNu*MCPrompt", "Tree_ttWJetsToLNu_5f_EWK*MCPrompt"],
+            "color": "#94a4a2",
+            "pretty_name": "t\\bar{t}W"
+        },
+        "TTTT": {
+            "fileglobs": ["Tree_TTTT_TuneCP5*_MCPrompt"],
+            "color": "#ffa90e",
+            "isSignal": 1,
+            "pretty_name": "t\\bar{t}t\\bar{t}"
+        }
+    }
+}

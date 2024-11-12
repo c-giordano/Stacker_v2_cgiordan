@@ -1,3 +1,6 @@
+import numpy as np
+np.finfo(np.dtype("float32"))
+np.finfo(np.dtype("float64"))
 import argparse
 import json
 import src.jobSubmission.condorTools as ct
