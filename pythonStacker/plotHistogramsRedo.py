@@ -35,7 +35,6 @@ def parse_arguments():
     parser.add_argument("--BSM_fullbkg", dest="BSM_fullbkg", action="store_true", default=False)
     parser.add_argument("--SBRatio", dest="SBRatio", action="store_true", default=False)
     parser.add_argument("--shapes", dest="shapes", action="store_true", default=False)
-    parser.add_argument("--hasBSM", action="store_true", default=True)
     parser.add_argument("--suffix", action="store", default="_")
 
     arguments.add_settingfiles(parser)
@@ -94,7 +93,7 @@ def generate_outputfolder(years, outputfolder, subdir, suffix=""):
     outputsubfolder += suffix
 
     # outputsubfolder += args.bsm_model
-    if args.hasBSM:
+    if args.UseBSM:
         # coupling_name = 
         outputfolder_base = os.path.join(outputfolder, subdir, outputsubfolder, args.bsm_model[0])
         print(outputfolder_base)
@@ -258,10 +257,8 @@ def get_lumi(years):
         "2018": 59.8,
         # "Run2": 167.0,
     }
-    sum_years = {"2016", "2017", "2018"}
     for year in years:
-        if year in sum_years:
-            total_lumi += lumi[year]
+        total_lumi += lumi[year]
 
     if total_lumi >= 100.:
         total_lumi = round(total_lumi)

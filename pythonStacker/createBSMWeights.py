@@ -21,7 +21,7 @@ def parse_arguments():
                         help="which event class to check")
     parser.add_argument("-p", "--process", dest="process", action="store", default="TTTT_BSM")
     parser.add_argument("--storage", dest="storage", type=str,
-                        default="Intermediate_VO", help="Path at which the histograms are stored")
+                        default="Intermediate", help="Path at which the histograms are stored")
 
     opts, opts_unknown = parser.parse_known_args()
     return opts
