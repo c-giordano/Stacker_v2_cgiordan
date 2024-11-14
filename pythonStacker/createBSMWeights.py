@@ -9,6 +9,7 @@ import argparse
 import os
 
 import src
+import numpy as np
 
 
 def parse_arguments():
@@ -34,12 +35,13 @@ def get_bsmvariations_filename(storage: str, filename: str, eventclass) -> str:
 
 
 def reweight_and_write(reweighter, eventclass, tree, storage, filename, process):
-    arrs = tree.arrays(["eftVariations"], "eventClass==" + str(eventclass))
     # should become a record rather than a single array, using the naming scheme I devised in the init
-
-    import numpy as np
+    if filename=="/pnfs/iihe/cms/store/user/cgiordan/AnalysisOutput/ReducedTuples/2024-09-09_09-40/Tree_TTTT_13TeV_LO_TopPhilicScalarSinglet_M0p4_C1p0e00_240611_092611_Run2SIM_UL2018NanoAOD_240612_213908_MCPrompt_2018_base.root":
+        arrs = tree.arrays(["eftVariationsSel"], "eventClass==" + str(eventclass), aliases={"eftVariationsSel": "eftVariations[:, 1:3]"})
+    else:
+        arrs = tree.arrays(["eftVariationsSel"], "eventClass==" + str(eventclass), aliases={"eftVariationsSel": "eftVariations[:, 2:4]"})
     # var = np.array([reweighter.transform_weights(entry[1:]) for entry in arrs.eftVariationsNorm])
-    var = np.transpose(np.array(reweighter.transform_weights(ak.to_numpy(arrs.eftVariations))))
+    var = np.transpose(np.array(reweighter.transform_weights(ak.to_numpy(arrs.eftVariationsSel))))
     if len(var) == 0:
         return
 
@@ -57,7 +59,7 @@ def reweight_and_write(reweighter, eventclass, tree, storage, filename, process)
 if __name__ == "__main__":
     args = parse_arguments()
 
-    reweighter = bsm.bsm_reweighter(4)
+    reweighter = bsm.bsm_reweighter(2)
     # tree = uproot.open(args.inputfile)
 
     tree = src.get_tree_from_file(args.inputfile, args.process)
