@@ -96,20 +96,22 @@ def patch_scalevar_correlations(systematics, processes):
                 continue
             envelope_relevant_mod.append(process)
 
-    systematics["ScaleVarEnvelope"].processes = envelope_relevant_mod
+    # systematics["ScaleVarEnvelope"].processes = envelope_relevant_mod
+    systematics["ScaleVarEnvelope"].set_processes(envelope_relevant_mod)
     envelope_relevant = list(systematics["ScaleVarEnvelope"].processes)
     envelope_relevant += ["nonPromptElectron", "nonPromptMuon", "ChargeMisID"]
     for process in processes:
         if (("sm" in process) or ("quad" in process) or ("TTTT" in process) ): envelope_relevant.append(process)
 
     relevant_processes = [process for process in processes if not process in envelope_relevant]
-    
-    print ("\n","list of envelope relevant stuf:", envelope_relevant)
-    print ("\n","list of all relevant stuff:", relevant_processes)
 
+    print("Debugging the scale variations")
+    # print(f"For Processes {relevant_processes}")
     for i in range(6):
         key = f"ScaleVar_{i}"
-        systematics[key].processes = relevant_processes
+        # print(f"At variation {key}")
+        # systematics[key].processes = relevant_processes
+        systematics[key].set_processes(relevant_processes)
 
 
 
@@ -954,6 +956,7 @@ def bsm_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                 ret.append([bsm_variation, -count])
 
             current_bsm_var = ak.to_numpy(histograms_bsm[var_name][bsm_variation]["Up"])
+            # print(var_name, bsm_variation)
             if bsm_variation != "BSM_Quartic":
                 current_bsm_var += quartic_component
             # For each variation, first write the nominal component to file:
@@ -1027,7 +1030,9 @@ if __name__ == "__main__":
     shape_systematics = load_uncertainties(args.systematicsfile, allowflat=False)
     shape_systematics["nominal"] = Uncertainty("nominal", {})
     shape_systematics["stat_unc"] = Uncertainty("stat_unc", {})
+    print(f"Shape systematics before patch: {shape_systematics.keys()}")
     patch_scalevar_correlations(shape_systematics, processes)
+    print(f"Shape systematics after patch: {shape_systematics.keys()}")
 
     if args.UseEFT:
         eft_part, asimov_signal = eft_datacard_creation(rootfile, datacard_settings, args.eft_operator, shape_systematics, args)
@@ -1047,8 +1052,10 @@ if __name__ == "__main__":
     elif args.UseBSM:
         # find BSM process in processlist:
         for process in processes:
+            # print(f"Print the process {process}")
             if processfile["Processes"][process].get("isSignal", 0) > 0:
                 bsm_process = {process: processfile["Processes"][process]}
+                # print(bsm_process)
                 bsm_processname = process
                 break
         bsm_part = bsm_datacard_creation(rootfile, datacard_settings, ["BSM_Quad", "BSM_Quartic"], shape_systematics, bsm_process, args)
@@ -1070,6 +1077,7 @@ if __name__ == "__main__":
     asimov_bkg = nominal_datacard_creation(rootfile, datacard_settings, channels, processes, shape_systematics, args)
     if args.UseBSM:
         processes_write.extend(bsm_part)
+        
 
     if not args.UseData:
         if args.UseEFT:
@@ -1107,6 +1115,7 @@ if __name__ == "__main__":
 
     patch_scalevar_correlations(systematics, processes)
     if args.UseEFT:
+
         if args.TTTT_EFT: 
             systematics["Norm_tttt"] = Uncertainty("Norm_tttt", {"rate": "0.88/1.04", "processes": ["sm","lin","quad"], "exact": False})
         elif args.TTT_EFT: 
@@ -1114,7 +1123,14 @@ if __name__ == "__main__":
         elif args.All_EFT: 
                 systematics["Norm_Signal"] = Uncertainty("Norm_BSMsignal", {"rate": "0.84/1.13", "processes": ["sm","lin","quad"], "exact": False})
 
+  
+    # if args.UseBSM:
+    #     systematics["tttt_norm"] = Uncertainty("TTTTNorm", {"rate": "0.88/1.04", "processes": ['TTTT']})
+    #     # systematics["ttt_norm"] = Uncertainty("TTTNorm", {"rate": "0.88/1.12", "processes": ['TTT']})
+    #     print(f"Where u at? {systematics['tttt_norm']}")
+
     for syst_name, syst_info in systematics.items():
+        print(f"This syst was written: {syst_name}")
         dc_writer.add_systematic(syst_info)
 
     dc_writer.write_card()

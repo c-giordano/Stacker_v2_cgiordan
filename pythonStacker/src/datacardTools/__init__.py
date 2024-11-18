@@ -64,6 +64,10 @@ class DatacardWriter():
         self.commentline()
         self.outputstring += "* autoMCStats 0 1 1\n"
 
+    def add_RateParamNormalization(self, processname, range):
+        # TODO implement
+        pass
+
     def add_systematic(self, systematic: Uncertainty):
         if systematic.correlated_process:
             self.add_systematic_correlated(systematic)
@@ -74,7 +78,6 @@ class DatacardWriter():
         for process, _ in self.processes:
             if not systematic.is_process_relevant(process):
                 continue
-            
             processname = process
             if "sm" == processname:
                 processname = "TTTT"
@@ -85,7 +88,7 @@ class DatacardWriter():
             systematic_mod.pretty_name = systematic.pretty_name + processname
             systematic_mod.technical_name = systematic.technical_name + processname
             systematic_mod.name = systematic.name + processname
-            systematic_mod.processes = [process]
+            systematic_mod.set_processes(["^"+process+"$"])
             # then use nominal addition
             self.add_systematic_correlated(systematic_mod)
 
