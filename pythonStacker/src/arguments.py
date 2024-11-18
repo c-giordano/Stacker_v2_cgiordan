@@ -12,7 +12,7 @@ def add_settingfiles(parser: argparse.ArgumentParser):
                         type=str, help='JSON file with process definitions.')
     parser.add_argument('-cf', '--channelfile', dest='channelfile', default="settingfiles/Channel/all_channels.json",
                         type=str, help='JSON file with channel definitions.')
-    parser.add_argument('-y', '--years', dest='years', default=["2016PreVFP", "2016PostVFP", "2016", "2017", "2018"], nargs='+',
+    parser.add_argument('-y', '--years', dest='years', default=["2016", "2017", "2018"], nargs='+',
                         help='Specific years.')
 
 

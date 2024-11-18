@@ -131,9 +131,19 @@
         "type": "weight",
         "corr_proc": 0
     },
+    "ScaleVarEnvelopeTTT": {
+        "channels": "all",
+        "processes": ["TTT", "sm", "quad"],
+        "type": "envelope"
+    },
     "ScaleVarEnvelopeTTTT": {
         "channels": "all",
         "processes": ["TTTT", "sm", "quad"],
+        "type": "envelope"
+    },
+    "ScaleVarEnvelopeSignal": {
+        "channels": "all",
+        "processes": ["TTTT","TTT", "sm", "quad"],
         "type": "envelope"
     },
     "ScaleVarEnvelope": {
@@ -303,9 +313,23 @@
         "aliasDown": "isrfsrVariations[:, 1]",
         "corr_proc": 0
     },
+    "ISRTTT": {
+        "channels": "all",
+        "processes": ["TTT", "sm", "lin", "quad"],
+        "type": "weight",
+        "aliasUp": "isrfsrVariations[:, 0]",
+        "aliasDown": "isrfsrVariations[:, 1]"
+    },
     "ISRTTTT": {
         "channels": "all",
         "processes": ["TTTT", "sm", "lin", "quad"],
+        "type": "weight",
+        "aliasUp": "isrfsrVariations[:, 0]",
+        "aliasDown": "isrfsrVariations[:, 1]"
+    },
+    "ISRSignal": {
+        "channels": "all",
+        "processes": ["TTTT","TTT", "sm", "lin", "quad"],
         "type": "weight",
         "aliasUp": "isrfsrVariations[:, 0]",
         "aliasDown": "isrfsrVariations[:, 1]"

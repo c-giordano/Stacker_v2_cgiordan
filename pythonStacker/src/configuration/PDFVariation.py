@@ -16,7 +16,7 @@ class PDFVariation(Uncertainty):
 
         self.name = f"PDF_{instance}"
         self.pretty_name = f"PDF_{instance}"
-        self.technical_name = f"PDF_{instance}"
+        self.technical_name = f"pdf_{instance}"
         self.weight_key_up = f"PDF_{instance}"
         self.weight_alias_up = f"pdfVariations[:, {instance}]"
 

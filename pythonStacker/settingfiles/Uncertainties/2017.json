@@ -136,13 +136,18 @@
     },
     "ScaleVar": {
         "channels": "all",
-        "processes": "MCOnly",
+        "processes": ["TTW","TTZ","TTH","Xgamma","WZ","VVV","other_t","TTT"],
         "type": "weight",
         "corr_proc": 0
     },
+    "ScaleVarEnvelopeTTTT": {
+        "channels": "all",
+        "processes": ["TTTT", "sm", "quad"],
+        "type": "envelope"
+    },
     "ScaleVarEnvelope": {
         "channels": "all",
-        "processes": ["TTTT", "sm", "quad", "TTH", "TTW"],
+        "processes": ["TTH", "TTW"],
         "type": "envelope",
         "corr_proc": 0
     },
@@ -299,9 +304,16 @@
         "processes": "MCOnly",
         "type": "shape"
     },
+    "ISRTTTT": {
+        "channels": "all",
+        "processes": ["TTTT", "sm", "lin", "quad"],
+        "type": "weight",
+        "aliasUp": "isrfsrVariations[:, 0]",
+        "aliasDown": "isrfsrVariations[:, 1]"
+    },
     "ISR": {
         "channels": "all",
-        "processes": "MCOnly",
+        "processes": ["TTW","TTZ","TTH","Xgamma","WZ","VVV","other_t","TTT"],
         "type": "weight",
         "aliasUp": "isrfsrVariations[:, 0]",
         "aliasDown": "isrfsrVariations[:, 1]",
