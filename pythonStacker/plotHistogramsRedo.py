@@ -309,7 +309,7 @@ if __name__ == "__main__":
     storagepath = os.path.join(args.storage, subbasedir)
 
     # TODO: outputfolder with year and suffix:
-    outputfolder_base = generate_outputfolder(args.years, args.outputfolder, subbasedir, suffix="")
+    outputfolder_base = generate_outputfolder(args.years, args.outputfolder, subbasedir, suffix="_data")
 
     for channel in channels:
         if args.channel is not None and channel != args.channel:
