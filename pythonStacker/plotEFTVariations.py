@@ -38,7 +38,7 @@ def lin_quad_plot_EFT(variable: Variable, plotdir: str, histograms, process_info
     # first plot nominal, then start adding variations
     print(variable.name)
     nominal_content = np.array(ak.to_numpy(histograms[variable.name]["nominal"]))
-    stat_unc_var = np.nan_to_num(np.array(ak.to_numpy(histograms[variable.name]["stat_unc"])) / nominal_content, nan=0.)
+    #stat_unc_var = np.nan_to_num(np.array(ak.to_numpy(histograms[variable.name]["stat_unc"])) / nominal_content, nan=0.)
 
     # pretty_name = generate_process_name("SM", info)
     nominal_weights = np.ones(len(nominal_content))
@@ -82,13 +82,13 @@ def lin_quad_plot_EFT(variable: Variable, plotdir: str, histograms, process_info
         #ax_ratio_two.hist(binning[:-1], binning, weights=mix_ratio, histtype="step")
  
 
-    ax_main.errorbar(x=binning[:-1] + 0.5 * np.diff(binning), y=np.ones(len(nominal_content)), yerr=stat_unc_var, ecolor='k', label="stat unc.")
+    ax_main.errorbar(x=binning[:-1] + 0.5 * np.diff(binning), y=np.ones(len(nominal_content)), ecolor='k', label="stat unc.")
 
     ax_main.set_xlim(variable.range)
     ax_main.set_ylabel("SM + EFT / SM")
-    modify_yrange_updown(ax_main, (minim, maxim), up_scale=1.4)
+    modify_yrange_updown(ax_main, (minim, maxim), up_scale=1.2)
     ax_main.legend(ncol=2)
-    ax_main.text(0.049, 0.74, plotlabel, transform=ax_main.transAxes)
+    ax_main.text(0.059, 0.74, plotlabel, transform=ax_main.transAxes)
 
     ax_ratio_one.set_xlim(variable.range)
     ax_ratio_two.set_xlim(variable.range)
@@ -113,6 +113,7 @@ def main_plot_EFT(variable: Variable, plotdir: str, histograms, process_info: di
     # pretty_name = generate_process_name("SM", info)
     nominal_weights = np.ones(len(nominal_content))
     ax_main.hist(binning[:-1], binning, weights=nominal_weights, histtype="step", color="k", label="SM")
+    print(nominal_content)
 
     eft_variations = eft.getEFTVariationsLinear()
     minim = 1.
@@ -166,18 +167,18 @@ def mix_plot_EFT(variable: Variable, plotdir: str, histograms, process_info: dic
     minim = 1.
     maxim = 1.
         
-    mix_list = [#"cQQ1_cQt1","cQQ1_cQt8","cQQ1_ctHIm","cQQ1_ctHRe",
-		    "cQQ1_ctt",
-		    "cQQ8_cQQ1",
-		    "cQQ8_cQt1",
-		    "cQQ8_cQt8",
-		    #"cQQ8_ctHIm","cQQ8_ctHRe",
-		    "cQQ8_ctt",
-		    #"cQt1_cQt8","cQt1_ctHIm","cQt1_ctHRe",
-		    "cQt1_ctt",
-		    #"cQt8_ctHIm","cQt8_ctHRe",
+    mix_list = [#"cQQ1_cQt1","cQQ1_cQt8",
+		    "cQQ1_ctHIm","cQQ1_ctHRe",
+		    #"cQQ1_ctt",
+		    #"cQQ8_cQQ1","cQQ8_cQt1","cQQ8_cQt8","cQQ8_ctHIm","cQQ8_ctHRe",
+		    #"cQQ8_ctt",
+		    #"cQt1_cQt8",
+		    "cQt1_ctHIm","cQt1_ctHRe",
+		    #"cQt1_ctt",
+		    "cQt8_ctHIm","cQt8_ctHRe",
 		    "ctHRe_ctHIm",
-		    "ctt_cQt8","ctt_ctHIm","ctt_ctHRe"
+		    #"ctt_cQt8",
+		    "ctt_ctHIm","ctt_ctHRe"
 		    ]
     for eft_var in mix_list:
         mix_name = "EFT_"+eft_var
@@ -189,7 +190,7 @@ def mix_plot_EFT(variable: Variable, plotdir: str, histograms, process_info: dic
     #ax_main.errorbar(x=binning[:-1] + 0.5 * np.diff(binning), y=np.ones(len(nominal_content)), yerr=stat_unc_var, ecolor='k', label="stat unc.")
     ax_main.set_xlim(variable.range)
     ax_main.set_ylabel("mixed term")
-    modify_yrange_updown(ax_main, (minim, maxim), up_scale=2)
+    modify_yrange_updown(ax_main, (minim, maxim), up_scale=-0.95)
     ax_main.legend(ncol=2)
     ax_main.set_xlabel(variable.axis_label)
     ax_main.text(0.049, 0.77, plotlabel, transform=ax_main.transAxes)
@@ -215,18 +216,18 @@ def mix_SM_plot_EFT(variable: Variable, plotdir: str, histograms, process_info: 
     minim = 1.
     maxim = 1.
         
-    mix_list = [#"cQQ1_cQt1","cQQ1_cQt8","cQQ1_ctHIm","cQQ1_ctHRe",
-		    "cQQ1_ctt",
-		    "cQQ8_cQQ1",
-		    "cQQ8_cQt1",
-		    "cQQ8_cQt8",
+    mix_list = [#"cQQ1_cQt1","cQQ1_cQt8",
+		    "cQQ1_ctHIm","cQQ1_ctHRe",
+		    #"cQQ1_ctt","cQQ8_cQQ1","cQQ8_cQt1","cQQ8_cQt8",
 		    #"cQQ8_ctHIm","cQQ8_ctHRe",
-		    "cQQ8_ctt",
-		    #"cQt1_cQt8","cQt1_ctHIm","cQt1_ctHRe",
-		    "cQt1_ctt",
-		    #"cQt8_ctHIm","cQt8_ctHRe",
+		    #"cQQ8_ctt",
+		    #"cQt1_cQt8",
+		    "cQt1_ctHIm","cQt1_ctHRe",
+		    #"cQt1_ctt",
+		    "cQt8_ctHIm","cQt8_ctHRe",
 		    "ctHRe_ctHIm",
-		    "ctt_cQt8","ctt_ctHIm","ctt_ctHRe"
+		    #"ctt_cQt8",
+		    "ctt_ctHIm","ctt_ctHRe"
 		    ]
     for eft_var in mix_list:
         mix_name = "EFT_"+eft_var
@@ -305,10 +306,10 @@ if __name__ == "__main__":
         for _, variable in variables.get_variable_objects().items():
             if not variable.is_channel_relevant(channel):
                 continue
-            #lin_quad_plot_EFT(variable, outputfolder, histograms, processinfo, channel, args.process)
-            #main_plot_EFT(variable, outputfolder, histograms, processinfo, channel, args.process)
-            #mix_plot_EFT(variable, outputfolder, histograms, processinfo, channel, args.process)
-            #mix_SM_plot_EFT(variable, outputfolder, histograms, processinfo, channel, args.process)
+            lin_quad_plot_EFT(variable, outputfolder, histograms, processinfo, channel, args.process)
+            main_plot_EFT(variable, outputfolder, histograms, processinfo, channel, args.process)
+            mix_plot_EFT(variable, outputfolder, histograms, processinfo, channel, args.process)
+            mix_SM_plot_EFT(variable, outputfolder, histograms, processinfo, channel, args.process)
 
         for subchannel in channels[channel].subchannels.keys():
             if not variable.is_channel_relevant(channel + subchannel):
@@ -327,6 +328,6 @@ if __name__ == "__main__":
             histograms.load_histograms()
             for _, variable in variables.get_variable_objects().items():
                 lin_quad_plot_EFT(variable, outputfolder, histograms, processinfo, channel + subchannel, args.process)
-                #main_plot_EFT(variable, outputfolder, histograms, processinfo, channel + subchannel, args.process)
+                main_plot_EFT(variable, outputfolder, histograms, processinfo, channel + subchannel, args.process)
                 mix_plot_EFT(variable, outputfolder, histograms, processinfo, channel + subchannel, args.process)
                 mix_SM_plot_EFT(variable, outputfolder, histograms, processinfo, channel + subchannel, args.process)
