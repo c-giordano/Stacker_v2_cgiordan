@@ -25,7 +25,7 @@
             "Othert", 
             "TTT"
         ], 
-        "technical_name": "ps_isr", 
+        "technical_name": "ps_isr_", 
         "aliasUp": "isrfsrVariations[:, 0]", 
         "channels": "all", 
         "type": "weight"

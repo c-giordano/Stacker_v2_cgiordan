@@ -25,13 +25,13 @@
             "Othert"
         ], 
         "corr_proc": 0, 
-        "technical_name": "ps_isr", 
+        "technical_name": "ps_isr_", 
         "aliasUp": "isrfsrVariations[:, 0]", 
         "channels": "all", 
         "type": "weight"
     }, 
     "nonPromptMuNorm2018": {
-        "processes": "nonPromptMuon", 
+        "processes": ["nonPromptMuon","nonPrompt"], 
         "corr_proc": 1, 
         "technical_name": "CMS_fake_m_2018", 
         "channels": "all", 
@@ -101,7 +101,7 @@
         "type": "weight"
     }, 
     "nonPromptElNorm": {
-        "processes": "nonPromptElectron", 
+        "processes": ["nonPromptElectron","nonPrompt"], 
         "corr_proc": 1, 
         "technical_name": "CMS_fake_e_correlated", 
         "channels": "all", 
@@ -128,7 +128,7 @@
         "type": "weight"
     }, 
     "nonPromptElNorm2018": {
-        "processes": "nonPromptElectron", 
+        "processes": ["nonPromptElectron","nonPrompt"], 
         "corr_proc": 1, 
         "technical_name": "CMS_fake_e_2018", 
         "channels": "all", 
@@ -183,7 +183,7 @@
         "type": "flat"
     }, 
     "nonPromptMuNorm": {
-        "processes": "nonPromptMuon", 
+        "processes": ["nonPromptMuon","nonPrompt"], 
         "corr_proc": 1, 
         "technical_name": "CMS_fake_m_correlated", 
         "channels": "all", 
@@ -406,7 +406,7 @@
     "ttz_norm": {
         "processes": "ttZ", 
         "corr_proc": 1, 
-        "technical_name": "Norm_ttW", 
+        "technical_name": "Norm_ttZ", 
         "channels": "all", 
         "pretty_name": "ttZ norm", 
         "rate": 1.2, 

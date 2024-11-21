@@ -83,6 +83,8 @@ if __name__ == "__main__":
                     command += " --EFT"
                 if args.UseBSM is True:
                     command += " --BSM"
+                if args.UseData:
+                    command += " --data"
 
                 for syst in systematics:
                     if syst is None:
