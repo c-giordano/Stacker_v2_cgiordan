@@ -69,6 +69,10 @@ class DatacardWriter():
         self.outputstring += "PS group = ps_isr_Othert ps_isr_Xg ps_isr_ttH ps_isr_ttW ps_isr_ttZ ps_isr_BSMsignal ps_fsr\nJEC group = CMS_scale_j CMS_res_j_1p93_2016 CMS_res_j_1p93_2017 CMS_res_j_1p93_2018 CMS_res_j_2p5_2016 CMS_res_j_2p5_2017 CMS_res_j_2p5_2018\nWZNjets group = CMS_TOP24008_WZ_j_2 CMS_TOP24008_WZ_j_3 CMS_TOP24008_WZ_j_4 CMS_TOP24008_WZ_j_5 CMS_TOP24008_WZ_j_6\n"
         self.outputstring += "Norm group = CMS_fake_m_2018 CMS_fake_m_2017 CMS_fake_m_2016 CMS_fake_m CMS_fake_e_2018 CMS_fake_e_2017 CMS_fake_e_2016 CMS_fake_e Norm_Xg Norm_ttH Norm_ttW Norm_ttZ Norm_Othert Norm_ChargeMisID Norm_BSMsignal\nrest group = CMS_HEM_2018 CMS_l1_ecal_prefiring CMS_scale_met CMS_pileup_13TeV\nscale group = QCDscale_fac_Othert QCDscale_fac_Xg QCDscale_fac_ttH QCDscale_fac_ttW QCDscale_fac_ttZ QCDscale_fac_BSMsignal QCDscale_ren_Othert QCDscale_ren_Xg QCDscale_ren_ttH QCDscale_ren_ttW QCDscale_ren_ttZ QCDscale_ren_BSMsignal\n"
 
+    def add_RateParamNormalization(self, processname, range):
+        # TODO implement
+        pass
+
     def add_systematic(self, systematic: Uncertainty):
         if systematic.correlated_process:
             self.add_systematic_correlated(systematic)
@@ -79,7 +83,6 @@ class DatacardWriter():
         for process, _ in self.processes:
             if not systematic.is_process_relevant(process):
                 continue
-            
             processname = process
             if "sm" == processname:
                 processname = "TTTT"
@@ -90,7 +93,7 @@ class DatacardWriter():
             systematic_mod.pretty_name = systematic.pretty_name + processname
             systematic_mod.technical_name = systematic.technical_name + processname
             systematic_mod.name = systematic.name + processname
-            systematic_mod.processes = [process]
+            systematic_mod.set_processes(["^"+process+"$"])
             # then use nominal addition
             self.add_systematic_correlated(systematic_mod)
 

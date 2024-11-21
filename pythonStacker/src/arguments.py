@@ -43,6 +43,15 @@ def add_EFT_choice(parser: argparse.ArgumentParser):
                         help="string to choose which WC to consider.")
 
 
+def add_BSM_choices(parser: argparse.ArgumentParser):
+    parser.add_argument('--BSMModel', dest="bsm_model", nargs='+', default=["TopPhilicVectorSinglet"],
+                        help="string to choose which models to consider.")
+    parser.add_argument('--BSMMass', dest="bsm_mass", nargs='+', default=[400, 600, 800],
+                        help="string to choose which masses to consider.")
+    parser.add_argument('--BSMCoupling', dest="bsm_coupling", nargs='+', default=[1.0],
+                        help="string to choose which couplings to consider.")
+
+
 def add_tmp_storage(parser: argparse.ArgumentParser):
     parser.add_argument("--storage", dest="storage", type=str,
                         default="Intermediate", help="Path at which the \

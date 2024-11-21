@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import os
 import argparse
 import json
+import itertools
 
 # Own code
 from src import generate_binning, load_prepared_histograms
@@ -33,14 +34,19 @@ def parse_arguments():
     parser.add_argument("--wc", action="store", default="ctt")
     parser.add_argument("--EFT_ratio", dest="EFT_ratio", action="store_true", default=False)
     parser.add_argument("--EFT_fullbkg", dest="EFT_fullbkg", action="store_true", default=False)
+    parser.add_argument("--BSM_ratio", dest="BSM_ratio", action="store_true", default=False)
+    parser.add_argument("--BSM_fullbkg", dest="BSM_fullbkg", action="store_true", default=False)
     parser.add_argument("--SBRatio", dest="SBRatio", action="store_true", default=False)
     parser.add_argument("--shapes", dest="shapes", action="store_true", default=False)
+    parser.add_argument("--suffix", action="store", default="_")
 
     arguments.add_settingfiles(parser)
     arguments.select_specifics(parser)
     arguments.add_tmp_storage(parser)
     arguments.add_plot_output(parser)
     arguments.add_toggles(parser)
+    arguments.add_EFT_choice(parser)
+    arguments.add_BSM_choices(parser)
     args = parser.parse_args()
     return args
 
@@ -89,7 +95,13 @@ def generate_outputfolder(years, outputfolder, subdir, suffix=""):
 
     outputsubfolder += suffix
 
-    outputfolder_base = os.path.join(outputfolder, subdir, outputsubfolder)
+    # outputsubfolder += args.bsm_model
+    if args.UseBSM:
+        # coupling_name = 
+        outputfolder_base = os.path.join(outputfolder, subdir, outputsubfolder, args.bsm_model[0])
+        print(outputfolder_base)
+    else:
+        outputfolder_base = os.path.join(outputfolder, subdir, outputsubfolder)
     if not os.path.exists(outputfolder_base):
         os.makedirs(outputfolder_base)
     copy_index_html(outputfolder_base)
@@ -213,6 +225,37 @@ def plot_EFT_line(axis, histograms, variable: Variable, years, operator: str, no
     return all_variations
 
 
+def plot_BSM_line(axis, histograms, variable: Variable, years, models: list, masses: list, couplings: list, normalization_contribution=None):
+    binning = generate_binning(variable.range, variable.nbins)
+    if normalization_contribution is None:
+        normalization_contribution = np.ones(variable.nbins)
+    # nominal_content = np.zeros(variable.nbins)
+    all_variations = []
+    for model, mass, coupling in itertools.product(models, masses, couplings):
+        name_string = f"{model}_{mass}"
+        current_histograms = histograms[name_string]
+        # print(histograms.keys())
+        current_variation = np.zeros(variable.nbins)
+        for year in years:
+            current_variation += float(coupling)* float(coupling) * np.array(ak.to_numpy(current_histograms[year][variable.name]["BSM_Quad"]["Up"]))
+            current_variation += (float(coupling) ** 4) * np.array(ak.to_numpy(current_histograms[year][variable.name]["BSM_Quartic"]["Up"]))
+        
+        current_variation = np.nan_to_num(current_variation / normalization_contribution, nan=1., posinf=1., neginf=1.)
+
+        pretty_bsm_name = model.split("Philic")[-1]
+        pretty_bsm_name = pretty_bsm_name.replace("Vector", "V")
+        pretty_bsm_name = pretty_bsm_name.replace("Singlet", "S")
+        pretty_bsm_name = pretty_bsm_name.replace("Octet", "O")
+        pretty_bsm_name = pretty_bsm_name.replace("Scalar", "S")
+        mass_name = float(mass/1000)
+        coupling_name = "(g="+str(coupling)+")"
+        pretty_bsm_name += " " + str(mass_name) + " TeV " + coupling_name
+        axis.hist(binning[:-1], binning, weights=current_variation, histtype="step",
+                  label=pretty_bsm_name, linewidth=2.)
+        all_variations.append(current_variation)
+    return all_variations
+
+
 def finalize_plot(figure, axes, variable: Variable, plotdir: str, plotlabel=""):
     for ax in axes:
         ax.set_xlim(variable.range)
@@ -235,12 +278,14 @@ def get_lumi(years):
         "2016": 36.3,
         "2017": 41.5,
         "2018": 59.8,
+        # "Run2": 167.0,
     }
     for year in years:
         total_lumi += lumi[year]
 
     if total_lumi >= 100.:
         total_lumi = round(total_lumi)
+    # total_lumi += lumi[years]
     return total_lumi
 
 
@@ -251,6 +296,10 @@ def plotting_sequence(args, histograms, variable, processinfo, plotdir, channel,
     if args.EFT_ratio or args.EFT_fullbkg:
         n_ratios = 1
     if args.EFT_fullbkg:
+        n_ratios = 2
+    if args.BSM_ratio:
+        n_ratios = 1
+    if args.BSM_fullbkg:
         n_ratios = 2
     
     lumi = get_lumi(args.years)
@@ -273,6 +322,12 @@ def plotting_sequence(args, histograms, variable, processinfo, plotdir, channel,
 
     if args.UseEFT:
         plot_EFT_line(axes[0], histograms[args.EFTsignal], variable, args.years, args.wc)
+    if args.UseBSM:
+        plot_BSM_line(axes[0], histograms, variable, args.years, args.bsm_model, args.bsm_mass, args.bsm_coupling)
+    if args.BSM_ratio:
+        bsm_content = plot_BSM_line(axes[1], histograms, variable, args.years, args.bsm_model, args.bsm_mass, args.bsm_coupling, None)
+        axes[1].set_ylabel(r"Sig", fontsize="small")
+        modify_yrange_updown(axes[1], bsm_content)
 
     if args.SBRatio:
         ratiocontent = plot_signal_bkg_ratio(axes[1], main_plot_out["binning"], main_plot_out["signal"], main_plot_out["bkg"])
@@ -284,6 +339,10 @@ def plotting_sequence(args, histograms, variable, processinfo, plotdir, channel,
         eft_content = plot_EFT_line(axes[2], histograms[args.EFTsignal], variable, args.years, args.wc, main_plot_out["sum"])
         axes[2].set_ylabel("EFT / SM", fontsize="small")
         modify_yrange_updown(axes[2], eft_content)
+    if args.BSM_fullbkg:
+        bsm_content = plot_BSM_line(axes[2], histograms, variable, args.years, args.bsm_model, args.bsm_mass, args.bsm_coupling, main_plot_out["bkg"])
+        axes[2].set_ylabel("Sig / BKG", fontsize="small")
+        modify_yrange_updown(axes[2], bsm_content)
 
     finalize_plot(fig, axes, variable, plotdir, channel)
 
@@ -309,7 +368,7 @@ if __name__ == "__main__":
     storagepath = os.path.join(args.storage, subbasedir)
 
     # TODO: outputfolder with year and suffix:
-    outputfolder_base = generate_outputfolder(args.years, args.outputfolder, subbasedir, suffix="_data")
+    outputfolder_base = generate_outputfolder(args.years, args.outputfolder, subbasedir, suffix=args.suffix)
 
     for channel in channels:
         if args.channel is not None and channel != args.channel:
