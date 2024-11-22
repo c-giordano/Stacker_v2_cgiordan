@@ -21,7 +21,7 @@
             "ttZ", 
             "ttH", 
             "Xg", 
-            "VV(V)", 
+            "VVV", 
             "Othert", 
             "TTT"
         ], 
@@ -123,7 +123,7 @@
         "type": "weight"
     }, 
     "VVVNorm": {
-        "processes": "VV(V)", 
+        "processes": "VVV", 
         "corr_proc": 1, 
         "technical_name": "Norm_VVV", 
         "channels": "all", 
@@ -293,7 +293,7 @@
             "ttZ", 
             "ttH", 
             "Xg", 
-            "VV(V)", 
+            "VVV", 
             "Othert"
         ], 
         "corr_proc": 0, 
@@ -429,7 +429,7 @@
             "ttZ", 
             "ttH", 
             "Xg", 
-            "VV(V)", 
+            "VVV", 
             "Othert"
         ], 
         "corr_proc": 0, 

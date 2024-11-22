@@ -21,7 +21,7 @@
             "ttZ", 
             "ttH", 
             "Xg", 
-            "VV(V)", 
+            "VVV", 
             "Othert"
         ], 
         "corr_proc": 0, 
@@ -234,7 +234,7 @@
         "type": "flat"
     }, 
     "VVVNorm": {
-        "processes": "VV(V)", 
+        "processes": "VVV", 
         "corr_proc": 1, 
         "technical_name": "Norm_VVV", 
         "channels": "all", 
@@ -277,7 +277,7 @@
     "btag_lf_stats1": {
         "aliasDown": "nominalWeight * expDown[:, 11]", 
         "processes": "MCOnly", 
-        "technical_name": "BTagSFLfs1_2018", 
+        "technical_name": "CMS_btag_lfstats1_2018", 
         "aliasUp": "nominalWeight * expUp[:, 11]", 
         "channels": "all", 
         "pretty_name": "BTagSFLfs1_2018", 
@@ -290,7 +290,7 @@
             "ttZ", 
             "ttH", 
             "Xg", 
-            "VV(V)", 
+            "VVV", 
             "Othert"
         ], 
         "corr_proc": 0, 
@@ -442,7 +442,7 @@
             "ttZ", 
             "ttH", 
             "Xg", 
-            "VV(V)", 
+            "VVV", 
             "Othert"
         ], 
         "corr_proc": 0, 
