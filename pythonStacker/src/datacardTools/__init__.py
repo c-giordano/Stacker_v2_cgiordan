@@ -93,7 +93,8 @@ class DatacardWriter():
             systematic_mod.pretty_name = systematic.pretty_name + processname
             systematic_mod.technical_name = systematic.technical_name + processname
             systematic_mod.name = systematic.name + processname
-            systematic_mod.set_processes([process])
+            #systematic_mod.set_processes([process])
+	    systematic_mod.set_processes(["^"+process+"$"])
             # then use nominal addition
             self.add_systematic_correlated(systematic_mod)
 
