@@ -1,0 +1,113 @@
+{
+    "Basedir": "/pnfs/iihe/cms/store/user/nivanden/AnalysisOutput/ReducedTuples/2024-04-23_16-46",
+    "Processes": {
+        "Data": {
+            "fileglobs": ["Tree_*MergedNew*Run*Obs"],
+            "pretty_name": "data",
+            "color": "#000000",
+            "isData": 1
+        },
+        "Data2016PreVFPB": {
+            "fileglobs": ["Tree_*MergedNew*Run2016B*Obs"],
+            "pretty_name": "data",
+            "color": "#000000",
+            "isData": 1
+        },
+        "Data2016PreVFPC": {
+            "fileglobs": ["Tree_*MergedNew*Run2016C*Obs"],
+            "pretty_name": "data",
+            "color": "#000000",
+            "isData": 1
+        },
+        "Data2016PreVFPD": {
+            "fileglobs": ["Tree_*MergedNew*Run2016D*Obs"],
+            "pretty_name": "data",
+            "color": "#000000",
+            "isData": 1
+        },
+        "Data2016PreVFPE": {
+            "fileglobs": ["Tree_*MergedNew*Run2016E*Obs"],
+            "pretty_name": "data",
+            "color": "#000000",
+            "isData": 1
+        },
+        "Data2016PreVFPF": {
+            "fileglobs": ["Tree_*MergedNew*Run2016F*Obs"],
+            "pretty_name": "data",
+            "color": "#000000",
+            "isData": 1
+        },
+        "Data2016PostVFPF": {
+            "fileglobs": ["Tree_*MergedNew*Run2016F*Obs"],
+            "pretty_name": "data",
+            "color": "#000000",
+            "isData": 1
+        },
+        "Data2016PostVFPG": {
+            "fileglobs": ["Tree_*MergedNew*Run2016G*Obs"],
+            "pretty_name": "data",
+            "color": "#000000",
+            "isData": 1
+        },
+        "Data2016PostVFPH": {
+            "fileglobs": ["Tree_*MergedNew*Run2016H*Obs"],
+            "pretty_name": "data",
+            "color": "#000000",
+            "isData": 1
+        },
+        "Data2017B": {
+            "fileglobs": ["Tree_*MergedNew*Run2017B*Obs"],
+            "pretty_name": "data",
+            "color": "#000000",
+            "isData": 1
+        },
+        "Data2017C": {
+            "fileglobs": ["Tree_*MergedNew*Run2017C*Obs"],
+            "pretty_name": "data",
+            "color": "#000000",
+            "isData": 1
+        },
+        "Data2017D": {
+            "fileglobs": ["Tree_*MergedNew*Run2017D*Obs"],
+            "pretty_name": "data",
+            "color": "#000000",
+            "isData": 1
+        },
+        "Data2017E": {
+            "fileglobs": ["Tree_*MergedNew*Run2017E*Obs"],
+            "pretty_name": "data",
+            "color": "#000000",
+            "isData": 1
+        },
+        "Data2017F": {
+            "fileglobs": ["Tree_*MergedNew*Run2017F*Obs"],
+            "pretty_name": "data",
+            "color": "#000000",
+            "isData": 1
+        },
+        "Data2018A": {
+            "fileglobs": ["Tree_*MergedNew*Run2018A*Obs"],
+            "pretty_name": "data",
+            "color": "#000000",
+            "isData": 1
+        },
+        "Data2018B": {
+            "fileglobs": ["Tree_*MergedNew*Run2018B*Obs"],
+            "pretty_name": "data",
+            "color": "#000000",
+            "isData": 1
+        },
+        "Data2018C": {
+            "fileglobs": ["Tree_*MergedNew*Run2018C*Obs"],
+            "pretty_name": "data",
+            "color": "#000000",
+            "isData": 1
+        },
+        "Data2018D": {
+            "fileglobs": ["Tree_*MergedNew*Run2018D*Obs"],
+            "pretty_name": "data",
+            "color": "#000000",
+            "isData": 1
+        }
+    }
+}

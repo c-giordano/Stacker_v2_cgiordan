@@ -62,18 +62,18 @@
         "corr_proc": 1,
         "type": "flat"
     },
-    "nonPromptMuNorm2016": {
-        "pretty_name": "nonPromptMuNorm2016",
-        "technical_name": "nonPromptMuNorm2016",
+    "nonPromptMuNorm2017": {
+        "pretty_name": "nonPromptMuNorm2017",
+        "technical_name": "nonPromptMuNorm2017",
         "channels": "all",
         "processes": "nonPromptMuon",
         "rate": 1.2,
         "corr_proc": 1,
         "type": "flat"
     },
-    "nonPromptElNorm2016": {
-        "pretty_name": "nonPromptElNorm2016",
-        "technical_name": "nonPromptElNorm2016",
+    "nonPromptElNorm2017": {
+        "pretty_name": "nonPromptElNorm2017",
+        "technical_name": "nonPromptElNorm2017",
         "channels": "all",
         "processes": "nonPromptElectron",
         "rate": 1.2,
@@ -107,12 +107,21 @@
         "corr_proc": 1,
         "type": "flat"
     },
-    "Lumi2016": {
-        "pretty_name": "Lumi2016",
-        "technical_name": "Lumi2016",
+    "Lumi2017": {
+        "pretty_name": "Lumi2017",
+        "technical_name": "Lumi2017",
         "channels": "all",
         "processes": "MCOnly",
-        "rate": 1.01,
+        "rate": 1.02,
+        "corr_proc": 1,
+        "type": "flat"
+    },
+    "Lumi1718": {
+        "pretty_name": "Lumi1718",
+        "technical_name": "Lumi1718",
+        "channels": "all",
+        "processes": "MCOnly",
+        "rate": 1.006,
         "corr_proc": 1,
         "type": "flat"
     },
@@ -121,24 +130,24 @@
         "technical_name": "Lumi",
         "channels": "all",
         "processes": "MCOnly",
-        "rate": 1.006,
+        "rate": 1.009,
         "corr_proc": 1,
         "type": "flat"
     },
     "ScaleVar": {
         "channels": "all",
-        "processes": ["TTW","TTZ","TTH","Xgamma","WZ","VVV","other_t","TTT"],
+        "processes": ["TTW","TTZ","TTH","Xgamma","WZ","VVV","other_t"],
         "type": "weight",
         "corr_proc": 0
     },
-    "ScaleVarEnvelopeTTTT": {
+    "ScaleVarEnvelopeTTT": {
         "channels": "all",
-        "processes": ["TTTT", "sm", "quad"],
+        "processes": ["TTT", "sm", "quad"],
         "type": "envelope"
     },
     "ScaleVarEnvelope": {
         "channels": "all",
-        "processes": ["TTH", "TTW"],
+        "processes": ["TTH", "TTW","TTTT"],
         "type": "envelope",
         "corr_proc": 0
     },
@@ -168,8 +177,8 @@
         "aliasDown": "nominalWeight * expDown[:, 1]"
     },
     "MuonIDStat": {
-        "pretty_name": "MuonIDStat_2016",
-        "technical_name": "MuonIDStat_2016",
+        "pretty_name": "MuonIDStat_2017",
+        "technical_name": "MuonIDStat_2017",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -184,8 +193,8 @@
         "aliasDown": "nominalWeight * expDown[:, 3]"
     },
     "ElectronIDStat": {
-        "pretty_name": "ElectronIDStat_2016",
-        "technical_name": "ElectronIDStat_2016",
+        "pretty_name": "ElectronIDStat_2017",
+        "technical_name": "ElectronIDStat_2017",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -209,8 +218,8 @@
         "aliasDown": "nominalWeight * expDown[:, 7]"
     },
     "btag_hf_stats1": {
-        "pretty_name": "BTagSFHfs1_2016",
-        "technical_name": "BTagSFHfs1_2016",
+        "pretty_name": "BTagSFHfs1_2017",
+        "technical_name": "BTagSFHfs1_2017",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -218,8 +227,8 @@
         "aliasDown": "nominalWeight * expDown[:, 9]"
     },
     "btag_hf_stats2": {
-        "pretty_name": "BTagSFHfs2_2016",
-        "technical_name": "BTagSFHfs2_2016",
+        "pretty_name": "BTagSFHfs2_2017",
+        "technical_name": "BTagSFHfs2_2017",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -236,8 +245,8 @@
         "aliasDown": "nominalWeight * expDown[:, 8]"
     },
     "btag_lf_stats1": {
-        "pretty_name": "BTagSFLfs1_2016",
-        "technical_name": "BTagSFLfs1_2016",
+        "pretty_name": "BTagSFLfs1_2017",
+        "technical_name": "BTagSFLfs1_2017",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -245,8 +254,8 @@
         "aliasDown": "nominalWeight * expDown[:, 11]"
     },
     "btag_lf_stats2": {
-        "pretty_name": "BTagSFLfs2_2016",
-        "technical_name": "BTagSFLfs2_2016",
+        "pretty_name": "BTagSFLfs2_2017",
+        "technical_name": "BTagSFLfs2_2017",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -279,13 +288,13 @@
         "fileglob": "JEC"
     },
     "JER_2p5": {
-        "technical_name": "JER_2p5_2016",
+        "technical_name": "JER_2p5_2017",
         "fileglob": "JER",
         "processes": "MCOnly",
         "type": "shape"
     },
     "JER_1p93": {
-        "technical_name": "JER_1p93_2016",
+        "technical_name": "JER_1p93_2017",
         "fileglob": "JER",
         "processes": "MCOnly",
         "type": "shape"
@@ -295,20 +304,20 @@
         "processes": "MCOnly",
         "type": "shape"
     },
+    "ISRTTT": {
+        "channels": "all",
+        "processes": ["TTT", "sm", "lin", "quad"],
+        "type": "weight",
+        "aliasUp": "isrfsrVariations[:, 0]",
+        "aliasDown": "isrfsrVariations[:, 1]"
+    },
     "ISR": {
         "channels": "all",
-        "processes": ["TTW","TTZ","TTH","Xgamma","WZ","VVV","other_t","TTT"],
+        "processes": ["TTW","TTZ","TTH","Xgamma","WZ","VVV","other_t","TTTT"],
         "type": "weight",
         "aliasUp": "isrfsrVariations[:, 0]",
         "aliasDown": "isrfsrVariations[:, 1]",
         "corr_proc": 0
-    },
-    "ISRTTTT": {
-        "channels": "all",
-        "processes": ["TTTT", "sm", "lin", "quad"],
-        "type": "weight",
-        "aliasUp": "isrfsrVariations[:, 0]",
-        "aliasDown": "isrfsrVariations[:, 1]"
     },
     "FSR": {
         "channels": "all",

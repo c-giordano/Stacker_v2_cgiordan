@@ -1,3 +1,6 @@
+import numpy as np
+np.finfo(np.dtype("float32"))
+np.finfo(np.dtype("float64"))
 import argparse
 import json
 import src.jobSubmission.condorTools as ct
@@ -80,6 +83,8 @@ if __name__ == "__main__":
                     command += " --EFT"
                 if args.UseBSM is True:
                     command += " --BSM"
+                if args.UseData:
+                    command += " --data"
 
                 for syst in systematics:
                     if syst is None:

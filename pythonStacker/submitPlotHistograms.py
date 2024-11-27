@@ -10,6 +10,7 @@ def parse_arguments():
     arguments.add_settingfiles(parser)
     arguments.select_specifics(parser)
     arguments.add_toggles(parser)
+    parser.add_argument("--wc", action="store", default="ctt")
 
     args = parser.parse_args()
     return args
@@ -32,6 +33,7 @@ if __name__ == "__main__":
     if args.UseEFT:
         basecommand += " --EFT"
         basecommand += " --EFT_ratio --EFT_fullbkg"
+        basecommand += f" --wc {args.wc}"
     cmds = []
     for year in args.years:
         for channel in channels:
@@ -41,6 +43,8 @@ if __name__ == "__main__":
                 continue
             cmd = basecommand + f" -y {year}"
             cmd += f" -c {channel}"
+            if args.UseData:
+                cmd += " --data"
             cmds.append([cmd])
 
      #if "2016PreVFP" in args.years and "2016PostVFP" in args.years:
@@ -53,8 +57,8 @@ if __name__ == "__main__":
     #        cmd_tmp = cmd + f" -c {channel}"
     #        cmds.append([cmd_tmp])
 
-    if len(args.years) >= 4:
-        cmd = basecommand + " -y 2016PreVFP 2016PostVFP 2017 2018"
+    if len(args.years) >= 2:
+        cmd = basecommand + " -y 2016 2017 2018"
         for channel in channels:
             if args.channel is not None and channel != args.channel:
                 continue

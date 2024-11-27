@@ -1,6 +1,16 @@
 {
     "Basedir": "/pnfs/iihe/cms/store/user/nivanden/AnalysisOutput/ReducedTuples/2024-04-23_16-46",
     "Processes": {
+        "TTTW": {
+            "fileglobs": ["Tree_TTTW_TuneCP5_*MCPrompt"],
+            "pretty_name": "ttt",
+            "color": "#e9d98d"
+        },
+        "TTTJ": {
+            "fileglobs": ["Tree_TTTJ_TuneCP5_*MCPrompt"],
+            "pretty_name": "ttt",
+            "color": "#e9d98d"
+        },
         "TTT": {
             "fileglobs": ["Tree_TTTW_TuneCP5_*MCPrompt", "Tree_TTTJ_TuneCP5_*MCPrompt"],
             "pretty_name": "ttt",

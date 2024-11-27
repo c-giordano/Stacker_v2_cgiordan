@@ -93,65 +93,68 @@ def clean_systematics(systematics: dict[str, Uncertainty], process):
 def create_histograms_singledata(output_histograms: dict, args, files, channel: Channel, variables: VariableReader, systematics: dict, globalEFTToggle, globalBSMToggle):
     for filename in files:
         print(f"opening file {filename}")
-        current_tree: uproot.TTree = src.get_tree_from_file(filename, args.process)
-
-        # generates masks for subchannels
-        subchannelmasks, subchannelnames = channel.produce_masks(current_tree)
-
-        # no structure yet to load systematics weights. Weightmanager? Or move to systematics loop?
-        # Does imply more overhead in reading, can try here, see what memory effect it has, otherwise move to systematics.
-        # weights = ak.to_numpy(current_tree.arrays(["weights"], cut=channel.selection, aliases={"weights": "nominalWeight"}).weights)
-        print("Loading weights...")
-        weights = WeightManager(current_tree, channel.selection, systematics)
-        if globalEFTToggle:
-            eventclass = channel.selection.split("==")[-1]
-            weights.add_eftvariations(get_eftvariations_filename(args.storage, filename, eventclass))
-        if globalBSMToggle:
-            eventclass = channel.selection.split("==")[-1]
-            weights.add_bsmvariations(get_bsmvariations_filename(args.storage, filename, eventclass))
-        print("Done!")
-        for _, variable in variables.get_variable_objects().items():
-            if not variable.is_channel_relevant(args.channel):
-                continue
-            # load data:
-            data = get_histogram_data(variable, current_tree, channel)
-
-            for name, syst in systematics.items():
-                if name == "stat_unc":
-                    # don't need a dedicated run for this; should be filled before
+        processes = ["nonPromptElectron", "nonPromptMuon"] if args.process == "nonPrompt" else [args.process]
+        for process in processes:
+            print(f"working on process {process}")
+            current_tree: uproot.TTree = src.get_tree_from_file(filename, process)
+    
+            # generates masks for subchannels
+            subchannelmasks, subchannelnames = channel.produce_masks(current_tree)
+    
+            # no structure yet to load systematics weights. Weightmanager? Or move to systematics loop?
+            # Does imply more overhead in reading, can try here, see what memory effect it has, otherwise move to systematics.
+            # weights = ak.to_numpy(current_tree.arrays(["weights"], cut=channel.selection, aliases={"weights": "nominalWeight"}).weights)
+            print("Loading weights...")
+            weights = WeightManager(current_tree, channel.selection, systematics)
+            if globalEFTToggle:
+                eventclass = channel.selection.split("==")[-1]
+                weights.add_eftvariations(get_eftvariations_filename(args.storage, filename, eventclass))
+            if globalBSMToggle:
+                eventclass = channel.selection.split("==")[-1]
+                weights.add_bsmvariations(get_bsmvariations_filename(args.storage, filename, eventclass))
+            print("Done!")
+            for _, variable in variables.get_variable_objects().items():
+                if not variable.is_channel_relevant(args.channel):
                     continue
-                if name == "nominal":
-                    hist_content, _, hist_unc = prepare_histogram(data, weights["nominal"], variable)
-                    output_histograms[args.channel][variable.name]["nominal"] += hist_content
-                    output_histograms[args.channel][variable.name]["stat_unc"] += hist_unc
-                else:
-                    if not syst.is_process_relevant(args.process):
-                        continue
-                    keys = syst.get_weight_keys()
-                    hist_content_up, _, _ = prepare_histogram(data, weights[keys[0]], variable)
-                    output_histograms[args.channel][variable.name][name]["Up"] += hist_content_up
-                    if keys[1] is not None:
-                        hist_content_down, _, _ = prepare_histogram(data, weights[keys[1]], variable)
-                        output_histograms[args.channel][variable.name][name]["Down"] += hist_content_down
-
-                for subchannel_name in subchannelnames:
+                # load data:
+                data = get_histogram_data(variable, current_tree, channel)
+    
+                for name, syst in systematics.items():
                     if name == "stat_unc":
                         # don't need a dedicated run for this; should be filled before
                         continue
                     if name == "nominal":
-                        hist_content, _, hist_unc = prepare_histogram(data[subchannelmasks[subchannel_name]], weights["nominal"][subchannelmasks[subchannel_name]], variable)
-                        output_histograms[subchannel_name][variable.name]["nominal"] += hist_content
-                        output_histograms[subchannel_name][variable.name]["stat_unc"] += hist_unc
+                        hist_content, _, hist_unc = prepare_histogram(data, weights["nominal"], variable)
+                        output_histograms[args.channel][variable.name]["nominal"] += hist_content
+                        output_histograms[args.channel][variable.name]["stat_unc"] += hist_unc
                     else:
-                        if not syst.is_process_relevant(args.process):
+                        if not syst.is_process_relevant(process):
                             continue
                         keys = syst.get_weight_keys()
-                        hist_content_up, _, _ = prepare_histogram(data[subchannelmasks[subchannel_name]], weights[keys[0]][subchannelmasks[subchannel_name]], variable)
-                        output_histograms[subchannel_name][variable.name][name]["Up"] += hist_content_up
+                        hist_content_up, _, _ = prepare_histogram(data, weights[keys[0]], variable)
+                        output_histograms[args.channel][variable.name][name]["Up"] += hist_content_up
                         if keys[1] is not None:
-                            # TODO: check if this works
-                            hist_content_down, _, _ = prepare_histogram(data[subchannelmasks[subchannel_name]], weights[keys[1]][subchannelmasks[subchannel_name]], variable)
-                            output_histograms[subchannel_name][variable.name][name]["Down"] += hist_content_down
+                            hist_content_down, _, _ = prepare_histogram(data, weights[keys[1]], variable)
+                            output_histograms[args.channel][variable.name][name]["Down"] += hist_content_down
+    
+                    for subchannel_name in subchannelnames:
+                        if name == "stat_unc":
+                            # don't need a dedicated run for this; should be filled before
+                            continue
+                        if name == "nominal":
+                            hist_content, _, hist_unc = prepare_histogram(data[subchannelmasks[subchannel_name]], weights["nominal"][subchannelmasks[subchannel_name]], variable)
+                            output_histograms[subchannel_name][variable.name]["nominal"] += hist_content
+                            output_histograms[subchannel_name][variable.name]["stat_unc"] += hist_unc
+                        else:
+                            if not syst.is_process_relevant(process):
+                                continue
+                            keys = syst.get_weight_keys()
+                            hist_content_up, _, _ = prepare_histogram(data[subchannelmasks[subchannel_name]], weights[keys[0]][subchannelmasks[subchannel_name]], variable)
+                            output_histograms[subchannel_name][variable.name][name]["Up"] += hist_content_up
+                            if keys[1] is not None:
+                                # TODO: check if this works
+                                hist_content_down, _, _ = prepare_histogram(data[subchannelmasks[subchannel_name]], weights[keys[1]][subchannelmasks[subchannel_name]], variable)
+                                output_histograms[subchannel_name][variable.name][name]["Down"] += hist_content_down
 
 
 def create_histogram_shapevar(output_histograms: dict, args, files, channel: Channel, variables: VariableReader, systematics: dict, globalEFTToggle, globalBSMToggle):

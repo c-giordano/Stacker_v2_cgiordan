@@ -4,7 +4,7 @@ import math
 import argparse
 import json
 import sys
-import os
+import os ,shutil
 import fnmatch
 from array import array
 import ctypes
@@ -118,6 +118,7 @@ parser.add_argument('--region', default='', help='Name of kinematic region')
 parser.add_argument('--lumi', default='138 fb^{-1} (13 TeV)', help='Lumi label')
 parser.add_argument('--split', default=False, action='store_true', help='Split into different processes')
 parser.add_argument('--asimov', default=False, action='store_true', help='Do not plot data')
+parser.add_argument('--plot_directory', default='/SS2L_3L_fit/post-fit/')
 
 args = parser.parse_args()
 extra_pad = float(args.extra_pad)
@@ -135,7 +136,7 @@ reg = args.region
 #hashcol = ROOT.TColor.GetColor('#898d8d')
 #hashcol = ROOT.TColor.GetColor('#a2acab')
 hashcol = ROOT.TColor.GetColor('#bec6c4')
-sigcol = ROOT.TColor.GetColor('#ef3340')
+sigcol = ROOT.TColor.GetColor("#ffa90e")
 
 add = bool('njets' in args.file or 'loose' in args.file or 'medium' in args.file or 'ht' in args.file)
 
@@ -272,13 +273,13 @@ for d in histo_file.GetListOfKeys():
 
 procSel, procSelCol, procName = [], [], []
 if '_sig' in args.outname:
-    procs = ['TTT', 'Other_t', 'Xgam', 'ChargeMisID', 'WZ', 'VVV', 'nonPromptElectron', 'nonPromptMuon', 'TTH', 'TTZ', 'TTW', 'TTTT']
-    procnames = ['ttt', 'Other t', 'X#gamma', 'Charge misID', 'VV(V)', 'VV(V)', 'Nonprompt', 'Nonprompt', 't#bar{t}H', 't#bar{t}Z', 't#bar{t}W', 't#bar{t}t#bar{t}']
-    proccol = ['#ead98b', 851, 593, 882, 893, 893, '#fa873d', '#fa873d', '#715c2a', 407, 419, '#ef3340']
+    procs = ['TTT', 'other_t', 'Xgamma', 'ChargeMisID', 'WZ', 'VVV', 'nonPromptElectron', 'nonPromptMuon', 'TTH', 'TTZ', 'TTW', 'TotalSig']
+    procnames = ['ttt', 'Other t', 'X#gamma', 'ChargeMisID', 'WZ', 'VV(V)', 'NP e', 'NP #mu', 't#bar{t}H', 't#bar{t}Z', 't#bar{t}W', 't#bar{t}t#bar{t}']
+    proccol = ["#e9d98d", '#92dadd', "#3f90da", "#832db6", "#bd1f01", "#bd1f01", "#e76300", "#a96b59", "#b9ac70", "#717581", "#94a4a2", "#ffa90e"]
 else:
-    procs = ['TTT', 'Other_t', 'Xgam', 'ChargeMisID', 'WZ', 'VVV', 'nonPromptElectron', 'nonPromptMuon', 'TTH', 'TTZ', 'TTW', 'TTTT']
-    procnames = ['Other t', 'Other t', 'X#gamma', 'Charge misID', 'VV(V)', 'VV(V)', 'Nonprompt', 'Nonprompt', 't#bar{t}H', 't#bar{t}Z', 't#bar{t}W', 't#bar{t}t#bar{t}']
-    proccol = [851, 851, 593, 882, 893, 893, '#fa873d', '#fa873d', '#715c2a', 407, 419, '#ef3340']
+    procs = ['TTT', 'other_t', 'Xgamma', 'ChargeMisID', 'WZ', 'VVV', 'nonPromptElectron', 'nonPromptMuon', 'TTH', 'TTZ', 'TTW', 'TotalSig']
+    procnames = ['ttt', 'Other t', 'X#gamma', 'ChargeMisID', 'WZ', 'VV(V)', 'NP e', 'NP #mu', 't#bar{t}H', 't#bar{t}Z', 't#bar{t}W', 't#bar{t}t#bar{t}']
+    proccol = ["#e9d98d", '#92dadd', "#3f90da", "#832db6", "#bd1f01", "#bd1f01", "#e76300", "#a96b59", "#b9ac70", "#717581", "#94a4a2", "#ffa90e"]
 
 prochist = []
 for ip, p in enumerate(procs):
@@ -511,7 +512,7 @@ else:
         ipp = len(procSel)-ip-1
         p = procSel[ipp]
 #    for ip, p in enumerate(procSel):
-        if procSel[ipp] == 'TTTT' or p not in procSel: continue
+        if procSel[ipp] == 'TotalSig' or p not in procSel: continue
         if procSel[ipp] == 'TTT' and 'sig' not in args.outname: continue
         if procSel[ipp] == 'nonPromptMuon' and 'nonPromptElectron' in procSel: continue
         if procSel[ipp] == 'ttt' and 'Other t' in procSel and 'sig' not in args.outname: continue
@@ -732,8 +733,8 @@ xlabel = 0.22
 if '\\,' in regName:
     ylabel = 0.83
     xlabel = 0.20
-#label.DrawMathText(xlabel, ylabel, regName)
-#label.Draw()
+label.DrawMathText(xlabel, ylabel, regName)
+label.Draw()
 
 #if add and 'OneMedB' in args.file:
 #    labelb = ROOT.TMathText()
@@ -744,7 +745,7 @@ if '\\,' in regName:
 #    labelb.SetTextSize(0.055)
 #    labelb.DrawMathText(0.65, 0.65, '\mathrm{N_{b}^{medium} \geq 1}')
 #    labelb.Draw()
-
+#
 #pfl = ROOT.TMathText()
 #pfl.SetNDC()
 #pfl.SetTextAlign(13)
@@ -785,8 +786,18 @@ pads[0].cd()
 pads[0].GetFrame().Draw()
 pads[0].RedrawAxis()
 
-c2.Print(args.outname+".png")
-c2.Print(args.outname+".pdf")
-c2.Print(args.outname+".eps")
+plot_directory_ = "/user/mshoosht/public_html/Interpretations/Plots/"+args.plot_directory+"/"
+if not os.path.exists(plot_directory_):
+	try:
+		os.makedirs(plot_directory_)
+	except OSError: # Resolve rare race condition
+		pass
+
+shutil.copyfile('/user/mshoosht/public_html/index.php', os.path.join( plot_directory_, 'index.php' ) )
+print plot_directory_
+
+c2.Print(plot_directory_+args.outname+".png")
+c2.Print(plot_directory_+args.outname+".pdf")
+c2.Print(plot_directory_+args.outname+".root")
 
 

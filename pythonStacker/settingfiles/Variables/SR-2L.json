@@ -1,7 +1,7 @@
 {
     "HT_SR2L" : {
-        "range": [200.0, 1400.0],
-        "nbins": 12,
+        "range": [200.0, 1600.0],
+        "nbins": 7,
         "axis_label": "$H_T$",
         "branch_name": "jetPt",
         "method_name": "sum_branch",

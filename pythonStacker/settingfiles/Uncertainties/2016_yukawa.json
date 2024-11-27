@@ -127,18 +127,13 @@
     },
     "ScaleVar": {
         "channels": "all",
-        "processes": ["TTW","TTZ","TTH","Xgamma","WZ","VVV","other_t","TTT"],
+        "processes": "MCOnly",
         "type": "weight",
         "corr_proc": 0
     },
-    "ScaleVarEnvelopeTTTT": {
-        "channels": "all",
-        "processes": ["TTTT", "sm", "quad"],
-        "type": "envelope"
-    },
     "ScaleVarEnvelope": {
         "channels": "all",
-        "processes": ["TTH", "TTW"],
+        "processes": ["TTTT", "sm", "quad", "TTH", "TTW"],
         "type": "envelope",
         "corr_proc": 0
     },
@@ -297,18 +292,11 @@
     },
     "ISR": {
         "channels": "all",
-        "processes": ["TTW","TTZ","TTH","Xgamma","WZ","VVV","other_t","TTT"],
+        "processes": "MCOnly",
         "type": "weight",
         "aliasUp": "isrfsrVariations[:, 0]",
         "aliasDown": "isrfsrVariations[:, 1]",
         "corr_proc": 0
-    },
-    "ISRTTTT": {
-        "channels": "all",
-        "processes": ["TTTT", "sm", "lin", "quad"],
-        "type": "weight",
-        "aliasUp": "isrfsrVariations[:, 0]",
-        "aliasDown": "isrfsrVariations[:, 1]"
     },
     "FSR": {
         "channels": "all",
@@ -356,5 +344,32 @@
         "type": "weight",
         "aliasUp": "nominalWeight * otherVariations[:, 12]",
         "aliasDown": "nominalWeight * otherVariations[:, 13]"
+    },
+    "tttt_norm": {
+        "pretty_name": "tttt_norm",
+        "technical_name": "tttt_norm",
+        "channels": "all",
+        "processes": "TTTT",
+        "rate": "0.867/1.078",
+        "corr_proc": 0,
+        "type": "flat"
+    },
+    "tttj_norm": {
+        "pretty_name": "tttj_norm",
+        "technical_name": "tttj_norm",
+        "channels": "all",
+        "processes": "TTTJ",
+        "rate": "0.90/1.12",
+        "corr_proc": 0,
+        "type": "flat"
+    },
+    "tttw_norm": {
+        "pretty_name": "tttw_norm",
+        "technical_name": "tttw_norm",
+        "channels": "all",
+        "processes": "TTTW",
+        "rate": "0.846/1.162",
+        "corr_proc": 0,
+        "type": "flat"
     }
 }

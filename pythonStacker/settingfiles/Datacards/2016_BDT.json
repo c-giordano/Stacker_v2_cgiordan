@@ -1,0 +1,49 @@
+{
+    "DC_name": "DC_2016",
+    "channelcontent": {
+        "CR-3L-Z": {
+            "variable": "NJets_CR3LZ",
+            "prettyname": "CR3LZ"
+        },
+        "SR-2Lpuresig": {
+            "variable": "BDTScore_TTTT_2L_ll",
+            "prettyname": "SR2L_Sig"
+        },
+        "SR-2LpureTTW": {
+            "variable": "BDTScore_TTX_2L",
+            "prettyname": "SR2L_ttw"
+        },
+        "SR-2LpureNP": {
+            "variable": "BDTScore_NP_2L",
+            "prettyname": "SR2L_NP"
+        },
+        "SR-3Lpuresig": {
+            "variable": "BDTScore_TTTT_3L",
+            "prettyname": "SR3L_Sig"
+        },
+        "SR-3LpureTTW": {
+            "variable": "BDTScore_TTX_3L",
+            "prettyname": "SR3L_ttw"
+        },
+        "SR-3LpureNP": {
+            "variable": "BDTScore_NP_3L",
+            "prettyname": "SR3L_NP"
+        },
+        "CR-2L-23J1B": {
+            "variable": "BDTScore_ttbar_CR2L",
+            "prettyname": "CR2LNP"
+        },
+        "CR-2L-45J2B": {
+            "variable": "BDTScore_ttbar_CR2L",
+            "prettyname": "CR2LTTW"
+        },
+        "CR-4L-Z": {
+            "variable": "NJets_CR4LZ",
+            "prettyname": "CR4LZ"
+        },
+        "CR-3L-2J1B": {
+            "variable": "NJets_CR3Lothers",
+            "prettyname": "CR3LNP"
+        }
+    }
+}

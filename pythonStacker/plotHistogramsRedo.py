@@ -9,9 +9,11 @@ import matplotlib.pyplot as plt
 import os
 import argparse
 import json
+import itertools
 
 # Own code
 from src import generate_binning, load_prepared_histograms
+from src.dataprocessing import DataManager
 from src.configuration import load_channels
 from src.histogramTools import HistogramManager
 from src.variables.variableReader import VariableReader, Variable
@@ -28,16 +30,23 @@ def parse_arguments():
                         default=False, help="Switch to indicate whether the \
                         total uncertainty should be plotted")
 
+    parser.add_argument("--EFTsignal", action="store", default="TTTT_EFT")
+    parser.add_argument("--wc", action="store", default="ctt")
     parser.add_argument("--EFT_ratio", dest="EFT_ratio", action="store_true", default=False)
     parser.add_argument("--EFT_fullbkg", dest="EFT_fullbkg", action="store_true", default=False)
+    parser.add_argument("--BSM_ratio", dest="BSM_ratio", action="store_true", default=False)
+    parser.add_argument("--BSM_fullbkg", dest="BSM_fullbkg", action="store_true", default=False)
     parser.add_argument("--SBRatio", dest="SBRatio", action="store_true", default=False)
     parser.add_argument("--shapes", dest="shapes", action="store_true", default=False)
+    parser.add_argument("--suffix", action="store", default="_")
 
     arguments.add_settingfiles(parser)
     arguments.select_specifics(parser)
     arguments.add_tmp_storage(parser)
     arguments.add_plot_output(parser)
     arguments.add_toggles(parser)
+    arguments.add_EFT_choice(parser)
+    arguments.add_BSM_choices(parser)
     args = parser.parse_args()
     return args
 
@@ -86,7 +95,13 @@ def generate_outputfolder(years, outputfolder, subdir, suffix=""):
 
     outputsubfolder += suffix
 
-    outputfolder_base = os.path.join(outputfolder, subdir, outputsubfolder)
+    # outputsubfolder += args.bsm_model
+    if args.UseBSM:
+        # coupling_name = 
+        outputfolder_base = os.path.join(outputfolder, subdir, outputsubfolder, args.bsm_model[0])
+        print(outputfolder_base)
+    else:
+        outputfolder_base = os.path.join(outputfolder, subdir, outputsubfolder)
     if not os.path.exists(outputfolder_base):
         os.makedirs(outputfolder_base)
     copy_index_html(outputfolder_base)
@@ -129,6 +144,23 @@ def plot_histograms_base(axis, histograms: dict, variable: Variable, processes: 
         axis.set_ylabel("Events")
 
     return {"signal": signal, "bkg": bkg, "sum": sum_of_content, "binning": binning}
+
+
+def plot_data(axis, datamanager: DataManager, variable: Variable, years: list):
+    data = np.zeros(variable.nbins)
+    binning = generate_binning(variable.range, variable.nbins)
+
+    # load data or make sure it is loaded?
+    content = np.zeros(variable.nbins)
+    content, stat_unc = datamanager.get_histogram_and_uncertainties(years, variable)
+    stat_unc = np.abs(stat_unc - content)
+
+    # then add to figure, fix label and color, as well as legend
+    pretty_name = "Data"
+    axis.errorbar(x=binning[:-1] + (np.diff(binning)/2), y=content, yerr=stat_unc, ecolor="#000000", linewidth=1,
+                  fmt='o', markersize=5., c="#000000",# mec="#000000",
+                  label=pretty_name)
+
 
 
 def plot_systematics_band(axis, nominal_content, variable: Variable, storagepath: str, years: list):
@@ -174,7 +206,10 @@ def plot_EFT_line(axis, histograms, variable: Variable, years, operator: str, no
         nominal_content += np.array(ak.to_numpy(histograms[year][variable.name]["nominal"]))
 
     all_variations = []
-    for wc_factor in [1., 2.]:
+    wc_points = [1. , 2.]
+    if (args.wc=="ctHRe" or args.wc=="ctHIm"): 
+        wc_points = [20. , 30.]
+    for wc_factor in wc_points:
         current_variation = nominal_content # nominal_content
         for year in years:
             current_variation = current_variation + wc_factor * np.array(ak.to_numpy(histograms[year][variable.name][lin_name]["Up"]))
@@ -186,6 +221,37 @@ def plot_EFT_line(axis, histograms, variable: Variable, years, operator: str, no
         axis.hist(binning[:-1], binning, weights=current_variation, histtype="step",
                   label=pretty_eft_name, linewidth=2.)
 
+        all_variations.append(current_variation)
+    return all_variations
+
+
+def plot_BSM_line(axis, histograms, variable: Variable, years, models: list, masses: list, couplings: list, normalization_contribution=None):
+    binning = generate_binning(variable.range, variable.nbins)
+    if normalization_contribution is None:
+        normalization_contribution = np.ones(variable.nbins)
+    # nominal_content = np.zeros(variable.nbins)
+    all_variations = []
+    for model, mass, coupling in itertools.product(models, masses, couplings):
+        name_string = f"{model}_{mass}"
+        current_histograms = histograms[name_string]
+        # print(histograms.keys())
+        current_variation = np.zeros(variable.nbins)
+        for year in years:
+            current_variation += float(coupling)* float(coupling) * np.array(ak.to_numpy(current_histograms[year][variable.name]["BSM_Quad"]["Up"]))
+            current_variation += (float(coupling) ** 4) * np.array(ak.to_numpy(current_histograms[year][variable.name]["BSM_Quartic"]["Up"]))
+        
+        current_variation = np.nan_to_num(current_variation / normalization_contribution, nan=1., posinf=1., neginf=1.)
+
+        pretty_bsm_name = model.split("Philic")[-1]
+        pretty_bsm_name = pretty_bsm_name.replace("Vector", "V")
+        pretty_bsm_name = pretty_bsm_name.replace("Singlet", "S")
+        pretty_bsm_name = pretty_bsm_name.replace("Octet", "O")
+        pretty_bsm_name = pretty_bsm_name.replace("Scalar", "S")
+        mass_name = float(mass/1000)
+        coupling_name = "(g="+str(coupling)+")"
+        pretty_bsm_name += " " + str(mass_name) + " TeV " + coupling_name
+        axis.hist(binning[:-1], binning, weights=current_variation, histtype="step",
+                  label=pretty_bsm_name, linewidth=2.)
         all_variations.append(current_variation)
     return all_variations
 
@@ -212,22 +278,28 @@ def get_lumi(years):
         "2016": 36.3,
         "2017": 41.5,
         "2018": 59.8,
+        # "Run2": 167.0,
     }
     for year in years:
         total_lumi += lumi[year]
 
     if total_lumi >= 100.:
         total_lumi = round(total_lumi)
+    # total_lumi += lumi[years]
     return total_lumi
 
 
-def plotting_sequence(args, histograms, variable, processinfo, plotdir, channel, storagepath):
+def plotting_sequence(args, histograms, variable, processinfo, plotdir, channel, storagepath, datahistograms=None):
     n_ratios = 0
     if args.SBRatio:
         n_ratios = 1
     if args.EFT_ratio or args.EFT_fullbkg:
         n_ratios = 1
     if args.EFT_fullbkg:
+        n_ratios = 2
+    if args.BSM_ratio:
+        n_ratios = 1
+    if args.BSM_fullbkg:
         n_ratios = 2
     
     lumi = get_lumi(args.years)
@@ -240,22 +312,37 @@ def plotting_sequence(args, histograms, variable, processinfo, plotdir, channel,
         fig, axes = fg.create_multi_ratioplot(lumi, True, n_subplots=n_ratios)
 
     main_plot_out = plot_histograms_base(axes[0], histograms, variable, processinfo, args.years, shapes=args.shapes)
+    if datahistograms is not None:    
+        data_out = plot_data(axes[0], datahistograms, variable, args.years)
+    else:
+        data_out = None
+
     if not args.no_unc:
         plot_systematics_band(axes[0], main_plot_out["sum"], variable, storagepath, args.years)
 
     if args.UseEFT:
-        plot_EFT_line(axes[0], histograms["TTTT_EFT"], variable, args.years, "ctt")
+        plot_EFT_line(axes[0], histograms[args.EFTsignal], variable, args.years, args.wc)
+    if args.UseBSM:
+        plot_BSM_line(axes[0], histograms, variable, args.years, args.bsm_model, args.bsm_mass, args.bsm_coupling)
+    if args.BSM_ratio:
+        bsm_content = plot_BSM_line(axes[1], histograms, variable, args.years, args.bsm_model, args.bsm_mass, args.bsm_coupling, None)
+        axes[1].set_ylabel(r"Sig", fontsize="small")
+        modify_yrange_updown(axes[1], bsm_content)
 
     if args.SBRatio:
         ratiocontent = plot_signal_bkg_ratio(axes[1], main_plot_out["binning"], main_plot_out["signal"], main_plot_out["bkg"])
     if args.EFT_ratio or args.EFT_fullbkg:
-        eft_content = plot_EFT_line(axes[1], histograms["TTTT_EFT"], variable, args.years, "ctt", main_plot_out["signal"])
+        eft_content = plot_EFT_line(axes[1], histograms[args.EFTsignal], variable, args.years, args.wc, main_plot_out["signal"])
         axes[1].set_ylabel(r"EFT / SM $t\bar{t}t\bar{t}$", fontsize="small")
         modify_yrange_updown(axes[1], eft_content)
     if args.EFT_fullbkg:
-        eft_content = plot_EFT_line(axes[2], histograms["TTTT_EFT"], variable, args.years, "ctt", main_plot_out["sum"])
+        eft_content = plot_EFT_line(axes[2], histograms[args.EFTsignal], variable, args.years, args.wc, main_plot_out["sum"])
         axes[2].set_ylabel("EFT / SM", fontsize="small")
         modify_yrange_updown(axes[2], eft_content)
+    if args.BSM_fullbkg:
+        bsm_content = plot_BSM_line(axes[2], histograms, variable, args.years, args.bsm_model, args.bsm_mass, args.bsm_coupling, main_plot_out["bkg"])
+        axes[2].set_ylabel("Sig / BKG", fontsize="small")
+        modify_yrange_updown(axes[2], bsm_content)
 
     finalize_plot(fig, axes, variable, plotdir, channel)
 
@@ -281,7 +368,7 @@ if __name__ == "__main__":
     storagepath = os.path.join(args.storage, subbasedir)
 
     # TODO: outputfolder with year and suffix:
-    outputfolder_base = generate_outputfolder(args.years, args.outputfolder, subbasedir, suffix="test")
+    outputfolder_base = generate_outputfolder(args.years, args.outputfolder, subbasedir, suffix=args.suffix)
 
     for channel in channels:
         if args.channel is not None and channel != args.channel:
@@ -291,18 +378,26 @@ if __name__ == "__main__":
         systematics = ["nominal"]
 
         outputfolder = os.path.join(outputfolder_base, channel)
+
+        if args.UseEFT : 
+            outputfolder = os.path.join(outputfolder_base, args.EFTsignal, args.wc, channel)
+
         if not os.path.exists(outputfolder):
             os.makedirs(outputfolder)
         copy_index_html(outputfolder)
 
         histograms = load_prepared_histograms(processinfo, channel, variables, systematics, storagepath_tmp, args)
+        data_histograms = None
+        if args.UseData:
+            data_histograms = DataManager(storagepath_tmp, variables, channel, args.years, eras_split=False)
 
         for variable_name, variable in variables.get_variable_objects().items():
             if not variable.is_channel_relevant(channel):
                 continue
             if args.variable and args.variable != variable_name:
                 continue
-            plotting_sequence(args, histograms, variable, processinfo, outputfolder, channel, storagepath_tmp)
+            plotting_sequence(args, histograms, variable, processinfo, outputfolder, channel, storagepath_tmp, data_histograms)
+            # exit()
             # plot_variable_base(variable, outputfolder, processinfo, histograms, storagepath=storagepath_tmp, years=args.years, drawEFT=args.UseEFT, no_uncertainty=args.no_unc, plotlabel=channel)
 
         for subchannel in channels[channel].get_subchannels():
@@ -310,16 +405,22 @@ if __name__ == "__main__":
             histograms = dict()
 
             outputfolder = os.path.join(outputfolder_base, channel, subchannel)
+
+            if args.UseEFT : 
+                 outputfolder = os.path.join(outputfolder_base, args.EFTsignal, args.wc, channel, subchannel)
+
             if not os.path.exists(outputfolder):
                 os.makedirs(outputfolder)
             copy_index_html(outputfolder)
 
             histograms = load_prepared_histograms(processinfo, channel, variables, systematics, storagepath_tmp, args)
+            if args.UseData:
+                data_histograms = DataManager(storagepath_tmp, variables, channel, args.years, eras_split=False)
 
             for _, variable in variables.get_variable_objects().items():
                 if not variable.is_channel_relevant(channel + subchannel):
                     continue
-                plotting_sequence(args, histograms, variable, processinfo, outputfolder, channel+"_"+subchannel, storagepath_tmp)
+                plotting_sequence(args, histograms, variable, processinfo, outputfolder, channel+"_"+subchannel, storagepath_tmp, data_histograms)
                 # plot_variable_base(variable, outputfolder, processinfo, histograms, storagepath=storagepath_tmp, years=args.years, drawEFT=args.UseEFT, no_uncertainty=args.no_unc, plotlabel=channel+"_"+subchannel)
 
     print("Finished!")

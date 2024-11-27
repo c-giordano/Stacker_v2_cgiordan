@@ -62,7 +62,16 @@ class DatacardWriter():
 
     def add_MCstats(self):
         self.commentline()
-        self.outputstring += "* autoMCStats 0 1 1\n"
+        self.outputstring += "* autoMCStats 0 0 1\n"
+        self.commentline()
+        self.outputstring += "PDF group = pdf_1 pdf_10 pdf_0 pdf_11 pdf_12 pdf_13 pdf_14 pdf_15 pdf_16 pdf_17 pdf_18 pdf_19 pdf_2 pdf_20 pdf_21 pdf_22 pdf_23 pdf_24 pdf_25 pdf_26 pdf_27 pdf_28 pdf_29 pdf_3 pdf_30 pdf_31 pdf_32 pdf_33 pdf_34 pdf_35 pdf_36 pdf_37 pdf_38 pdf_39 pdf_4 pdf_40 pdf_41 pdf_42 pdf_43 pdf_44 pdf_45 pdf_46 pdf_47 pdf_48 pdf_49 pdf_5 pdf_50 pdf_51 pdf_52 pdf_53 pdf_54 pdf_55 pdf_56 pdf_57 pdf_58 pdf_59 pdf_6 pdf_60 pdf_61 pdf_62 pdf_63 pdf_64 pdf_65 pdf_66 pdf_67 pdf_68 pdf_69 pdf_7 pdf_70 pdf_71 pdf_72 pdf_73 pdf_74 pdf_75 pdf_76 pdf_77 pdf_78 pdf_79 pdf_8 pdf_80 pdf_81 pdf_82 pdf_83 pdf_84 pdf_85 pdf_86 pdf_87 pdf_88 pdf_89 pdf_9 pdf_90 pdf_91 pdf_92 pdf_93 pdf_94 pdf_95 pdf_96 pdf_97 pdf_98 pdf_99\n"
+        self.outputstring += "Lumi group = lumi_13TeV lumi_13TeV_1718 lumi_2016 lumi_2017 lumi_2018\nBtag group = CMS_btag_cferr1 CMS_btag_cferr2 CMS_btag_hf CMS_btag_hfstats1_2016 CMS_btag_hfstats1_2017 CMS_btag_hfstats1_2018 CMS_btag_hfstats2_2016 CMS_btag_hfstats2_2017 CMS_btag_hfstats2_2018 CMS_btag_lf CMS_btag_lfstats1_2016 CMS_btag_lfstats1_2017 CMS_btag_lfstats1_2018 CMS_btag_lfstats2_2016 CMS_btag_lfstats2_2017 CMS_btag_lfstats2_2018\nleptonID group = CMS_eff_e_id_2016 CMS_eff_e_id_2017 CMS_eff_e_id_2018 CMS_eff_e_id_correlated CMS_eff_e_reco CMS_eff_m_id_2016 CMS_eff_m_id_2017 CMS_eff_m_id_2018 CMS_eff_m_id_correlated\n"
+        self.outputstring += "PS group = ps_isr_Othert ps_isr_Xg ps_isr_ttH ps_isr_ttW ps_isr_ttZ ps_isr_BSMsignal ps_fsr\nJEC group = CMS_scale_j CMS_res_j_1p93_2016 CMS_res_j_1p93_2017 CMS_res_j_1p93_2018 CMS_res_j_2p5_2016 CMS_res_j_2p5_2017 CMS_res_j_2p5_2018\nWZNjets group = CMS_TOP24008_WZ_j_2 CMS_TOP24008_WZ_j_3 CMS_TOP24008_WZ_j_4 CMS_TOP24008_WZ_j_5 CMS_TOP24008_WZ_j_6\n"
+        self.outputstring += "Norm group = CMS_fake_m_2018 CMS_fake_m_2017 CMS_fake_m_2016 CMS_fake_m CMS_fake_e_2018 CMS_fake_e_2017 CMS_fake_e_2016 CMS_fake_e Norm_Xg Norm_ttH Norm_ttW Norm_ttZ Norm_Othert Norm_ChargeMisID Norm_BSMsignal\nrest group = CMS_HEM_2018 CMS_l1_ecal_prefiring CMS_scale_met CMS_pileup_13TeV\nscale group = QCDscale_fac_Othert QCDscale_fac_Xg QCDscale_fac_ttH QCDscale_fac_ttW QCDscale_fac_ttZ QCDscale_fac_BSMsignal QCDscale_ren_Othert QCDscale_ren_Xg QCDscale_ren_ttH QCDscale_ren_ttW QCDscale_ren_ttZ QCDscale_ren_BSMsignal\n"
+
+    def add_RateParamNormalization(self, processname, range):
+        # TODO implement
+        pass
 
     def add_systematic(self, systematic: Uncertainty):
         if systematic.correlated_process:
@@ -74,7 +83,6 @@ class DatacardWriter():
         for process, _ in self.processes:
             if not systematic.is_process_relevant(process):
                 continue
-            
             processname = process
             if "sm" == processname:
                 processname = "TTTT"
@@ -85,7 +93,8 @@ class DatacardWriter():
             systematic_mod.pretty_name = systematic.pretty_name + processname
             systematic_mod.technical_name = systematic.technical_name + processname
             systematic_mod.name = systematic.name + processname
-            systematic_mod.processes = [process]
+            #systematic_mod.set_processes([process])
+	    systematic_mod.set_processes(["^"+process+"$"])
             # then use nominal addition
             self.add_systematic_correlated(systematic_mod)
 

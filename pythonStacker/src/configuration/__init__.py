@@ -1,4 +1,6 @@
 import json
+import re
+
 from src.configuration.Uncertainty import Uncertainty
 import src.configuration.PDFVariation as PDFVariation
 import src.configuration.ScaleVariation as ScaleVariation
@@ -65,7 +67,11 @@ class Channel:
 
         # build process ignore list
         self.ign_processes = channelinfo.get("ignore_processes", [])
+        if type(self.ign_processes) is not list:
+            self.ign_processes = [self.ign_processes]
         self.ign_processes.extend(ignore_proc)
+        self.reg_ign_processes = [re.compile(process) for process in self.ign_processes]
+
 
         # subchannel structure
         subchannels: list[str] = channelinfo.get("subchannels", [])
@@ -74,7 +80,9 @@ class Channel:
         # load other config options
 
     def is_process_excluded(self, process: str):
-        return process in self.ign_processes
+        # return process in self.ign_processes
+        return any([bool(ign_process.match(process)) for ign_process in self.reg_ign_processes])    
+
 
     def get_subchannels(self) -> list[str]:
         ret = []

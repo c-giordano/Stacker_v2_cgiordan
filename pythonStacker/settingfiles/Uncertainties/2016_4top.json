@@ -127,7 +127,7 @@
     },
     "ScaleVar": {
         "channels": "all",
-        "processes": ["TTW","TTZ","TTH","Xgamma","WZ","VVV","other_t","TTT"],
+        "processes": ["TTW","TTZ","TTH","TTT"],
         "type": "weight",
         "corr_proc": 0
     },
@@ -297,7 +297,7 @@
     },
     "ISR": {
         "channels": "all",
-        "processes": ["TTW","TTZ","TTH","Xgamma","WZ","VVV","other_t","TTT"],
+        "processes": ["TTW","TTZ","TTH","TTT"],
         "type": "weight",
         "aliasUp": "isrfsrVariations[:, 0]",
         "aliasDown": "isrfsrVariations[:, 1]",
@@ -312,14 +312,14 @@
     },
     "FSR": {
         "channels": "all",
-        "processes": "MCOnly",
+        "processes": ["TTW","TTZ","TTH","TTT","TTTT","sm","lin","quad"],
         "type": "weight",
         "aliasUp": "isrfsrVariations[:, 2]",
         "aliasDown": "isrfsrVariations[:, 3]"
     },
     "pdfUncertainty": {
         "channels": "all",
-        "processes": "MCOnly",
+        "processes": ["TTW","TTZ","TTH","TTT","TTTT","sm","lin","quad"],
         "type": "weight"
     },
     "WZNjets_2": {

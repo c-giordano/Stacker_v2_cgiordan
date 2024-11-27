@@ -2,10 +2,11 @@ import numpy as np
 import uproot
 import os
 import glob
+import itertools
 
 from src.histogramTools import HistogramManager
 import plugins.eft as eft
-
+import plugins.bsm as bsm
 
 """
 Some general tools to create histograms
@@ -116,6 +117,13 @@ def load_prepared_histograms(processinfo, channel, variables, systematics, stora
         histograms[process] = dict()
         if args.UseEFT:
             histograms["TTTT_EFT"] = dict()
+
+            histograms["TTTW_EFT"] = dict()
+            histograms["TTTJ_EFT"] = dict()
+            histograms["TTT_EFT"] = dict()
+        if args.UseBSM:
+            for model, mass in itertools.product(args.bsm_model, args.bsm_mass):
+                histograms[f"{model}_{mass}"] = dict()
         for year in args.years:
             histograms[process][year] = HistogramManager(storagepath, process, variables, systematics, year, channel=channel)
             histograms[process][year].load_histograms()
@@ -124,4 +132,17 @@ def load_prepared_histograms(processinfo, channel, variables, systematics, stora
                 systematics_tmp.extend(eft.getEFTVariationsGroomed())
                 histograms["TTTT_EFT"][year] = HistogramManager(storagepath, "TTTT_EFT", variables, systematics_tmp, year, channel=channel)
                 histograms["TTTT_EFT"][year].load_histograms()
+                histograms["TTTW_EFT"][year] = HistogramManager(storagepath, "TTTW_EFT", variables, systematics_tmp, year, channel=channel)
+                histograms["TTTW_EFT"][year].load_histograms()
+                histograms["TTTJ_EFT"][year] = HistogramManager(storagepath, "TTTJ_EFT", variables, systematics_tmp, year, channel=channel)
+                histograms["TTTJ_EFT"][year].load_histograms()
+                histograms["TTT_EFT"][year] = HistogramManager(storagepath, "TTT_EFT", variables, systematics_tmp, year, channel=channel)
+                histograms["TTT_EFT"][year].load_histograms()
+            if args.UseBSM:
+                systematics_tmp = list(systematics)
+                systematics_tmp.extend(bsm.getBSMVariationsGroomed())
+                for model, mass in itertools.product(args.bsm_model, args.bsm_mass):
+                    histograms[f"{model}_{mass}"][year] = HistogramManager(storagepath, f"{model}_M{round(mass/1000)}p{int(mass/100)}", variables, systematics_tmp, year, channel=channel)
+                    histograms[f"{model}_{mass}"][year].load_histograms()
+
     return histograms
