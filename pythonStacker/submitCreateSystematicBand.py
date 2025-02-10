@@ -9,6 +9,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description='Script to submit plotting of histograms')
     arguments.add_settingfiles(parser)
     arguments.select_specifics(parser)
+    arguments.add_tmp_storage(parser)
 
     args = parser.parse_args()
     return args
@@ -22,6 +23,7 @@ if __name__ == "__main__":
     basecommand += f" --processfile {args.processfile}"
     basecommand += f" --systematicsfile {args.systematicsfile}"
     basecommand += f" --channelfile {args.channelfile}"
+    basecommand += f" --storage {args.storage}"
 
     with open(args.channelfile, 'r') as f:
         channels = json.load(f)

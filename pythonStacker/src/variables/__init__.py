@@ -58,6 +58,13 @@ def count_btag_tight(tree: uproot.TTree, branchname: str, selection: str):
     return count_btag(tree, branchname, selection, 3)
 
 
+def sum_of_lepton_charges(tree: uproot.TTree, branchname: str, selection: str):
+    variables = tree.arrays(["electronCharge", "muonCharge"], cut=selection)
+    charges = ak.concatenate([variables.electronCharge, variables.muonCharge], axis=1)
+    final_var = ak.sum(charges, axis=1)
+    return ak.to_numpy(final_var)
+
+
 def get_method_from_str(method: str):
     tmp = {
         "load": load_variable,
@@ -67,6 +74,7 @@ def get_method_from_str(method: str):
         "sum_branch": sum_branch,
         "btag_tight": count_btag_tight,
         "btag_med": count_btag_med,
-        "btag_loose": count_btag_loose
+        "btag_loose": count_btag_loose,
+        "sum_of_lepton_charges": sum_of_lepton_charges
     }
     return tmp[method]

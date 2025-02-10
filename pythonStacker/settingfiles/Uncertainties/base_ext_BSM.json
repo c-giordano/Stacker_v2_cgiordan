@@ -472,37 +472,15 @@
     "ISRSignal": {
         "aliasDown": "isrfsrVariations[:, 1]", 
         "processes": [
-            "tttt", 
-            "ttt", 
-            "sm", 
-            "lin", 
-            "quad"
+            "TopPhilic",
+            "BSM_Quad",
+            "BSM_Quartic"
         ], 
         "technical_name": "ps_isr_BSMsignal", 
         "aliasUp": "isrfsrVariations[:, 0]", 
         "channels": "all", 
         "type": "weight"
-    }, 
-    "ISR_tttt": {
-        "aliasDown": "isrfsrVariations[:, 1]", 
-        "processes": [
-            "tttt", 
-            "sm", 
-            "lin", 
-            "quad"
-        ], 
-        "technical_name": "ISR_tttt", 
-        "aliasUp": "isrfsrVariations[:, 0]", 
-        "channels": "all", 
-        "type": "weight"
-    }, 
-    "JEC": {
-        "pretty_name": "JEC", 
-        "processes": "MCOnly", 
-        "technical_name": "CMS_scale_j", 
-        "type": "shape", 
-        "fileglob": "JEC"
-    }, 
+    },
     "JER_1p93": {
         "fileglob": "JER", 
         "processes": "MCOnly", 
@@ -598,10 +576,9 @@
     "ScaleVarFactorizationSignal": {
         "aliasDown": "scaleVariations[:, 4]", 
         "processes": [
-            "tttt", 
-            "ttt", 
-            "sm", 
-            "quad"
+            "TopPhilic",
+            "BSM_Quad",
+            "BSM_Quartic"
         ], 
         "corr_proc": 1, 
         "technical_name": "QCDscale_fac_BSMsignal", 
@@ -612,10 +589,9 @@
     "ScaleVarRenormalizationSignal": {
         "aliasDown": "scaleVariations[:, 1]", 
         "processes": [
-            "tttt", 
-            "ttt", 
-            "sm", 
-            "quad"
+            "TopPhilic",
+            "BSM_Quad",
+            "BSM_Quartic"
         ], 
         "corr_proc": 1, 
         "technical_name": "QCDscale_ren_BSMsignal", 
@@ -627,7 +603,8 @@
         "fileglob": "HEMIssue",
         "technical_name": "CMS_HEM_2018",
         "processes": "MCOnly",
-        "type": "shape"
+        "type": "shape",
+        "eraspecific": "18"
     },
     "Absolute": {
         "pretty_name": "JEC_Absolute",

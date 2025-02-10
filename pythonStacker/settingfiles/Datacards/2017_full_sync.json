@@ -1,16 +1,20 @@
 {
-    "DC_name": "DC_SM_2018",
+    "DC_name": "DC_2017",
     "channelcontent": {
+        "CR-3L-Z": {
+            "variable": "NJets_CR3LZ",
+            "prettyname": "CR3LZ"
+        },
         "SR-2Lpuresig_ee": {
-            "variable": "BDTScore_TTTT_2L_ll",
+            "variable": "HT_SR2L",
             "prettyname": "SR2L_ee_Sig"
         },
         "SR-2Lpuresig_em": {
-            "variable": "BDTScore_TTTT_2L",
+            "variable": "HT_SR2L",
             "prettyname": "SR2L_em_Sig"
         },
         "SR-2Lpuresig_mm": {
-            "variable": "BDTScore_TTTT_2L_ll",
+            "variable": "HT_SR2L",
             "prettyname": "SR2L_mm_Sig"
         },
         "SR-2LpureTTW_ee": {
@@ -27,10 +31,10 @@
         },
         "SR-2LpureNP": {
             "variable": "BDTScore_NP_2L",
-            "prettyname": "SR2L_NPClass"
+            "prettyname": "SR2L_NP"
         },
         "SR-3Lpuresig": {
-            "variable": "BDTScore_TTTT_3L",
+            "variable": "HT_SR3L",
             "prettyname": "SR3L_Sig"
         },
         "SR-3LpureTTW": {
@@ -56,10 +60,6 @@
         "CR-2L-45J2B": {
             "variable": "BDTScore_ttbar_CR2L",
             "prettyname": "CR2LTTW"
-        },
-        "CR-3L-Z": {
-            "variable": "NJets_CR3LZ",
-            "prettyname": "CR3LZ"
         },
         "CR-4L-Z": {
             "variable": "NJets_CR4LZ",

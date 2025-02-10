@@ -493,7 +493,7 @@
         "pretty_name": "tttw_norm",
         "technical_name": "cross_section_tttW",
         "channels": "all",
-        "processes": "tttw",
+        "processes": "tttW",
         "rate": "0.846/1.162",
         "type": "flat"
     }

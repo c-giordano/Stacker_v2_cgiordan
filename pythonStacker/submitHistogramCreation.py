@@ -16,6 +16,8 @@ def parse_arguments():
     arguments.add_settingfiles(parser)
     arguments.select_specifics(parser)
     arguments.add_toggles(parser)
+    arguments.add_tmp_storage(parser)
+    arguments.add_reweighting_option(parser)
     # Adding further selections:
 
     args = parser.parse_args()
@@ -36,6 +38,7 @@ if __name__ == "__main__":
     basecommand += f" --processfile {args.processfile}"
     basecommand += f" --systematicsfile {args.systematicsfile}"
     basecommand += f" --channelfile {args.channelfile}"
+    basecommand += f" --storage {args.storage}"
 
     with open(args.processfile, 'r') as f:
         processlist = list(json.load(f)["Processes"].keys())
@@ -85,6 +88,8 @@ if __name__ == "__main__":
                     command += " --EFT"
                 if args.UseBSM is True:
                     command += " --BSM"
+                    if args.pseudo is True:
+                        command += " --pseudo"
                 if args.UseData:
                     command += " --data"
 

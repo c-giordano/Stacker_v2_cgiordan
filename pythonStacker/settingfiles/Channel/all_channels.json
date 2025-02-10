@@ -27,7 +27,7 @@
     "CR-4L-Z": {
         "subchannels": [],
         "selection": "eventClass==7",
-        "ignore_processes": ["ChargeMisID", "Xgamma", "TTW"]
+        "ignore_processes": ["ChargeMisID", "Xg", "ttW", "TopPhilic"]
     },
     "CR-3L-2J1B": {
         "subchannels": [],
@@ -60,11 +60,13 @@
     },
     "puresig_4L": {
         "isSubchannel": 1,
-        "selection": "(fourTopScore > ttWScore)"
+        "selection": "(fourTopScore > ttWScore)",
+        "ignore_processes": ["TopPhilic"]
     },
     "pureTTW_4L": {
         "isSubchannel": 1,
-        "selection": "(ttWScore > fourTopScore)"
+        "selection": "(ttWScore > fourTopScore)",
+        "ignore_processes": ["TopPhilic"]
     },
     "pureNP": {
         "isSubchannel": 1,

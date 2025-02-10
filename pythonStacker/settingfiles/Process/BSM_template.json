@@ -1,17 +1,17 @@
 {
-    "Basedir": "/pnfs/iihe/cms/store/user/nivanden/AnalysisOutput/ReducedTuples/2024-04-23_16-46_MOD",
+    "Basedir": "/pnfs/iihe/cms/store/user/nivanden/AnalysisOutput/ReducedTuples/2024-11-20_14-44",
     "Processes": {
-        "TTT": {
+        "ttt": {
             "fileglobs": ["Tree_TTTW_TuneCP5*MCPrompt", "Tree_TTTJ_TuneCP5*MCPrompt"],
             "pretty_name": "ttt",
             "color": "#e9d98d"
         },
-        "other_t": {
+        "Othert": {
             "fileglobs": ["Tree_THQ_*MCPrompt", "Tree_tZq_ll*MCPrompt", "*_TTHH_*MCPrompt", "*_TTWW_*MCPrompt", "*_TTWH_*MCPrompt", "*_TTWZ_*MCPrompt", "*_TTZH_*MCPrompt", "*_TTZZ_*MCPrompt"],
             "pretty_name": "Other\\ t",
             "color": "#92dadd"
         },
-        "Xgamma": {
+        "Xg": {
             "fileglobs": ["*TTTo2L2Nu*MCPrompt", "*TTToSemiLeptonic*MCPrompt", "*_TTGamma_*MCPrompt", "Tree_ZGToLLG*MCPrompt", "*DYJetsToLL*MCPrompt"],
             "pretty_name": "X\\gamma",
             "color": "#3f90da"
@@ -42,22 +42,22 @@
             "color": "#a96b59",
             "pretty_name": "NP\\ \\mu"
         },
-        "TTH": {
+        "ttH": {
             "fileglobs": ["Tree_ttHJetToNonbb*MCPrompt"],
             "pretty_name": "t\\bar{t}H",
             "color": "#b9ac70"
         },
-        "TTZ": {
+        "ttZ": {
             "fileglobs": ["Tree_TTZToLLNuNu*MCPrompt"],
             "pretty_name": "t\\bar{t}Z",
             "color": "#717581"
         },
-        "TTW": {
+        "ttW": {
             "fileglobs": ["Tree_TTWJetsToLNu*MCPrompt", "Tree_ttWJetsToLNu_5f_EWK*MCPrompt"],
             "color": "#94a4a2",
             "pretty_name": "t\\bar{t}W"
         },
-        "TTTT": {
+        "tttt": {
             "fileglobs": ["Tree_TTTT_TuneCP5*_MCPrompt"],
             "color": "#ffa90e",
             "pretty_name": "t\\bar{t}t\\bar{t}"

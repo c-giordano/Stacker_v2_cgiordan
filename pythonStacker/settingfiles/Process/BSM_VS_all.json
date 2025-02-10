@@ -1,0 +1,39 @@
+{"Basedir": "/pnfs/iihe/cms/store/user/cgiordan/AnalysisOutput/ReducedTuples/2025-02-07_15-25",
+"Processes": {
+    "TopPhilicVectorSinglet_M0p4": {
+        "fileglobs": ["Tree_*TopPhilicVectorSinglet_M0p4*_MCPrompt"],
+        "color": "#EF3340",
+        "isSignal": 1,
+        "pretty_name": "M=400",
+        "hasBSM": 1
+    },
+    "TopPhilicVectorSinglet_M0p6": {
+        "fileglobs": ["Tree_*TopPhilicVectorSinglet_M0p6*_MCPrompt"],
+        "color": "#EF3340",
+        "isSignal": 1,
+        "pretty_name": "M=600",
+        "hasBSM": 1
+    },
+    "TopPhilicVectorSinglet_M0p8": {
+        "fileglobs": ["Tree_*TopPhilicVectorSinglet_M0p8*_MCPrompt"],
+        "color": "#EF3340",
+        "isSignal": 1,
+        "pretty_name": "M=800",
+        "hasBSM": 1
+    },
+    "TopPhilicVectorSinglet_M1p0": {
+        "fileglobs": ["Tree_*TopPhilicVectorSinglet_M1p0*_MCPrompt"],
+        "color": "#EF3340",
+        "isSignal": 1,
+        "pretty_name": "M=1000",
+        "hasBSM": 1
+    },
+    "TopPhilicVectorSinglet_M1p5": {
+        "fileglobs": ["Tree_*TopPhilicVectorSinglet_M1p5*_MCPrompt"],
+        "color": "#EF3340",
+        "isSignal": 1,
+        "pretty_name": "M=1500",
+        "hasBSM": 1
+    }
+}
+}

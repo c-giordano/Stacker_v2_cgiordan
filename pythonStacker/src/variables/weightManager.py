@@ -72,8 +72,8 @@ class WeightManager():
             if self.reweight_initialized:
                 return self.weights['nominal'] * self.bsm_variations[key] * self.reweight_values
             return self["nominal"] * self.bsm_variations[key]
-        if self.reweight_initialized:
-            return self.weights[key] * self.reweight_values
+            if self.reweight_initialized:
+                return self.weights[key] * self.reweight_values
         return self.weights[key]
 
 

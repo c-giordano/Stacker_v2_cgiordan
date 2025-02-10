@@ -38,5 +38,13 @@
         "branch_name": "bTagWP",
         "method_name": "btag_tight",
         "channels": ["CR-3L-2J1B"]
+    },
+    "SumCharges_CR3Lothers": {
+        "range": [-1.5, 1.5],
+        "nbins": 2,
+        "axis_label": "$Sum charges$",
+        "branch_name": "ThisDoesLiterallyNotMatter",
+        "method_name": "sum_of_lepton_charges",
+        "channels": ["CR-3L-2J1B"]
     }
 }

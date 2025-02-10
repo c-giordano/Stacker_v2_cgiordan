@@ -14,17 +14,22 @@ Some general tools to create histograms
 """
 
 
-def generate_binning(range, nbins):
-    raw_bins = np.linspace(range[0], range[1], nbins + 1)
+def generate_binning(axisrange, nbins):
+    if len(axisrange) > 2:
+        # custom binning
+        # ensure its an array
+        raw_bins = np.array(axisrange)
+    else:
+        raw_bins = np.linspace(axisrange[0], axisrange[1], nbins + 1)
     return raw_bins
 
 
-def histogram_w_flow(data, range, wgts, nbins):
+def histogram_w_flow(data, axisrange, wgts, nbins):
     """
     Creates a numpy histogram but takes into account the under- and overflow.
     """
 
-    raw_bins = np.linspace(range[0], range[1], nbins + 1)
+    raw_bins = generate_binning(axisrange, nbins)
     use_bins = [np.array([-np.inf]), raw_bins, np.array([np.inf])]
     use_bins = np.concatenate(use_bins)
 
@@ -36,7 +41,7 @@ def histogram_w_flow(data, range, wgts, nbins):
     return binned_data, raw_bins
 
 
-def histogram_w_unc_flow(data, range, wgts, nbins):
+def histogram_w_unc_flow(data, axisrange, wgts, nbins):
     """
     Uses:
         - the data to bin
@@ -51,7 +56,7 @@ def histogram_w_unc_flow(data, range, wgts, nbins):
     Creates a numpy histogram. Takes into account over- and underflow. Calculates the MC uncertainties.
     """
 
-    raw_bins = np.linspace(range[0], range[1], nbins + 1)
+    raw_bins = generate_binning(axisrange, nbins)
     use_bins = [np.array([-np.inf]), raw_bins, np.array([np.inf])]
     use_bins = np.concatenate(use_bins)
 

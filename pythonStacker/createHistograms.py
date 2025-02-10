@@ -33,7 +33,7 @@ More systematic variations is a different question but we can work something out
 
 def parse_arguments() -> argparse.Namespace:
     """
-    For now directly takne from create_histograms in interpretations.
+    For now directly taken from create_histograms in interpretations.
     """
     parser = argparse.ArgumentParser(description='Process command line arguments.')
 
@@ -43,6 +43,7 @@ def parse_arguments() -> argparse.Namespace:
     arguments.add_toggles(parser)
     arguments.add_tmp_storage(parser)
     arguments.add_reweighting_option(parser)
+    
     # Parse arguments
     args = parser.parse_args()
 
@@ -66,7 +67,7 @@ def parse_arguments() -> argparse.Namespace:
 
 
 def prepare_histogram(data, wgts, variable: Variable):
-    hist_content, binning, hist_unc = src.histogram_w_unc_flow(ak.to_numpy(data), range=variable.range, wgts=ak.to_numpy(wgts), nbins=variable.nbins)
+    hist_content, binning, hist_unc = src.histogram_w_unc_flow(ak.to_numpy(data), axisrange=variable.range, wgts=ak.to_numpy(wgts), nbins=variable.nbins)
     return hist_content, binning, hist_unc
 
 
@@ -94,6 +95,7 @@ def create_histograms_singledata(output_histograms: dict, args, files, channel: 
     for filename in files:
         print(f"opening file {filename}")
         processes = ["nonPromptElectron", "nonPromptMuon"] if args.process == "nonPrompt" else [args.process]
+        
         for process in processes:
             print(f"working on process {process}")
             current_tree: uproot.TTree = src.get_tree_from_file(filename, process)
@@ -112,6 +114,13 @@ def create_histograms_singledata(output_histograms: dict, args, files, channel: 
             if globalBSMToggle:
                 eventclass = channel.selection.split("==")[-1]
                 weights.add_bsmvariations(get_bsmvariations_filename(args.storage, filename, eventclass))
+                if args.pseudo:
+                    print(filename)
+                    eventclass = channel.selection.split("==")[-1]
+                    print(get_bsmvariations_filename(args.storage, filename, eventclass, "_Pseudo_nominal"))
+                    weights.add_reweighting(get_bsmvariations_filename(args.storage, filename, eventclass, "_Pseudo_nominal"))
+                    print(weights)
+                    print("Pseudo-reweighting is done!!!")
             print("Done!")
             for _, variable in variables.get_variable_objects().items():
                 if not variable.is_channel_relevant(args.channel):
@@ -183,7 +192,7 @@ def create_histogram_shapevar(output_histograms: dict, args, files, nominalfiles
                 print("Not correct era, loading nominal")
                 current_tree: uproot.TTree = src.get_tree_from_file(filenominal, args.process)
             else:
-                print("correct era, loading vaiation")
+                print("correct era, loading variation")
                 current_tree: uproot.TTree = src.get_tree_from_file(filename, "Unc_" + syst.treename + "_" + variation)
             weights = WeightManager(current_tree, channel.selection, systematics)
             subchannelmasks, subchannelnames = channel.produce_masks(current_tree)
@@ -240,7 +249,7 @@ if __name__ == "__main__":
         subbasedir = basedir.split("/")[-1]
         
         if args.UseBSM and processinfo.get("hasBSM", 0) > 0:
-            storagepath = os.path.join(storagepath, '2024-04-23_16-46')
+            storagepath = os.path.join(storagepath, '2024-11-20_14-44')
         else:
             storagepath = os.path.join(storagepath, subbasedir)
         

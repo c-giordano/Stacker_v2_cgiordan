@@ -150,13 +150,14 @@ def nominal_datacard_creation(rootfile: uproot.WritableDirectory, datacard_setti
     """
     all_asimovdata = dict()
     for channelname, channel_DC_setting in datacard_settings["channelcontent"].items():
-        #print(channelname)
+        print(f"in normal DC creation {channelname}")
         # load histograms for this specific channel and the variable with HistogramManager
         histograms = dict()
 
         # asimov set
         # setup variable reader for the single variable
         var_name = channel_DC_setting["variable"]
+        print(var_name)
         variables = VariableReader(args.variablefile, [var_name])
         storagepath = os.path.join(args.storage, channelname)
         # setup systematics for current channel
@@ -169,13 +170,18 @@ def nominal_datacard_creation(rootfile: uproot.WritableDirectory, datacard_setti
             convert_and_write_histogram(datacontent, variables.get_properties(var_name), path_to_histogram, rootfile, statunc=np.sqrt(datacontent))
 
         for process in processes:
+            print(process)
             if channels[channelname].is_process_excluded(process):
+                print(f"excluded? {process}")
                 continue
             #print(process)
+            
             histograms = HistogramManager(storagepath, process, variables, list(shape_systematics.keys()), args.years[0])
             histograms.load_histograms()
-
+            print(histograms[var_name]["nominal"])
             # write nominal
+            if "nominal" not in histograms[var_name]:
+                print(f"Missing 'nominal' in histograms[{var_name}]")
             asimov_data += np.array(ak.to_numpy(histograms[var_name]["nominal"]))
             path_to_histogram = f"{channel_DC_setting['prettyname']}/{process}"
             convert_and_write_histogram(histograms[var_name]["nominal"], variables.get_properties(var_name), path_to_histogram, rootfile, statunc=histograms[var_name]["stat_unc"])
@@ -1006,14 +1012,24 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
     return ret, all_asimovdata
 
 
-def bsm_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings: dict, bsm_variations: list, shape_systematics: dict, bsm_process: dict, args: argparse.Namespace):
+def bsm_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings: dict, channels: dict, bsm_variations: list, shape_systematics: dict, bsm_process: dict, args: argparse.Namespace):
     ret = []
+    print(bsm_process)
     bsm_process_name = list(bsm_process.keys())[0]
+    print(f"name of BSM process {bsm_process_name}")
     bsm_process_info = bsm_process[bsm_process_name]
 
+
     for channel_num, (channelname, channel_DC_setting) in enumerate(datacard_settings["channelcontent"].items()):
+        print(f"Does it match? {channelname} & {channels[channelname].is_process_excluded(process)}")
+        if channels[channelname].is_process_excluded(process):
+            print(f"Process {process} is excluded for {channelname} channel")
+            continue
+        print(f"In {channelname}, whose dictionary is {channel_DC_setting}:")
         storagepath = os.path.join(args.storage, channelname)
+        print(f"Fetch files from storage {storagepath}")
         var_name = channel_DC_setting["variable"]
+        print(f"Get variable {var_name}")
         variables = VariableReader(args.variablefile, [var_name])
 
         ### Now we need the histograms:
@@ -1021,9 +1037,11 @@ def bsm_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
         content_to_load = ["nominal", "stat_unc"]
         content_to_load += bsm_variations
         content_to_load += list(shape_systematics.keys())
+        # print(f"Loading all systematic variations {content_to_load}")
         histograms_bsm = HistogramManager(storagepath, bsm_process_name, variables, content_to_load, args.years[0])
         histograms_bsm.load_histograms()
 
+        print(histograms_bsm[var_name]["stat_unc"])
         # relative size of stat unc:
         stat_unc_rel = np.nan_to_num(histograms_bsm[var_name]["stat_unc"] / histograms_bsm[var_name]["nominal"])
         quartic_component = ak.to_numpy(histograms_bsm[var_name]["BSM_Quartic"]["Up"])
@@ -1039,6 +1057,7 @@ def bsm_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                 current_bsm_var += quartic_component
             # For each variation, first write the nominal component to file:
             path_to_histogram = f"{channel_DC_setting['prettyname']}/{bsm_variation}"
+            print(path_to_histogram)
             # recalc stat unc:
             stat_unc = stat_unc_rel * current_bsm_var
             convert_and_write_histogram(current_bsm_var, variables.get_properties(var_name), path_to_histogram, rootfile, statunc=stat_unc)
@@ -1048,6 +1067,7 @@ def bsm_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                 if systname == "nominal" or systname == "stat_unc":
                     continue
                 if not syst.is_process_relevant(bsm_process_name):
+                    print(f"process {bsm_process_name} for {systname} not relevant")
                     continue
 
                 upvar = histograms_bsm[var_name][systname]["Up"]
@@ -1131,14 +1151,15 @@ if __name__ == "__main__":
         processes_write.extend(eft_part)
     elif args.UseBSM:
         # find BSM process in processlist:
+        print(processfile)
         for process in processes:
-            # print(f"Print the process {process}")
+            print(f"Print the process {process}")
             if processfile["Processes"][process].get("isSignal", 0) > 0:
                 bsm_process = {process: processfile["Processes"][process]}
                 # print(bsm_process)
                 bsm_processname = process
                 break
-        bsm_part = bsm_datacard_creation(rootfile, datacard_settings, ["BSM_Quad", "BSM_Quartic"], shape_systematics, bsm_process, args)
+        bsm_part = bsm_datacard_creation(rootfile, datacard_settings, channels, ["BSM_Quad", "BSM_Quartic"], shape_systematics, bsm_process, args)
         processes = [process for process in processes if process != bsm_processname]
         processes_write = [[process, i + 1] for i, process in enumerate(processes)]
     else:

@@ -7,6 +7,14 @@
         "method_name": "sum_branch",
         "channels": ["SR-2L"]
     },
+    "HT_SR2L_asymm" : {
+        "range": [200.0, 700.0, 1600.0],
+        "nbins": 2,
+        "axis_label": "$H_T$",
+        "branch_name": "jetPt",
+        "method_name": "sum_branch",
+        "channels": ["SR-2L"]
+    },
     "LT_SR2L" : {
         "range": [250.0, 1400.0],
         "nbins": 23,
