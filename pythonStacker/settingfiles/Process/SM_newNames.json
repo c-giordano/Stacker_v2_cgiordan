@@ -1,8 +1,8 @@
 {
-    "Basedir": "/pnfs/iihe/cms/store/user/nivanden/AnalysisOutput/ReducedTuples/2024-04-23_16-46",
+    "Basedir": "/pnfs/iihe/cms/store/user/mshoosht/AnalysisOutput/ReducedTuples/2024-11-20_14-44",
     "Processes": {
         "ttt": {
-            "fileglobs": ["Tree_TTTW_TuneCP5_*MCPrompt", "Tree_TTTJ_TuneCP5_*MCPrompt"],
+            "fileglobs": ["Tree_TTTJminus*MCPrompt", "Tree_TTTJplus*MCPrompt", "Tree_TTTWminus*MCPrompt", "Tree_TTTWplus*MCPrompt*"],
             "pretty_name": "ttt",
             "color": "#e9d98d"
         },
