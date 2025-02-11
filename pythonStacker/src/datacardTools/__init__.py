@@ -63,7 +63,7 @@ class DatacardWriter():
 
     def add_MCstats(self):
         self.commentline()
-        if os.environ["USER"]==["mshoosht"]:
+        if os.environ["USER"] in ["mshoosht"]:
             self.outputstring += "* autoMCStats 0 0 1\n"
             self.commentline()
             self.outputstring += "PDF group = pdf_1 pdf_10 pdf_0 pdf_11 pdf_12 pdf_13 pdf_14 pdf_15 pdf_16 pdf_17 pdf_18 pdf_19 pdf_2 pdf_20 pdf_21 pdf_22 pdf_23 pdf_24 pdf_25 pdf_26 pdf_27 pdf_28 pdf_29 pdf_3 pdf_30 pdf_31 pdf_32 pdf_33 pdf_34 pdf_35 pdf_36 pdf_37 pdf_38 pdf_39 pdf_4 pdf_40 pdf_41 pdf_42 pdf_43 pdf_44 pdf_45 pdf_46 pdf_47 pdf_48 pdf_49 pdf_5 pdf_50 pdf_51 pdf_52 pdf_53 pdf_54 pdf_55 pdf_56 pdf_57 pdf_58 pdf_59 pdf_6 pdf_60 pdf_61 pdf_62 pdf_63 pdf_64 pdf_65 pdf_66 pdf_67 pdf_68 pdf_69 pdf_7 pdf_70 pdf_71 pdf_72 pdf_73 pdf_74 pdf_75 pdf_76 pdf_77 pdf_78 pdf_79 pdf_8 pdf_80 pdf_81 pdf_82 pdf_83 pdf_84 pdf_85 pdf_86 pdf_87 pdf_88 pdf_89 pdf_9 pdf_90 pdf_91 pdf_92 pdf_93 pdf_94 pdf_95 pdf_96 pdf_97 pdf_98 pdf_99\n"
