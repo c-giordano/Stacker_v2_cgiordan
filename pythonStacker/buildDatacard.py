@@ -178,7 +178,7 @@ def nominal_datacard_creation(rootfile: uproot.WritableDirectory, datacard_setti
             
             histograms = HistogramManager(storagepath, process, variables, list(shape_systematics.keys()), args.years[0])
             histograms.load_histograms()
-            print(histograms[var_name]["nominal"])
+            #print(histograms[var_name]["nominal"])
             # write nominal
             if "nominal" not in histograms[var_name]:
                 print(f"Missing 'nominal' in histograms[{var_name}]")
@@ -1041,7 +1041,7 @@ def bsm_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
         histograms_bsm = HistogramManager(storagepath, bsm_process_name, variables, content_to_load, args.years[0])
         histograms_bsm.load_histograms()
 
-        print(histograms_bsm[var_name]["stat_unc"])
+        #print(histograms_bsm[var_name]["stat_unc"])
         # relative size of stat unc:
         stat_unc_rel = np.nan_to_num(histograms_bsm[var_name]["stat_unc"] / histograms_bsm[var_name]["nominal"])
         quartic_component = ak.to_numpy(histograms_bsm[var_name]["BSM_Quartic"]["Up"])
@@ -1057,7 +1057,7 @@ def bsm_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                 current_bsm_var += quartic_component
             # For each variation, first write the nominal component to file:
             path_to_histogram = f"{channel_DC_setting['prettyname']}/{bsm_variation}"
-            print(path_to_histogram)
+            #print(path_to_histogram)
             # recalc stat unc:
             stat_unc = stat_unc_rel * current_bsm_var
             convert_and_write_histogram(current_bsm_var, variables.get_properties(var_name), path_to_histogram, rootfile, statunc=stat_unc)
@@ -1214,15 +1214,6 @@ if __name__ == "__main__":
                 processes.append(proc)
 
     patch_scalevar_correlations(systematics, processes)
-    if args.UseEFT:
-
-        if args.TTTT_EFT: 
-            systematics["Norm_tttt"] = Uncertainty("cross_section_tttt", {"rate": "0.88/1.04", "processes": ["sm","lin","quad"], "exact": False})
-        elif args.TTT_EFT: 
-                systematics["Norm_ttt"] = Uncertainty("cross_section_ttt", {"rate": "0.88/1.12", "processes": ["sm","lin","quad"], "exact": False})
-        elif args.All_EFT: 
-                systematics["Norm_Signal"] = Uncertainty("cross_section_BSMsignal", {"rate": "0.84/1.13", "processes": ["sm","lin","quad"], "exact": False})
-
   
     # if args.UseBSM:
     #     systematics["tttt_norm"] = Uncertainty("TTTTNorm", {"rate": "0.88/1.04", "processes": ['TTTT']})
