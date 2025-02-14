@@ -65,6 +65,8 @@ if __name__ == "__main__":
             if channels[channel].get("isSubchannel", 0) > 0:
                 continue
             cmd_tmp = cmd + f" -c {channel}"
+            if args.UseData:
+                cmd_tmp += " --data"
             cmds.append([cmd_tmp])
 
     ct.submitCommandsetsAsCondorCluster("plothistograms", cmds, scriptfolder="Scripts/condor/")
