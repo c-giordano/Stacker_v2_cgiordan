@@ -55,30 +55,31 @@ def parse_arguments():
     return args
 
 
-def convert_and_write_histogram(input_histogram, variable: Variable, outputname: str, rootfile: uproot.WritableDirectory, statunc=None):
+def convert_and_write_histogram(input_histogram, variable: Variable, outputname: str, rootfile: uproot.WritableDirectory, statunc=None, isData=False):
     raw_bins = generate_binning(variable.range, variable.nbins)
     if statunc is None:
         statunc = np.zeros(len(input_histogram))
 
     # safety functions:
     ret_th1: ROOT.TH1D = cnvrt.numpy_to_TH1D(input_histogram, raw_bins, err=statunc)
-    for i in range(1, ret_th1.GetNbinsX() + 1):
-        if ret_th1.GetBinContent(i) > 0.001:
-            continue
-        ret_th1.SetBinError(i, 0.001)
-        ret_th1.SetBinContent(i, 0.001)
-        #if ret_th1.GetBinContent(i) < -1e-06:
-        if ret_th1.GetBinContent(i) < 0.001:
-            if "lin" in outputname :
-                print (outputname , "\n we don't want to change the interference even if it's negative!!")
+    if not isData:
+        for i in range(1, ret_th1.GetNbinsX() + 1):
+            if ret_th1.GetBinContent(i) > 0.001:
                 continue
-            else:
-                print(f"WARNING: Significant negative value in {outputname} bin {i}! Setting to 0.")
-                #ret_th1.SetBinError(i, 0.0)
-                #ret_th1.SetBinContent(i, 0.0)
-    if ret_th1.Integral()==0 :
-        ret_th1.SetBinContent(1, 1e-6)  # Set the first bin to a small value
-        print (f"This process {outputname} is actually empty here")
+            ret_th1.SetBinError(i, 0.001)
+            ret_th1.SetBinContent(i, 0.001)
+            #if ret_th1.GetBinContent(i) < -1e-06:
+            if ret_th1.GetBinContent(i) < 0.001:
+                if "lin" in outputname :
+                    print (outputname , "\n we don't want to change the interference even if it's negative!!")
+                    continue
+                else:
+                    print(f"WARNING: Significant negative value in {outputname} bin {i}! Setting to 0.")
+                    #ret_th1.SetBinError(i, 0.0)
+                    #ret_th1.SetBinContent(i, 0.0)
+        if ret_th1.Integral()==0 :
+            ret_th1.SetBinContent(1, 1e-6)  # Set the first bin to a small value
+            print (f"This process {outputname} is actually empty here")
     rootfile[outputname] = ret_th1
 
 
@@ -167,7 +168,7 @@ def nominal_datacard_creation(rootfile: uproot.WritableDirectory, datacard_setti
             data_histograms = DataManager(storagepath, variables, channelname, args.years[0], eras_split=False)
             path_to_histogram = f"{channel_DC_setting['prettyname']}/data_obs"
             datacontent, stat_unc = data_histograms.get_histogram_and_uncertainties(args.years[0], variables.get_properties(var_name))
-            convert_and_write_histogram(datacontent, variables.get_properties(var_name), path_to_histogram, rootfile, statunc=np.sqrt(datacontent))
+            convert_and_write_histogram(datacontent, variables.get_properties(var_name), path_to_histogram, rootfile, statunc=np.sqrt(datacontent), isData=True)
 
         for process in processes:
             print(process)
