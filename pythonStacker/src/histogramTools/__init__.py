@@ -116,6 +116,8 @@ class HistogramManager:
 
     def save_histogram(self, content, var: str, sys: str = "nominal"):
         if sys == "nominal" or sys == "stat_unc":
+            if sys == "stat_unc":
+                content = np.sqrt(content)
             ak.to_parquet(content, self.get_name(var, sys))
         elif type(content) is dict:
             record = ak.Record(content)

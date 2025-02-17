@@ -68,8 +68,8 @@ def histogram_w_unc_flow(data, axisrange, wgts, nbins):
 
     sq_binned_data[1] += sq_binned_data[0]   # add underflow to first bin
     sq_binned_data[-2] += sq_binned_data[-1]  # add overflow to last bin
-    sq_binned_data = sq_binned_data[1:-1]     # chop off the under/overflow
-    uncertainty = np.sqrt(sq_binned_data)
+    uncertainty = sq_binned_data[1:-1]     # chop off the under/overflow
+    # uncertainty = np.sqrt(sq_binned_data)
 
     return binned_data, raw_bins, uncertainty
 
