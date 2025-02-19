@@ -239,7 +239,7 @@ if __name__ == "__main__":
     print(systematics.keys())
     if len(systematics) == 0:
         print(f"Nothing to do for process {args.process}, syst {args.systematic}, channel {args.channel}.")
-        exit(1)
+        exit(0)
 
     # load process list:
     with open(args.processfile, 'r') as f:
@@ -317,7 +317,7 @@ if __name__ == "__main__":
     if len(files) == 0:
         # make sure nothing is written in files without content to avoid unnecessary saves
         print("No files found for globs. Make sure this is expected!", file=sys.stderr)
-        exit(1)
+        exit(0)
     # print(files)
     # this will not work for requiring a specifc systematic! Need to check.
     if base_run:
