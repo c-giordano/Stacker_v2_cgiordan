@@ -1,0 +1,8 @@
+executable = buildDatacards.sh
+arguments = $(ProcId)
+
+output = /user/nivanden/condor/output/BuildDatacards_$(ClusterId)_$(ProcId).out
+error = /user/nivanden/condor/error/BuildDatacards_$(ClusterId)_$(ProcId).err
+log = /user/nivanden/condor/logs/BuildDatacards_$(ClusterId)_$(ProcId).log
+
+queue 3

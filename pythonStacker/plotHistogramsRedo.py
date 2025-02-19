@@ -160,6 +160,7 @@ def plot_data(axis, datamanager: DataManager, variable: Variable, years: list):
     axis.errorbar(x=binning[:-1] + (np.diff(binning)/2), y=content, yerr=stat_unc, ecolor="#000000", linewidth=1,
                   fmt='o', markersize=5., c="#000000",# mec="#000000",
                   label=pretty_name)
+    return (content, stat_unc)
 
 
 
@@ -191,6 +192,19 @@ def plot_signal_bkg_ratio(axis, binning, signal, background):
     ratio_content = np.nan_to_num(np.divide(signal, background))
     axis.hist(binning[:-1], binning, weights=ratio_content, histtype="step", color="k")
     modify_yrange_updown(axis, ratio_content)
+    return {"ratio": ratio_content}
+
+
+def plot_data_ratio(axis, binning, data, total):
+    ratio_content = np.nan_to_num(np.divide(data[0], total))
+    # axis.hist(binning[:-1], binning, weights=ratio_content, histtype="step", color="k")
+    stat_unc = np.abs(np.nan_to_num(np.divide(data[1], total)))
+    axis.errorbar(x=binning[:-1] + (np.diff(binning)/2), y=ratio_content, yerr=stat_unc, ecolor="#000000", linewidth=1,
+                fmt='o', markersize=5., c="#000000")
+    
+    # hline at 1:
+    axis.axhline(1., color="k", linestyle="--")
+    modify_yrange_updown(axis, ratio_content, down_scale=0.2)
     return {"ratio": ratio_content}
 
 
@@ -295,6 +309,8 @@ def plotting_sequence(args, histograms, variable, processinfo, plotdir, channel,
     n_ratios = 0
     if args.SBRatio:
         n_ratios = 1
+    if args.UseData:
+        n_ratios = 1
     if args.EFT_ratio or args.EFT_fullbkg:
         n_ratios = 1
     if args.EFT_fullbkg:
@@ -333,6 +349,8 @@ def plotting_sequence(args, histograms, variable, processinfo, plotdir, channel,
 
     if args.SBRatio:
         ratiocontent = plot_signal_bkg_ratio(axes[1], main_plot_out["binning"], main_plot_out["signal"], main_plot_out["bkg"])
+    if args.UseData:
+        ratiocontent = plot_data_ratio(axes[1], main_plot_out["binning"], data_out, main_plot_out["sum"])
     if args.EFT_ratio or args.EFT_fullbkg:
         eft_content = plot_EFT_line(axes[1], histograms[args.EFTsignal], variable, args.years, args.wc, main_plot_out["signal"])
         axes[1].set_ylabel(r"EFT / SM $t\bar{t}t\bar{t}$", fontsize="small")

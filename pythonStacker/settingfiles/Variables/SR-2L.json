@@ -79,9 +79,25 @@
         "method_name": "load",
         "channels": ["SR-2L"]
     },
+    "BDTScore_TTX_2L_fits": {
+        "range": [0.4, 0.5, 0.6, 0.7, 0.8, 1.0],
+        "nbins": 5,
+        "branch_name": "ttWScore",
+        "axis_label": "TTX Score",
+        "method_name": "load",
+        "channels": ["SR-2L"]
+    },
     "BDTScore_NP_2L": {
         "range": [0.4, 1.0],
         "nbins": 3,
+        "branch_name": "ttbarScore",
+        "axis_label": "TT Score",
+        "method_name": "load",
+        "channels": ["SR-2L"]
+    },
+    "BDTScore_NP_2L_fits": {
+        "range": [0.4, 0.5, 0.6, 0.7, 0.8, 1.0],
+        "nbins": 5,
         "branch_name": "ttbarScore",
         "axis_label": "TT Score",
         "method_name": "load",

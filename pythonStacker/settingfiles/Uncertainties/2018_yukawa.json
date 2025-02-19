@@ -155,26 +155,6 @@
         "aliasUp": "nominalWeight * otherVariations[:, 12]", 
         "channels": "all", 
         "type": "weight"
-    }, 
-    "ZZNjets_0": {
-        "channels": "all",
-        "processes": [
-            "VVV"
-        ],
-        "technical_name": "CMS_TOP24008_ZZ_j_0", 
-        "type": "weight",
-        "aliasUp": "nominalWeight * otherVariations[:, 0]",
-        "aliasDown": "nominalWeight * otherVariations[:, 1]"
-    },
-    "ZZNjets_1": {
-        "channels": "all",
-        "processes": [
-            "VVV"
-        ],
-        "technical_name": "CMS_TOP24008_ZZ_j_1",
-        "type": "weight",
-        "aliasUp": "nominalWeight * otherVariations[:, 2]",
-        "aliasDown": "nominalWeight * otherVariations[:, 3]"
     },
     "ZZNjets_2": {
         "channels": "all",
