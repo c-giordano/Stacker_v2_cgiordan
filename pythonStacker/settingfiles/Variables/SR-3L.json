@@ -63,8 +63,24 @@
         "method_name": "load",
         "channels": ["SR-3L"]
     },
+    "BDTScore_TTX_3L_fits": {
+        "range": [0.4, 0.6, 0.7, 1.0],
+        "nbins": 3,
+        "branch_name": "ttWScore",
+        "axis_label": "TTX Score",
+        "method_name": "load",
+        "channels": ["SR-3L"]
+    },
     "BDTScore_NP_3L": {
         "range": [0.4, 1.0],
+        "nbins": 3,
+        "branch_name": "ttbarScore",
+        "axis_label": "TT Score",
+        "method_name": "load",
+        "channels": ["SR-3L"]
+    },
+    "BDTScore_NP_3L_fits": {
+        "range": [0.4, 0.55, 0.7, 1.0],
         "nbins": 3,
         "branch_name": "ttbarScore",
         "axis_label": "TT Score",

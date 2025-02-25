@@ -49,6 +49,7 @@ def initJobScript(name, scriptfolder="", cwd=None):
     # write script
     with open(fname, 'w') as script:
         script.write('#!/bin/bash\n')
+        script.write('set -e\n')
         script.write(f'cd /user/nivanden/{os.getenv("CMSSW_VERSION")}/src\n')
         script.write('source /cvmfs/cms.cern.ch/cmsset_default.sh\n')
         script.write('eval `scram runtime -sh`\n')
@@ -91,6 +92,12 @@ def makeJobDescription(name, exe, argstring=None, stdout=None, stderr=None, log=
         f.write(f"error = /user/{os.environ['USER']}/condor/error/{stderr}\n")
         f.write(f"log = /user/{os.environ['USER']}/condor/logs/{log}\n\n")
         f.write("should_transfer_files = NO\n\n")
+        f.write("job_machine_attrs = Machine\n")
+        f.write("job_machine_attrs_history_length = 5\n")
+        f.write("requirements = target.machine =!= MachineAttrMachine1 && target.machine =!= MachineAttrMachine2 && target.machine =!= MachineAttrMachine3  && target.machine =!= MachineAttrMachine4\n")
+
+        f.write("max_retries = 5\n\n")
+        #f.write("max_retries = 10\n\n")
         # f.write('request_cpus = {}\n'.format(cpus)) # Don't specify if not necessary
         # f.write('request_memory = {}\n'.format(mem)) # Don't specify if not necessary
         # f.write('request_disk = {}\n\n'.format(disk)) # Don't specify if not necessary
