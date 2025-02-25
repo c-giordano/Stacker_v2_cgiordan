@@ -7,7 +7,7 @@
             "color": "#e9d98d"
         },
         "Othert": {
-            "fileglobs": ["Tree_THQ_*MCPrompt", "Tree_tZq_ll*MCPrompt", "*_TTHH_*MCPrompt", "*_TTWW_*MCPrompt", "*_TTWH_*MCPrompt", "*_TTWZ_*MCPrompt", "*_TTZH_*MCPrompt", "*_TTZZ_*MCPrompt"],
+            "fileglobs": ["Tree_THQ_*MCPrompt", "Tree_tZq_ll*MCPrompt", "Tree_TWZ*MCPrompt", "*_TTHH_*MCPrompt", "*_TTWW_*MCPrompt", "*_TTWH_*MCPrompt", "*_TTWZ_*MCPrompt", "*_TTZH_*MCPrompt", "*_TTZZ_*MCPrompt"],
             "pretty_name": "Other\\ t",
             "color": "#92dadd"
         },
