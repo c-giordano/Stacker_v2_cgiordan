@@ -20,7 +20,7 @@
         "selection": "eventClass==10"
     },
     "CR-3L-Z": {
-        "subchannels": [],
+        "subchannels": ["OneMedB"],
         "selection": "eventClass==6",
         "ignore_processes": ["ChargeMisID"]
     },
@@ -83,5 +83,9 @@
     "OSSF": {
         "isSubchannel": 1,
         "selection": "((nElectrons >= 2) & (abs(sum(ElectronCharge)) != 2)) | ((nMuons >= 2) & (abs(sum(MuonCharge)) != 2))"
+    },
+    "OneMedB": {
+        "isSubchannel": 1,
+        "selection": "(nJetsMedB > 0)"
     }
 }
