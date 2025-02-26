@@ -28,6 +28,17 @@ def parse_arguments():
     return args
 
 
+def filter_systematics(systematics, process):
+    filtered_systematics = {}
+    for key, value in systematics.items():
+        if not value.is_process_relevant(process):
+            continue
+        if "PDF_" in key:
+            continue
+        filtered_systematics[key] = value
+    return filtered_systematics
+
+
 def batch_systematic_keys(systematics, batchsize=4):
     keys = list(systematics.keys())
     batched = []
@@ -57,26 +68,26 @@ def plot_systematicsset(variable: Variable, plotdir: str, histograms, setnb, plo
     colors = ["r", "g", "b", "y", "c", "m"]
     for i, syst in enumerate(systematics):
         # TODO: actually load the variation
-        upvar = np.nan_to_num(np.array(ak.to_numpy(histograms[variable.name][syst]["Up"])) / nominal_content, nan=1., posinf=1., neginf=1.)
-        downvar = np.nan_to_num(np.array(ak.to_numpy(histograms[variable.name][syst]["Down"])) / nominal_content, nan=1., posinf=1., neginf=1.)
+        upvar = np.nan_to_num(np.array(ak.to_numpy(histograms[variable.name][syst]["Up"])) / nominal_content, nan=-1., posinf=-1., neginf=-1.)
+        downvar = np.nan_to_num(np.array(ak.to_numpy(histograms[variable.name][syst]["Down"])) / nominal_content, nan=-1., posinf=-1., neginf=-1.)
 
         minim = min(minim, min(np.min(downvar), np.min(upvar)))
         maxim = max(maxim, max(np.max(downvar), np.max(upvar)))
 
         # plot
-        ax_main.hist(binning[:-1], binning, weights=upvar, histtype="step", label=f"{syst} Up", color=colors[i])
-        ax_main.hist(binning[:-1], binning, weights=downvar, histtype="step", label=f"{syst} Down", color=colors[i], linestyle="dashed")
+        ax_main.hist(binning[:-1], binning, weights=upvar, histtype="step", label=f"{syst}", color=colors[i])
+        ax_main.hist(binning[:-1], binning, weights=downvar, histtype="step", color=colors[i], linestyle="dashed")
 
     ax_main.errorbar(x=binning[:-1] + 0.5 * np.diff(binning), y=np.ones(len(nominal_content)), yerr=np.abs(stat_unc_var), ecolor='k', label="stat unc.")
-    ax_main.set_xlim(variable.range)
+    ax_main.set_xlim((variable.range[0], variable.range[-1]))
     ax_main.set_ylabel("Unc / nom.")
     # modify_yrange_shape((minim, maxim), ax_main, minscale=0.95, maxscale=1.4)
     diff_minmax = maxim - minim
-    ax_main.set_ylim((minim - 0.02 * diff_minmax, maxim + 0.6 * diff_minmax))
+    ax_main.set_ylim((minim - 0.1 * diff_minmax, maxim + 0.8 * diff_minmax))
     # print((minim, maxim))
     # print((minim - 0.02 * diff_minmax, maxim + 0.4 * diff_minmax))
 
-    ax_main.legend(ncol=2)
+    ax_main.legend(ncol=1)
     ax_main.set_xlabel(variable.axis_label)
     ax_main.text(0.049, 0.77, plotlabel, transform=ax_main.transAxes)
 
@@ -107,11 +118,12 @@ if __name__ == "__main__":
     # load systematics
     systematics = load_uncertainties(args.systematicsfile, allowflat=False)
     # batched systematics
-    batched_systematics = batch_systematic_keys(systematics)
+    filtered_systematics = filter_systematics(systematics, args.process)
+    batched_systematics = batch_systematic_keys(filtered_systematics)
 
     systematics_list = list(systematics.keys()) + ["nominal", "stat_unc"]
     for channel in channels:
-        if args.channel is not None and channel != args.channel:
+        if args.channel is not None and not args.channel in channel:
             continue
         print(channel)
         storagepath_tmp = os.path.join(storagepath, channel)
@@ -120,6 +132,7 @@ if __name__ == "__main__":
         if not os.path.exists(outputfolder):
             os.makedirs(outputfolder)
         copy_index_html(outputfolder)
+        copy_index_html("/".join(outputfolder.split("/")[:-1]))
 
         histograms = HistogramManager(storagepath_tmp, args.process, variables, systematics_list, args.years[0])
         histograms.load_histograms()

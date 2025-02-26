@@ -174,7 +174,7 @@ class DatacardWriter():
                     if isinstance(systematic.rate, str):
                         systematic_line += "\t{:>20s}".format(systematic.rate)
                     else:
-                        systematic_line += "\t{:>20.2f}".format(systematic.rate)
+                        systematic_line += "\t{:>20.3f}".format(systematic.rate)
                     relevant = True
                 else:
                     systematic_line += "\t{:>20s}".format("-")

@@ -18,15 +18,15 @@
             "prettyname": "SR2L_ee_ttw"
         },
         "SR-2LpureTTW_em": {
-            "variable": "BDTScore_TTX_2L",
+            "variable": "BDTScore_TTX_2L_fits",
             "prettyname": "SR2L_em_ttw"
         },
         "SR-2LpureTTW_mm": {
-            "variable": "BDTScore_TTX_2L",
+            "variable": "BDTScore_TTX_2L_fits",
             "prettyname": "SR2L_mm_ttw"
         },
         "SR-2LpureNP": {
-            "variable": "BDTScore_NP_2L",
+            "variable": "BDTScore_NP_2L_fits",
             "prettyname": "SR2L_NPClass"
         },
         "SR-3Lpuresig": {
@@ -34,11 +34,11 @@
             "prettyname": "SR3L_Sig"
         },
         "SR-3LpureTTW": {
-            "variable": "BDTScore_TTX_3L",
+            "variable": "BDTScore_TTX_3L_fits",
             "prettyname": "SR3L_ttw"
         },
         "SR-3LpureNP": {
-            "variable": "BDTScore_NP_3L",
+            "variable": "BDTScore_NP_3L_fits",
             "prettyname": "SR3L_NP"
         },
         "SR-4Lpuresig_4L": {
@@ -57,7 +57,7 @@
             "variable": "BDTScore_ttbar_CR2L",
             "prettyname": "CR2LTTW"
         },
-        "CR-3L-Z": {
+        "CR-3L-ZOneMedB": {
             "variable": "NJets_CR3LZ",
             "prettyname": "CR3LZ"
         },
@@ -66,7 +66,7 @@
             "prettyname": "CR4LZ"
         },
         "CR-3L-2J1B": {
-            "variable": "SumCharges_CR3Lothers",
+            "variable": "N_MedBjets_CR3Lothers",
             "prettyname": "CR3LNP"
         }
     }

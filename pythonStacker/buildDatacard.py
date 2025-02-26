@@ -64,12 +64,12 @@ def convert_and_write_histogram(input_histogram, variable: Variable, outputname:
     ret_th1: ROOT.TH1D = cnvrt.numpy_to_TH1D(input_histogram, raw_bins, err=statunc)
     if not isData:
         for i in range(1, ret_th1.GetNbinsX() + 1):
-            if ret_th1.GetBinContent(i) > 0.001:
+            if ret_th1.GetBinContent(i) > 0.0:
                 continue
-            ret_th1.SetBinError(i, 0.001)
-            ret_th1.SetBinContent(i, 0.001)
+            ret_th1.SetBinError(i, 0.00001)
+            ret_th1.SetBinContent(i, 0.00001)
             #if ret_th1.GetBinContent(i) < -1e-06:
-            if ret_th1.GetBinContent(i) < 0.001:
+            if ret_th1.GetBinContent(i) < 0.00001:
                 if "lin" in outputname :
                     print (outputname , "\n we don't want to change the interference even if it's negative!!")
                     continue
@@ -173,13 +173,14 @@ def nominal_datacard_creation(rootfile: uproot.WritableDirectory, datacard_setti
         for process in processes:
             print(process)
             if channels[channelname].is_process_excluded(process):
-                print(f"excluded? {process}")
                 continue
             #print(process)
             
             histograms = HistogramManager(storagepath, process, variables, list(shape_systematics.keys()), args.years[0])
             histograms.load_histograms()
+
             #print(histograms[var_name]["nominal"])
+
             # write nominal
             if "nominal" not in histograms[var_name]:
                 print(f"Missing 'nominal' in histograms[{var_name}]")
@@ -187,6 +188,7 @@ def nominal_datacard_creation(rootfile: uproot.WritableDirectory, datacard_setti
             path_to_histogram = f"{channel_DC_setting['prettyname']}/{process}"
             convert_and_write_histogram(histograms[var_name]["nominal"], variables.get_properties(var_name), path_to_histogram, rootfile, statunc=histograms[var_name]["stat_unc"])
 
+            rel_stat_unc = histograms[var_name]["stat_unc"] / histograms[var_name]["nominal"]
             # loop and write systematics
             for systname, syst in shape_systematics.items():
                 # print(systname)
@@ -203,14 +205,23 @@ def nominal_datacard_creation(rootfile: uproot.WritableDirectory, datacard_setti
                 if systname == "ScaleVarEnvelope":
                     upvar, downvar = make_envelope(histograms[var_name])
 
+                # Some cleaning
+                upvar = np.where(histograms[var_name]["stat_unc"] > histograms[var_name]["nominal"], histograms[var_name]["nominal"], upvar)
+                downvar = np.where(histograms[var_name]["stat_unc"] > histograms[var_name]["nominal"], histograms[var_name]["nominal"], downvar)
+
+                upvar = np.where(histograms[var_name]["nominal"] <= 0.00005, 0.00001, upvar)
+                downvar = np.where(histograms[var_name]["nominal"] <= 0.00005, 0.00001, downvar)
+
+                upvarstat = rel_stat_unc * upvar
+                downvarstat = rel_stat_unc * downvar
                 rootpath_systname = syst.technical_name
                 if not syst.correlated_process:
                     rootpath_systname += process
 
                 path_to_histogram_systematic_up = f"{channel_DC_setting['prettyname']}/{rootpath_systname}Up/{process}"
                 path_to_histogram_systematic_down = f"{channel_DC_setting['prettyname']}/{rootpath_systname}Down/{process}"
-                convert_and_write_histogram(upvar, variables.get_properties(var_name), path_to_histogram_systematic_up, rootfile)
-                convert_and_write_histogram(downvar, variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
+                convert_and_write_histogram(upvar, variables.get_properties(var_name), path_to_histogram_systematic_up, rootfile, statunc=upvarstat)
+                convert_and_write_histogram(downvar, variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile, statunc=downvarstat)
 
         # write data_obs:
         all_asimovdata[channel_DC_setting['prettyname']] = asimov_data
