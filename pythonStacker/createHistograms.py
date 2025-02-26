@@ -252,7 +252,8 @@ if __name__ == "__main__":
         subbasedir = basedir.split("/")[-1]
         
         if args.UseBSM and processinfo.get("hasBSM", 0) > 0:
-            storagepath = os.path.join(storagepath, '2024-11-20_14-44')
+            # storagepath = os.path.join(storagepath, '2024-11-20_14-44')
+            storagepath = os.path.join(storagepath, '2025-02-23_22-54')
         else:
             storagepath = os.path.join(storagepath, subbasedir)
         
