@@ -1,13 +1,13 @@
 {
-    "Basedir": "/pnfs/iihe/cms/store/user/nivanden/AnalysisOutput/ReducedTuples/2024-11-20_14-44",
+    "Basedir": "/pnfs/iihe/cms/store/user/nivanden/AnalysisOutput/ReducedTuples/2025-02-23_22-54",
     "Processes": {
         "ttt": {
-            "fileglobs": ["Tree_TTTW_TuneCP5*MCPrompt","Tree_TTTJ_TuneCP5*MCPrompt"],
+            "fileglobs": ["Tree_TTTJminus*MCPrompt", "Tree_TTTJplus*MCPrompt", "Tree_TTTWminus*MCPrompt", "Tree_TTTWplus*MCPrompt*"],
             "pretty_name": "ttt",
             "color": "#e9d98d"
         },
         "Othert": {
-            "fileglobs": ["Tree_THQ_*MCPrompt", "Tree_tZq_ll*MCPrompt", "*_TTHH_*MCPrompt", "*_TTWW_*MCPrompt", "*_TTWH_*MCPrompt", "*_TTWZ_*MCPrompt", "*_TTZH_*MCPrompt", "*_TTZZ_*MCPrompt"],
+            "fileglobs": ["Tree_THQ_*MCPrompt", "Tree_tZq_ll*MCPrompt", "Tree_TWZ*MCPrompt", "*_TTHH_*MCPrompt", "*_TTWW_*MCPrompt", "*_TTWH_*MCPrompt", "*_TTWZ_*MCPrompt", "*_TTZH_*MCPrompt", "*_TTZZ_*MCPrompt"],
             "pretty_name": "Other\\ t",
             "color": "#92dadd"
         },

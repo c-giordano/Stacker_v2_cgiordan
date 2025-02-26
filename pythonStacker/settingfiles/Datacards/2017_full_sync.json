@@ -45,14 +45,6 @@
             "variable": "BDTScore_NP_3L",
             "prettyname": "SR3L_NP"
         },
-        "SR-4Lpuresig_4L": {
-            "variable": "BDTScore_TTTT_4L",
-            "prettyname": "SR4L_Sig"
-        },
-        "SR-4LpureTTW_4L": {
-            "variable": "BDTScore_TTX_4L",
-            "prettyname": "SR4L_ttw"
-        },
         "CR-2L-23J1B": {
             "variable": "BDTScore_ttbar_CR2L",
             "prettyname": "CR2LNP"
