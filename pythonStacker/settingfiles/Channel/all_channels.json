@@ -27,7 +27,7 @@
     "CR-4L-Z": {
         "subchannels": [],
         "selection": "eventClass==7",
-        "ignore_processes": ["ChargeMisID", "Xg", "ttW", "TopPhilic"]
+        "ignore_processes": ["ChargeMisID", "Xg", "ttW", "TopPhilic", "BSM_Quad", "BSM_Quartic"]
     },
     "CR-3L-2J1B": {
         "subchannels": [],
