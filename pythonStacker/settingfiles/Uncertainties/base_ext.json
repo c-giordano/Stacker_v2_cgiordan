@@ -292,35 +292,35 @@
         "eraspecific": "16PostVFP"
     },
     "btag_hf": {
+        "aliasUp": "nominalWeight * expUp[:, 7]", 
         "aliasDown": "nominalWeight * expDown[:, 7]", 
         "processes": "MCOnly", 
         "technical_name": "CMS_btag_shape_hf", 
-        "aliasUp": "nominalWeight * expUp[:, 7]", 
         "channels": "all", 
         "pretty_name": "BTagSFHf", 
         "type": "weight"
     }, 
     "btag_hf_stats1": {
+        "aliasUp": "nominalWeight * expUp[:, 9]", 
         "aliasDown": "nominalWeight * expDown[:, 9]", 
         "processes": "MCOnly", 
         "technical_name": "CMS_btag_shape_hfstats1_", 
-        "aliasUp": "nominalWeight * expUp[:, 9]", 
         "channels": "all", 
         "pretty_name": "BTagSFHfs1", 
         "type": "weight"
     }, 
     "btag_hf_stats2": {
+        "aliasUp": "nominalWeight * expUp[:, 10]", 
         "aliasDown": "nominalWeight * expDown[:, 10]", 
         "processes": "MCOnly", 
         "technical_name": "CMS_btag_shape_hfstats2_", 
-        "aliasUp": "nominalWeight * expUp[:, 10]", 
         "channels": "all", 
         "pretty_name": "BTagSFHfs2", 
         "type": "weight"
     },
     "btag_hf_stats1_16PreVFP": {
-        "aliasDown": "nominalWeight * expDown[:, 9]", 
         "aliasUp": "nominalWeight * expUp[:, 9]", 
+        "aliasDown": "nominalWeight * expDown[:, 9]", 
         "technical_name": "CMS_btag_shape_hfstats1_2016preVFP",
         "processes": "MCOnly", 
         "channels": "all", 
@@ -329,8 +329,8 @@
         "eraspecific": "16PreVFP"
     }, 
     "btag_hf_stats2_16PreVFP": {
-        "aliasDown": "nominalWeight * expDown[:, 10]", 
         "aliasUp": "nominalWeight * expUp[:, 10]", 
+        "aliasDown": "nominalWeight * expDown[:, 10]", 
         "technical_name": "CMS_btag_shape_hfstats2_2016preVFP",
         "processes": "MCOnly", 
         "channels": "all", 
@@ -339,8 +339,8 @@
         "eraspecific": "16PreVFP"
     }, 
     "btag_hf_stats1_16PostVFP": {
-        "aliasDown": "nominalWeight * expDown[:, 9]", 
         "aliasUp": "nominalWeight * expUp[:, 9]", 
+        "aliasDown": "nominalWeight * expDown[:, 9]", 
         "technical_name": "CMS_btag_shape_hfstats1_2016postVFP",
         "processes": "MCOnly", 
         "channels": "all", 
@@ -349,8 +349,8 @@
         "eraspecific": "16PostVFP"
     }, 
     "btag_hf_stats2_16PostVFP": {
-        "aliasDown": "nominalWeight * expDown[:, 10]", 
         "aliasUp": "nominalWeight * expUp[:, 10]", 
+        "aliasDown": "nominalWeight * expDown[:, 10]", 
         "technical_name": "CMS_btag_shape_hfstats2_2016postVFP",
         "processes": "MCOnly", 
         "channels": "all", 
@@ -359,23 +359,32 @@
         "eraspecific": "16PostVFP"
     },
     "btag_cferr1": {
+        "aliasUp": "nominalWeight * expUp[:, 13]", 
         "aliasDown": "nominalWeight * expDown[:, 13]", 
         "processes": "MCOnly", 
         "technical_name": "CMS_btag_shape_cferr1", 
-        "aliasUp": "nominalWeight * expUp[:, 13]", 
         "channels": "all", 
         "pretty_name": "BTagSFCfe1", 
         "type": "weight"
     }, 
     "btag_cferr2": {
+        "aliasUp": "nominalWeight * expUp[:, 14]", 
         "aliasDown": "nominalWeight * expDown[:, 14]", 
         "processes": "MCOnly", 
         "technical_name": "CMS_btag_shape_cferr2", 
-        "aliasUp": "nominalWeight * expUp[:, 14]", 
         "channels": "all", 
         "pretty_name": "BTagSFCfe2", 
         "type": "weight"
-    }, 
+    },
+    "JetPUID": {
+        "aliasUp": "nominalWeight * expUp[:, 15]", 
+        "aliasDown": "nominalWeight * expDown[:, 15]", 
+        "processes": "MCOnly", 
+        "technical_name": "CMS_eff_j_PUJET_id_", 
+        "channels": "all", 
+        "pretty_name": "JetPUID", 
+        "type": "weight"
+    },
     "ElectronReco": {
         "aliasDown": "nominalWeight * expDown[:, 6]", 
         "processes": "MCOnly", 

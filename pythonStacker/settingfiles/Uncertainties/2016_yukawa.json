@@ -196,7 +196,7 @@
     "ElectronIDStat_16PreVFP": {
         "aliasDown": "nominalWeight * expDown[:, 4]", 
         "processes": "MCOnly", 
-        "technical_name": "CMS_eff_e_id_2016preVFP", 
+        "technical_name": "CMS_TOP24008_eff_e_id_2016preVFP", 
         "aliasUp": "nominalWeight * expUp[:, 4]", 
         "channels": "all", 
         "type": "weight",
@@ -205,7 +205,7 @@
     "ElectronIDStat_16PostVFP": {
         "aliasDown": "nominalWeight * expDown[:, 4]", 
         "processes": "MCOnly", 
-        "technical_name": "CMS_eff_e_id_2016postVFP", 
+        "technical_name": "CMS_TOP24008_eff_e_id_2016postVFP", 
         "aliasUp": "nominalWeight * expUp[:, 4]", 
         "channels": "all", 
         "type": "weight",
@@ -230,7 +230,7 @@
     "MuonIDStat_2016PreVFP": {
         "aliasDown": "nominalWeight * expDown[:, 2]", 
         "processes": "MCOnly", 
-        "technical_name": "CMS_eff_m_id_2016preVFP", 
+        "technical_name": "CMS_TOP24008_eff_m_id_2016preVFP", 
         "aliasUp": "nominalWeight * expUp[:, 2]", 
         "channels": "all", 
         "type": "weight",
@@ -239,7 +239,7 @@
     "MuonIDStat_2016PostVFP": {
         "aliasDown": "nominalWeight * expDown[:, 2]", 
         "processes": "MCOnly", 
-        "technical_name": "CMS_eff_m_id_2016postVFP", 
+        "technical_name": "CMS_TOP24008_eff_m_id_2016postVFP", 
         "aliasUp": "nominalWeight * expUp[:, 2]", 
         "channels": "all", 
         "type": "weight",
@@ -247,7 +247,7 @@
     },
     "btag_hf": {
         "processes": "MCOnly", 
-        "technical_name": "CMS_btag_shape_hf", 
+        "technical_name": "CMS_btag_DeepFlav_hf", 
         "aliasUp": "nominalWeight * expUp[:, 7]", 
         "aliasDown": "nominalWeight * expDown[:, 7]", 
         "channels": "all", 
@@ -257,7 +257,7 @@
     "btag_hf_stats1_16PreVFP": {
         "aliasDown": "nominalWeight * expDown[:, 9]", 
         "aliasUp": "nominalWeight * expUp[:, 9]", 
-        "technical_name": "CMS_btag_shape_hfstats1_2016preVFP",
+        "technical_name": "CMS_TOP24008_btag_hfstats1_2016preVFP",
         "processes": "MCOnly", 
         "channels": "all", 
         "pretty_name": "BTagSFHfs1", 
@@ -267,7 +267,7 @@
     "btag_hf_stats2_16PreVFP": {
         "aliasDown": "nominalWeight * expDown[:, 10]", 
         "aliasUp": "nominalWeight * expUp[:, 10]", 
-        "technical_name": "CMS_btag_shape_hfstats2_2016preVFP",
+        "technical_name": "CMS_TOP24008_btag_hfstats2_2016preVFP",
         "processes": "MCOnly", 
         "channels": "all", 
         "pretty_name": "BTagSFHfs2", 
@@ -277,7 +277,7 @@
     "btag_hf_stats1_16PostVFP": {
         "aliasDown": "nominalWeight * expDown[:, 9]", 
         "aliasUp": "nominalWeight * expUp[:, 9]", 
-        "technical_name": "CMS_btag_shape_hfstats1_2016postVFP",
+        "technical_name": "CMS_TOP24008_btag_hfstats1_2016postVFP",
         "processes": "MCOnly", 
         "channels": "all", 
         "pretty_name": "BTagSFHfs1", 
@@ -287,7 +287,7 @@
     "btag_hf_stats2_16PostVFP": {
         "aliasDown": "nominalWeight * expDown[:, 10]", 
         "aliasUp": "nominalWeight * expUp[:, 10]", 
-        "technical_name": "CMS_btag_shape_hfstats2_2016postVFP",
+        "technical_name": "CMS_TOP24008_btag_hfstats2_2016postVFP",
         "processes": "MCOnly", 
         "channels": "all", 
         "pretty_name": "BTagSFHfs2", 
@@ -296,7 +296,7 @@
     },
     "btag_lf": {
         "processes": "MCOnly", 
-        "technical_name": "CMS_btag_shape_lf", 
+        "technical_name": "CMS_btag_DeepFlav_lf", 
         "aliasUp": "nominalWeight * expUp[:, 8]", 
         "aliasDown": "nominalWeight * expDown[:, 8]", 
         "channels": "all", 
@@ -306,7 +306,7 @@
     "btag_lf_stats1_16PreVFP": {
         "aliasDown": "nominalWeight * expDown[:, 11]", 
         "aliasUp": "nominalWeight * expUp[:, 11]",
-        "technical_name": "CMS_btag_shape_lfstats1_2016preVFP",
+        "technical_name": "CMS_TOP24008_btag_lfstats1_2016preVFP",
         "processes": "MCOnly", 
         "channels": "all", 
         "pretty_name": "BTagSFLfs1", 
@@ -316,7 +316,7 @@
     "btag_lf_stats2_16PreVFP": {
         "aliasDown": "nominalWeight * expDown[:, 12]", 
         "aliasUp": "nominalWeight * expUp[:, 12]",
-        "technical_name": "CMS_btag_shape_lfstats2_2016preVFP",
+        "technical_name": "CMS_TOP24008_btag_lfstats2_2016preVFP",
         "processes": "MCOnly", 
         "channels": "all", 
         "pretty_name": "BTagSFLfs2", 
@@ -326,7 +326,7 @@
     "btag_lf_stats1_16PostVFP": {
         "aliasDown": "nominalWeight * expDown[:, 11]", 
         "aliasUp": "nominalWeight * expUp[:, 11]",
-        "technical_name": "CMS_btag_shape_hlstats1_2016postVFP",
+        "technical_name": "CMS_TOP24008_btag_lfstats1_2016postVFP",
         "processes": "MCOnly", 
         "channels": "all", 
         "pretty_name": "BTagSFLfs1", 
@@ -336,7 +336,7 @@
     "btag_lf_stats2_16PostVFP": {
         "aliasDown": "nominalWeight * expDown[:, 12]", 
         "aliasUp": "nominalWeight * expUp[:, 12]",
-        "technical_name": "CMS_btag_shape_hlstats2_2016postVFP",
+        "technical_name": "CMS_TOP24008_btag_lfstats2_2016postVFP",
         "processes": "MCOnly", 
         "channels": "all", 
         "pretty_name": "BTagSFLfs2", 
@@ -346,7 +346,7 @@
     "btag_cferr1": {
         "aliasDown": "nominalWeight * expDown[:, 13]", 
         "processes": "MCOnly", 
-        "technical_name": "CMS_btag_shape_cferr1", 
+        "technical_name": "CMS_btag_DeepFlav_cferr1", 
         "aliasUp": "nominalWeight * expUp[:, 13]", 
         "channels": "all", 
         "pretty_name": "BTagSFCfe1", 
@@ -354,13 +354,22 @@
     }, 
     "btag_cferr2": {
         "processes": "MCOnly", 
-        "technical_name": "CMS_btag_shape_cferr2", 
+        "technical_name": "CMS_btag_DeepFlav_cferr2", 
         "aliasUp": "nominalWeight * expUp[:, 14]", 
         "aliasDown": "nominalWeight * expDown[:, 14]", 
         "channels": "all", 
         "pretty_name": "BTagSFCfe2", 
         "type": "weight"
-    }, 
+    },
+    "JetPUID": {
+        "aliasUp": "nominalWeight * expUp[:, 15]", 
+        "aliasDown": "nominalWeight * expDown[:, 15]", 
+        "processes": "MCOnly", 
+        "technical_name": "CMS_eff_j_PUJET_id_2016", 
+        "channels": "all", 
+        "pretty_name": "JetPUID", 
+        "type": "weight"
+    },
     "ISR": {
         "processes": "MCOnly", 
         "technical_name": "ps_isr_", 

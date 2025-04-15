@@ -105,5 +105,5 @@ if __name__ == "__main__":
                 commandset.append(append_dict[syst])
             # commandset.append(commandset_process)
 
-    ct.submitCommandsetsAsCondorCluster("CreateHistograms", commandset, scriptfolder="Scripts/condor/")
+    ct.submitCommandsetsAsCondorCluster("CreateHistograms", commandset, scriptfolder="Scripts/condor/", hardbreak=False)
     # submit commandset
