@@ -38,6 +38,8 @@ if __name__ == "__main__":
                 continue
             cmd = basecommand + f" -y {year}"
             cmd += f" -c {channel}"
+            if args.variable is not None:
+                cmd += f" --variable {args.variable}"
             cmds.append([cmd])
 
     # if "2016PreVFP" in args.years and "2016PostVFP" in args.years:
@@ -50,8 +52,8 @@ if __name__ == "__main__":
     #         cmd_tmp = cmd + f" -c {channel}"
     #         cmds.append([cmd_tmp])
 
-    if len(args.years) >= 4:
-        cmd = basecommand + " -y 2016PreVFP 2016PostVFP 2017 2018"
+    if len(args.years) >= 3:
+        cmd = basecommand + " -y 2016 2017 2018"
         for channel in channels:
             if args.channel is not None and channel != args.channel:
                 continue

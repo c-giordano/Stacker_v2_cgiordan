@@ -34,7 +34,7 @@ def makeUnique(fname, scriptfolder=""):
     sys.exit()
 
 
-def initJobScript(name, scriptfolder="", cwd=None):
+def initJobScript(name, scriptfolder="", cwd=None, hardbreak=False):
     # initialize an executable bash script by setting correct cms env
     # but copied here to be more standalone
     # parse argument
@@ -49,7 +49,8 @@ def initJobScript(name, scriptfolder="", cwd=None):
     # write script
     with open(fname, 'w') as script:
         script.write('#!/bin/bash\n')
-        script.write('set -e\n')
+        if hardbreak:
+            script.write('set -e\n')
         script.write(f'cd /user/nivanden/{os.getenv("CMSSW_VERSION")}/src\n')
         script.write('source /cvmfs/cms.cern.ch/cmsset_default.sh\n')
         script.write('eval `scram runtime -sh`\n')
@@ -126,7 +127,7 @@ def submitCommandAsCondorJob(name, command, stdout=None, stderr=None, log=None,
 
 
 def submitCommandsAsCondorCluster(name, commands, stdout=None, stderr=None, log=None,
-                                  cpus=1, mem=1024, disk=10240):
+                                  cpus=1, mem=1024, disk=10240, hardbreak=False):
     # run several similar commands within a single cluster of jobs
     # note: each command must have the same executable and number of args, only args can differ!
     # note: commands can be a list of commands (-> a job will be submitted for each command)
@@ -137,7 +138,7 @@ def submitCommandsAsCondorCluster(name, commands, stdout=None, stderr=None, log=
     [exe,argstring] = commands[0].split(' ',1) # exe must be the same for all commands
     nargs = len(argstring.split(' ')) # nargs must be the same for all commands
     # first make the executable
-    initJobScript(shname)
+    initJobScript(shname, hardbreak=hardbreak)
     with open(shname,'a') as script:
         script.write(exe)
         # for i in range(nargs): script.write(' ${}'.format(i+1))
@@ -172,7 +173,7 @@ def submitCommandsAsCondorJob(name, commands, stdout=None, stderr=None, log=None
 
 
 def submitCommandsAsCondorJobs(name, commands, stdout=None, stderr=None, log=None,
-                               cpus=1, mem=1024, disk=10240, scriptfolder=""):
+                               cpus=1, mem=1024, disk=10240, scriptfolder="", hardbreak=False):
     # submit multiple sets of commands as jobs (one job per set)
     # commands is a list of lists of strings, each string represents a single command
     # the commands can be anything and are not necessarily same executable or number of args.
@@ -182,7 +183,7 @@ def submitCommandsAsCondorJobs(name, commands, stdout=None, stderr=None, log=Non
         shname = makeUnique(name + '.sh', scriptfolder=scriptfolder)
         jdname = makeUnique(name + '.sub', scriptfolder=scriptfolder)
         # first make the executable
-        initJobScript(shname, scriptfolder=scriptfolder)
+        initJobScript(shname, scriptfolder=scriptfolder, hardbreak=hardbreak)
         with open(os.path.join(scriptfolder, shname), 'a') as script:
             for cmd in commandset:
                 script.write(cmd + '\n')
@@ -197,7 +198,7 @@ def submitCommandsAsCondorJobs(name, commands, stdout=None, stderr=None, log=Non
 
 
 def submitCommandsetsAsCondorCluster(name, commands, stdout=None, stderr=None, log=None,
-                                     cpus=1, mem=1024, disk=10240, scriptfolder="", cwd=None):
+                                     cpus=1, mem=1024, disk=10240, scriptfolder="", cwd=None, hardbreak=False):
     # submit multiple sets of commands as one cluster (one job of the clusterper set)
     # commands is a list of lists of strings, each string represents a single command
     # the commands can be anything and are not necessarily same executable or number of args.
@@ -207,7 +208,7 @@ def submitCommandsetsAsCondorCluster(name, commands, stdout=None, stderr=None, l
     jdname = makeUnique(name + '.sub', scriptfolder)
     # first make the executable
     print(shname)
-    initJobScript(shname, scriptfolder, cwd=cwd)
+    initJobScript(shname, scriptfolder, cwd=cwd, hardbreak=hardbreak)
     with open(os.path.join(scriptfolder, shname), 'a') as script:
         for i, commandset in enumerate(commands):
             script.write(f"if [ $1 -eq {i} ]; then\n")

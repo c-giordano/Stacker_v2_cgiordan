@@ -33,8 +33,8 @@ def filter_systematics(systematics, process):
     for key, value in systematics.items():
         if not value.is_process_relevant(process):
             continue
-        if "PDF_" in key:
-            continue
+        # if "PDF_" in key:
+        #     continue
         filtered_systematics[key] = value
     return filtered_systematics
 
@@ -70,6 +70,8 @@ def plot_systematicsset(variable: Variable, plotdir: str, histograms, setnb, plo
         # TODO: actually load the variation
         upvar = np.nan_to_num(np.array(ak.to_numpy(histograms[variable.name][syst]["Up"])) / nominal_content, nan=-1., posinf=-1., neginf=-1.)
         downvar = np.nan_to_num(np.array(ak.to_numpy(histograms[variable.name][syst]["Down"])) / nominal_content, nan=-1., posinf=-1., neginf=-1.)
+        if "PDF" in syst:
+            downvar = np.ones(len(downvar))
 
         minim = min(minim, min(np.min(downvar), np.min(upvar)))
         maxim = max(maxim, max(np.max(downvar), np.max(upvar)))
