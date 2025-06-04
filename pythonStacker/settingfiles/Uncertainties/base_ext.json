@@ -468,7 +468,15 @@
         "aliasUp": "isrfsrVariations[:, 2]", 
         "channels": "all", 
         "type": "weight"
-    }, 
+    },
+    "FSR_extra1": {
+        "aliasDown": "isrfsrVariations[:, 3]", 
+        "processes": "MCOnly", 
+        "technical_name": "ps_fsr", 
+        "aliasUp": "isrfsrVariations[:, 2]", 
+        "channels": "all", 
+        "type": "weight"
+    },
     "ISR": {
         "aliasDown": "isrfsrVariations[:, 1]", 
         "processes": "MCOnly", 
@@ -764,5 +772,21 @@
         "type": "weight",
         "aliasUp": "nominalWeight * otherVariations[:, 0]",
         "aliasDown": "nominalWeight"
+    },
+    "triggerSF": {
+        "channels": "all",
+        "processes": "MCOnly",
+        "technical_name": "CMS_eff_trigger",
+        "type": "weight",
+        "aliasDown": "nominalWeight * expDown[:,16]", 
+        "aliasUp": "nominalWeight * expUp[:,16]"
+    },
+    "PDF_alphaS": {
+        "channels": "all",
+        "processes": "MCOnly",
+        "technical_name": "pdf_alphas",
+        "type": "weight",
+        "aliasDown": "pdfVariations[:, 101]",
+        "aliasUp": "pdfVariations[:, 102]"
     }
 }

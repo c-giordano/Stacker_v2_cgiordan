@@ -22,7 +22,7 @@
         "technical_name": "cross_section_ttH", 
         "channels": "all", 
         "pretty_name": "ttH norm", 
-        "rate": 1.2, 
+        "rate": 1.084, 
         "type": "flat"
     }, 
     "nonPromptElNorm": {
@@ -380,10 +380,18 @@
         "corr_proc": 0
     }, 
     "FSR": {
-        "processes": "MCOnly", 
-        "technical_name": "ps_fsr", 
+        "processes": ["tt.*", "Othert"], 
+        "technical_name": "ps_fsr_top", 
         "aliasUp": "isrfsrVariations[:, 2]", 
         "aliasDown": "isrfsrVariations[:, 3]", 
+        "channels": "all", 
+        "type": "weight"
+    },
+    "FSR_extra1": {
+        "aliasUp": "isrfsrVariations[:, 2]", 
+        "aliasDown": "isrfsrVariations[:, 3]", 
+        "processes": ["Xg", "VVV", "WZ"], 
+        "technical_name": "ps_fsr_ewk", 
         "channels": "all", 
         "type": "weight"
     },
