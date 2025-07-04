@@ -1,0 +1,53 @@
+{"Basedir": "/pnfs/iihe/cms/store/user/cgiordan/AnalysisOutput/ReducedTuples/2025-06-15_12-41",
+"Processes": {
+    "TopPhilicPseudoScalarSinglet_M0p4": {
+        "fileglobs": ["Tree_*TopPhilicPseudoScalarSinglet_M0p4*_MCPrompt"],
+        "color": "#1f77b4",
+        "isSignal": 1,
+        "pretty_name": "M=400",
+        "hasBSM": 1
+    },
+    "TopPhilicPseudoScalarSinglet_M0p6": {
+        "fileglobs": ["Tree_*TopPhilicPseudoScalarSinglet_M0p6*_MCPrompt"],
+        "color": "#ff7f0e",
+        "isSignal": 1,
+        "pretty_name": "M=600",
+        "hasBSM": 1
+    },
+    "TopPhilicPseudoScalarSinglet_M0p8": {
+        "fileglobs": ["Tree_*TopPhilicPseudoScalarSinglet_M0p8*_MCPrompt"],
+        "color": "#2ca02c",
+        "isSignal": 1,
+        "pretty_name": "M=800",
+        "hasBSM": 1
+    },
+    "TopPhilicPseudoScalarSinglet_M1p0": {
+        "fileglobs": ["Tree_*TopPhilicPseudoScalarSinglet_M1p0*_MCPrompt"],
+        "color": "#d62728",
+        "isSignal": 1,
+        "pretty_name": "M=1000",
+        "hasBSM": 1
+    },
+    "TopPhilicPseudoScalarSinglet_M1p2": {
+        "fileglobs": ["Tree_*TopPhilicPseudoScalarSinglet_M1p2*_MCPrompt"],
+        "color": "#9467bd",
+        "isSignal": 1,
+        "pretty_name": "M=1200",
+        "hasBSM": 1
+    },
+    "TopPhilicPseudoScalarSinglet_M1p4": {
+        "fileglobs": ["Tree_*TopPhilicPseudoScalarSinglet_M1p4*_MCPrompt"],
+        "color": "#8c564b",
+        "isSignal": 1,
+        "pretty_name": "M=1400",
+        "hasBSM": 1
+    },
+    "TopPhilicPseudoScalarSinglet_M1p6": {
+        "fileglobs": ["Tree_*TopPhilicPseudoScalarSinglet_M1p6*_MCPrompt"],
+        "color": "#e377c2",
+        "isSignal": 1,
+        "pretty_name": "M=1600",
+        "hasBSM": 1
+    }
+}
+}
