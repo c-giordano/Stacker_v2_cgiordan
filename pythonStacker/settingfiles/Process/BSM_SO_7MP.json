@@ -1,6 +1,6 @@
 {"Basedir": "/pnfs/iihe/cms/store/user/cgiordan/AnalysisOutput/ReducedTuples/2025-05-19_14-57",
 "Processes": {
-    "TopPhilicPseudoScalarOctet_M0p4": {
+    "TopPhilicScalarOctet_M0p4": {
         "fileglobs": ["Tree_*TopPhilicScalarOctet_M0p4*_MCPrompt"],
         "color": "#EF3340",
         "isSignal": 1,
@@ -8,7 +8,7 @@
         "hasBSM": 1,
         "doReweight": 1
     },
-    "TopPhilicPseudoScalarOctet_M0p6": {
+    "TopPhilicScalarOctet_M0p6": {
         "fileglobs": ["Tree_*TopPhilicScalarOctet_M0p6*_MCPrompt"],
         "color": "#EF3340",
         "isSignal": 1,
@@ -16,7 +16,7 @@
         "hasBSM": 1,
         "doReweight": 1
     },
-    "TopPhilicPseudoScalarOctet_M0p8": {
+    "TopPhilicScalarOctet_M0p8": {
         "fileglobs": ["Tree_*TopPhilicScalarOctet_M0p8*_MCPrompt"],
         "color": "#EF3340",
         "isSignal": 1,
@@ -24,7 +24,7 @@
         "hasBSM": 1,
         "doReweight": 1
     },
-    "TopPhilicPseudoScalarOctet_M1p0": {
+    "TopPhilicScalarOctet_M1p0": {
         "fileglobs": ["Tree_*TopPhilicScalarOctet_M1p0*_MCPrompt"],
         "color": "#EF3340",
         "isSignal": 1,
@@ -32,7 +32,7 @@
         "hasBSM": 1,
         "doReweight": 1
     },
-    "TopPhilicPseudoScalarOctet_M1p2": {
+    "TopPhilicScalarOctet_M1p2": {
         "fileglobs": ["Tree_*TopPhilicScalarOctet_M1p2*_MCPrompt"],
         "color": "#EF3340",
         "isSignal": 1,
@@ -40,7 +40,7 @@
         "hasBSM": 1,
         "doReweight": 1
     },
-    "TopPhilicPseudoScalarOctet_M1p4": {
+    "TopPhilicScalarOctet_M1p4": {
         "fileglobs": ["Tree_*TopPhilicScalarOctet_M1p4*_MCPrompt"],
         "color": "#EF3340",
         "isSignal": 1,
@@ -48,7 +48,7 @@
         "hasBSM": 1,
         "doReweight": 1
     },
-    "TopPhilicPseudoScalarOctet_M1p6": {
+    "TopPhilicScalarOctet_M1p6": {
         "fileglobs": ["Tree_*TopPhilicScalarOctet_M1p6*_MCPrompt"],
         "color": "#EF3340",
         "isSignal": 1,

@@ -370,11 +370,19 @@
         "type": "weight",
         "corr_proc": 0
     }, 
-    "FSR": {
-        "processes": "MCOnly", 
-        "technical_name": "ps_fsr", 
+    "FSR": { 
+        "processes": ["tt.*", "Othert"],
+        "technical_name": "ps_fsr_top", 
         "aliasUp": "isrfsrVariations[:, 2]", 
         "aliasDown": "isrfsrVariations[:, 3]", 
+        "channels": "all", 
+        "type": "weight"
+    },
+    "FSR_extra1": {
+        "aliasUp": "isrfsrVariations[:, 2]", 
+        "aliasDown": "isrfsrVariations[:, 3]", 
+        "processes": ["Xg", "VVV", "WZ"], 
+        "technical_name": "ps_fsr_ewk", 
         "channels": "all", 
         "type": "weight"
     },
@@ -544,13 +552,30 @@
         "rate": "0.867/1.078",
         "type": "flat"
     },
-    "ttt_norm": {
-        "pretty_name": "ttt_norm",
-        "technical_name": "cross_section_ttt",
+    "tttj_norm": {
+        "pretty_name": "tttj_norm",
+        "technical_name": "cross_section_tttj",
         "channels": "all",
-        "processes": "ttt",
-        "rate": "0.873/1.141",
+        "processes": "tttj",
+        "rate": "0.90/1.12",
         "type": "flat"
+    },
+    "tttw_norm": {
+        "pretty_name": "tttw_norm",
+        "technical_name": "cross_section_tttW",
+        "channels": "all",
+        "processes": "tttW",
+        "rate": "0.846/1.162",
+        "type": "flat"
+    },
+    "JetPUID": {
+        "aliasUp": "nominalWeight * expUp[:, 15]", 
+        "aliasDown": "nominalWeight * expDown[:, 15]", 
+        "processes": "MCOnly", 
+        "technical_name": "CMS_eff_j_PUJET_id_2016", 
+        "channels": "all", 
+        "pretty_name": "JetPUID", 
+        "type": "weight"
     },
     "ISRSignal": {
         "processes": [
