@@ -38,6 +38,7 @@ def parse_arguments():
     parser.add_argument("--BSM_fullbkg", dest="BSM_fullbkg", action="store_true", default=False)
     parser.add_argument("--SBRatio", dest="SBRatio", action="store_true", default=False)
     parser.add_argument("--shapes", dest="shapes", action="store_true", default=False)
+    parser.add_argument("--onlyBSMshapes", dest="BSMshapes", action="store_true", default=False)
     parser.add_argument("--suffix", action="store", default="")
 
     arguments.add_settingfiles(parser)
@@ -99,7 +100,7 @@ def generate_outputfolder(years, outputfolder, subdir, suffix=""):
     if args.UseBSM:
         # coupling_name = 
         outputfolder_base = os.path.join(outputfolder, subdir, outputsubfolder, args.bsm_model[0])
-        print(outputfolder_base)
+        # print(outputfolder_base)
     else:
         outputfolder_base = os.path.join(outputfolder, subdir, outputsubfolder)
     if not os.path.exists(outputfolder_base):
@@ -116,6 +117,7 @@ def plot_histograms_base(axis, histograms: dict, variable: Variable, processes: 
 
     binning = generate_binning(variable.range, variable.nbins)
     for name, info in processes.items():
+        # print(name)
         # print(name, info)
         content = np.zeros(variable.nbins)
         for year in years:
@@ -123,6 +125,7 @@ def plot_histograms_base(axis, histograms: dict, variable: Variable, processes: 
             content_tmp = ak.to_numpy(histograms[name][year][variable.name]["nominal"])
             content_tmp = np.array(content_tmp)
             content += content_tmp
+            # print(variable.name)
 
         # then add to figure, fix label and color, as well as legend
         pretty_name = generate_process_name(name, info)
@@ -248,25 +251,34 @@ def plot_BSM_line(axis, histograms, variable: Variable, years, models: list, mas
     for model, mass, coupling in itertools.product(models, masses, couplings):
         name_string = f"{model}_{mass}"
         current_histograms = histograms[name_string]
-        # print(histograms.keys())
+        # print(name_string)
         current_variation = np.zeros(variable.nbins)
         for year in years:
             current_variation += float(coupling)* float(coupling) * np.array(ak.to_numpy(current_histograms[year][variable.name]["BSM_Quad"]["Up"]))
             current_variation += (float(coupling) ** 4) * np.array(ak.to_numpy(current_histograms[year][variable.name]["BSM_Quartic"]["Up"]))
         
         current_variation = np.nan_to_num(current_variation / normalization_contribution, nan=1., posinf=1., neginf=1.)
+        # print(current_variation)
+        pretty = model.split("Philic")[-1]
 
-        pretty_bsm_name = model.split("Philic")[-1]
-        pretty_bsm_name = pretty_bsm_name.replace("Vector", "V")
-        pretty_bsm_name = pretty_bsm_name.replace("Singlet", "S")
-        pretty_bsm_name = pretty_bsm_name.replace("Octet", "O")
-        pretty_bsm_name = pretty_bsm_name.replace("Scalar", "S")
-        pretty_bsm_name = pretty_bsm_name.replace("Pseudo", "P")
+        for old, new in [
+            ("PseudoScalar", "P"),
+            ("Scalar",       "S"),
+            ("Vector",       "V"),
+            ("Singlet",     r"_{1}"),
+            ("Octet",       r"_{8}")]:
+            pretty = pretty.replace(old, new)
+
+        pretty_bsm_name = rf"${pretty}$"
         mass_name = float(mass/1000)
         coupling_name = "(g="+str(coupling)+")"
-        pretty_bsm_name += " " + str(mass_name) + " TeV " + coupling_name
+        pretty_bsm_name += coupling_name
+        # axis.hist(binning[:-1], binning, weights=current_variation, histtype="step",
+                #   label=pretty_bsm_name, linewidth=2.)
         axis.hist(binning[:-1], binning, weights=current_variation, histtype="step",
-                  label=pretty_bsm_name, linewidth=2.)
+                   label= str(mass_name) + " TeV ", linewidth=2.)
+        # axis.legend(title=f"{pretty_bsm_name}",
+        #     title_fontsize=16, frameon=False)
         all_variations.append(current_variation)
     return all_variations
 
@@ -306,11 +318,12 @@ def get_lumi(years):
 
 
 def plotting_sequence(args, histograms, variable, processinfo, plotdir, channel, storagepath, datahistograms=None):
+    # BSMShapesToggle = args.UseBSM and args.shapes
     n_ratios = 0
     if args.SBRatio:
         n_ratios = 1
-    if args.UseData:
-        n_ratios = 1
+    # if args.UseData:
+    #     n_ratios = 1
     if args.EFT_ratio or args.EFT_fullbkg:
         n_ratios = 1
     if args.EFT_fullbkg:
@@ -319,6 +332,8 @@ def plotting_sequence(args, histograms, variable, processinfo, plotdir, channel,
         n_ratios = 1
     if args.BSM_fullbkg:
         n_ratios = 2
+    # if args.UseData and args.BSM_ratio and args.BSM_fullbkg:
+    #     n_ratios = 3
     
     lumi = get_lumi(args.years)
     if n_ratios == 0:
@@ -329,7 +344,18 @@ def plotting_sequence(args, histograms, variable, processinfo, plotdir, channel,
     else:
         fig, axes = fg.create_multi_ratioplot(lumi, True, n_subplots=n_ratios)
 
-    main_plot_out = plot_histograms_base(axes[0], histograms, variable, processinfo, args.years, shapes=args.shapes)
+    # to_remove_for_BSM = ["ttt", "Othert", "Xg", "ChargeMisID", "VVV", "WZ", "nonPromptElectron", "nonPromptMuon", "ttH", "ttZ", "ttZ", "ttW", "tttt"]
+    # if BSMShapesToggle:
+    #     print(processinfo)
+    #     for key in to_remove_for_BSM:
+    #         processinfo.pop(key, None)#[x for x in args.shapes if x not in to_remove_for_BSM]
+    #     main_plot_out = plot_histograms_base(axes[0], histograms, variable, processinfo, args.years, shapes=args.shapes)
+    # else:
+    if args.BSMshapes:
+        empty_dict = {}
+        main_plot_out = plot_histograms_base(axes[0], histograms, variable, empty_dict, args.years, shapes=args.shapes)
+    else:
+        main_plot_out = plot_histograms_base(axes[0], histograms, variable, processinfo, args.years, shapes=args.shapes)
     if datahistograms is not None:    
         data_out = plot_data(axes[0], datahistograms, variable, args.years)
     else:
@@ -349,8 +375,8 @@ def plotting_sequence(args, histograms, variable, processinfo, plotdir, channel,
 
     if args.SBRatio:
         ratiocontent = plot_signal_bkg_ratio(axes[1], main_plot_out["binning"], main_plot_out["signal"], main_plot_out["bkg"])
-    if args.UseData:
-        ratiocontent = plot_data_ratio(axes[1], main_plot_out["binning"], data_out, main_plot_out["sum"])
+    # if args.UseData:
+    #     ratiocontent = plot_data_ratio(axes[1], main_plot_out["binning"], data_out, main_plot_out["sum"])
     if args.EFT_ratio or args.EFT_fullbkg:
         eft_content = plot_EFT_line(axes[1], histograms[args.EFTsignal], variable, args.years, args.wc, main_plot_out["signal"])
         axes[1].set_ylabel(r"EFT / SM $t\bar{t}t\bar{t}$", fontsize="small")
