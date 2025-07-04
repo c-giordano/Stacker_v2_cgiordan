@@ -67,7 +67,7 @@ def reweight_and_write(reweighter, eventclass, tree, storage, filename, process)
     return
 
 def write_pseudo_nominal(eventclass,storage, filename, process):
-    match = re.search(r"Tree_(TTT[TJW])_.*_TopPhilicScalar(Singlet|Octet)_M(0p\d+|1p[05])", filename)
+    match = re.search(r"Tree_(TTT[TJW])_.*_TopPhilicScalar(Singlet|Octet)_M(0p\d+|1p[0246])", filename)
     if not match:
         raise ValueError(f"Filename '{filename}' does not match the expected pattern.")
     base_name, type_name, mass_value = match.groups()
