@@ -11,6 +11,7 @@ def parse_arguments():
     arguments.add_settingfiles(parser)
     arguments.select_specifics(parser)
     arguments.add_toggles(parser)
+    arguments.add_tmp_storage(parser)
     parser.add_argument("--wc", action="store", default="ctt")
 
     args = parser.parse_args()
@@ -25,6 +26,7 @@ if __name__ == "__main__":
     basecommand += f" --processfile {args.processfile}"
     basecommand += f" --systematicsfile {args.systematicsfile}"
     basecommand += f" --channelfile {args.channelfile}"
+    basecommand += f" --storage {args.storage}"
 
     with open(args.channelfile, 'r') as f:
         channels = json.load(f)
