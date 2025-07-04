@@ -1,10 +1,11 @@
+import numpy as np
+np.finfo(np.dtype("float32"))
+np.finfo(np.dtype("float64"))
 import argparse
 import sys
 import os
 import json
 import awkward as ak
-import numpy as np
-
 import src.arguments as arguments
 from src.configuration import load_uncertainties, load_channels_and_subchannels, Uncertainty
 from src.variables.variableReader import VariableReader, Variable
@@ -50,20 +51,19 @@ def get_uncertainty_variation_shape(variable: Variable, uncertainty: Uncertainty
         return up, down
 
     for process, hists_per_year in histograms_proc.items():
-        print(process)
+        print(f"\t\t\t{process}")
         if not uncertainty.is_process_relevant(process):
-            print("skip process")
+            print("\t\t\tskip process")
             continue
 
         var_process_up = np.zeros(variable.nbins)
         var_process_down = np.zeros(variable.nbins)
 
         for year, hists in hists_per_year.items():
-            print(year)
+            print(f"\t\t\t{year}")
             # get the up and down variation:
 
             up_diff = np.array(ak.to_numpy(hists[variable.name][uncertainty.name]["Up"] - hists[variable.name]["nominal"]))
-            
 
             if uncertainty.weight_key_down is None:
                 down_diff = np.zeros(len(up_diff))
@@ -77,9 +77,8 @@ def get_uncertainty_variation_shape(variable: Variable, uncertainty: Uncertainty
             true_down_diff = np.where(down_diff < up_diff, down_diff, up_diff)
             true_down_diff[true_down_diff > 0] = 0.
 
-            print(true_up_diff / hists[variable.name]["nominal"])
-            print(uncertainty.name)
-            print(process)
+            print(f"\t\t\t Process {process} for uncertainty {uncertainty.name} has relative updiff {true_up_diff / hists[variable.name]['nominal']} and downdiff {true_down_diff / hists[variable.name]['nominal']}")
+
             var_process_up += true_up_diff
             var_process_down -= true_down_diff
 
@@ -113,7 +112,12 @@ def get_uncertainty_variation_flat(variable: Variable, uncertainty: Uncertainty,
         for year, hists in hists_per_year.items():
 
             # get the up and down variation:
-            diff = ak.to_numpy(hists[variable.name]["nominal"]) * (1 - uncertainty.rate)
+            rate = uncertainty.rate
+            if type(rate) is str and "/" in str(rate):
+                rate = rate.split("/")[-1]
+            rate = float(rate)
+            diff = ak.to_numpy(hists[variable.name]["nominal"]) * (1. - rate)
+            print(f"\t\t\t {variable.name} has rate {rate} with variations {diff} over {hists[variable.name]['nominal']}")
             var_process += diff
 
         if uncertainty.correlated_process:
@@ -134,7 +138,7 @@ def uncertaintyloop(variable: Variable, histograms_proc: dict[str, dict[str, His
     uncertainties_squared_up = np.zeros(variable.nbins)
     uncertainties_squared_down = np.zeros(variable.nbins)
     for name, uncertainty in uncertainties.items():
-        print(f"uncertainty {name}")
+        print(f"\t\tuncertainty {name} Start -----------------------------------")
         if not uncertainty.is_channel_relevant(channel):
             print("skip channel")
             # skip irrelevant channels
@@ -148,9 +152,11 @@ def uncertaintyloop(variable: Variable, histograms_proc: dict[str, dict[str, His
             # For a single uncertainty, loop processes and add up differences to nominal
             up_tmp, down_tmp = get_uncertainty_variation_shape(variable, uncertainty, histograms_proc)
 
+        print(f"\t\t\t Uncertainty band before new contributions: up {np.sqrt(uncertainties_squared_up)}, and down {np.sqrt(uncertainties_squared_down)}")
         uncertainties_squared_up += up_tmp
         uncertainties_squared_down += down_tmp
-
+        print(f"\t\t\t Uncertainty band after new contributions: up {np.sqrt(uncertainties_squared_up)}, and down {np.sqrt(uncertainties_squared_down)}")
+        print(f"\t\tuncertainty {name} End -----------------------------------")
     # unsquare
     unc_up = np.sqrt(uncertainties_squared_up)
     unc_down = np.sqrt(uncertainties_squared_down)
@@ -160,10 +166,12 @@ def uncertaintyloop(variable: Variable, histograms_proc: dict[str, dict[str, His
 def variableloop(variables: VariableReader, histograms_proc: dict[str, dict[str, HistogramManager]], uncertainties: dict, channel: str):
     ret = dict()
     for var_name, variable in variables.get_variable_objects().items():
-        print(var_name)
+        print(f"\t{var_name} Start -----------------------------------")
         if not variable.is_channel_relevant(channel):
             continue
         ret[variable.name] = uncertaintyloop(variable, histograms_proc, uncertainties, channel)
+        print(f"\t{var_name} End -----------------------------------")
+
     return ret
 
 
@@ -184,7 +192,7 @@ def channelloop(channels: list, variables: VariableReader, systematics_shape: di
     for channelname in channels:
         if args.channel is not None and args.channel not in channelname:
             continue
-        print(channelname)
+        print(channelname + "\n--------------------------------------------------------------------")
         # update storagepath to include channel
         storagepath_channel = os.path.join(storagepath, channelname)
 
@@ -203,6 +211,9 @@ def channelloop(channels: list, variables: VariableReader, systematics_shape: di
                 continue
             tmp_path = os.path.join(storagepath_channel, variable, outputfilename)
             ak.to_parquet(ak.Record(results[variable]), tmp_path)
+
+        print("End channel " + channelname + "\n--------------------------------------------------------------------")
+
 
 
 if __name__ == "__main__":
