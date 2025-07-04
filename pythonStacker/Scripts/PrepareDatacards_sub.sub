@@ -1,0 +1,6 @@
+executable = PrepareDatacards_new.sh
+arguments = $(model) $(mass_point) $(year) $(mass_gev) $(with_data)
+output = /user/cgiordan/condor/output/BuildDatacards_$(ClusterId)_$(ProcId).out
+error = /user/cgiordan/condor/error/BuildDatacards_$(ClusterId)_$(ProcId).err
+log = /user/cgiordan/condor/logs/BuildDatacards_$(ClusterId)_$(ProcId).log
+queue model, mass_point, year, mass_gev, with_data from datacards_jobs.txt
